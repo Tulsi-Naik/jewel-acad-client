@@ -1,0 +1,37 @@
+.bakery-dashboard {
+  background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20190223/ourmid/pngtree-beautiful-romantic-golden-jewelry-banner-background-spheresmall-golden-ballgold-image_83218.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+}
+
+
+.bakery-overlay {
+  background-color: rgba(255, 255, 255, 0.85);
+  /* Soft white overlay */
+  border-radius: 15px;
+  padding: 2rem;
+}
+
+.nav-link {
+  color: white !important;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.nav-link:hover {
+  background-color: #f8f9fa;
+  /* light background */
+  color: #000 !important;
+  /* dark text */
+  text-decoration: none;
+}
+
+.nav-link.active {
+  font-weight: bold;
+  border-bottom: 2px solid #fff;
+}
