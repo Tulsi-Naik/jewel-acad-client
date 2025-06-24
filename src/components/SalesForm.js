@@ -123,7 +123,7 @@ const SalesForm = () => {
         products: saleItems.map(item => item.product),
       });
 
-      await axios.patch('/api/ledger/${ledgerRes.data._id}/pay');
+      await axios.patch(`/api/ledger/${ledgerRes.data._id}/pay`);
       resetForm();
     } catch (err) {
       console.error(err);

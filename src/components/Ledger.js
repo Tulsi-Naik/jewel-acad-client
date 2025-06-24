@@ -163,6 +163,22 @@ const handleAddLedger = async () => {
   html2pdf().from(pdfContent).set(opt).save();
 };
 
+const markAsPaid = async (id) => {
+  try {
+    const res = await axios.patch(`/api/ledger/${id}/mark-paid`);
+    if (res.data.success) {
+      toast.success('Marked as paid');
+      fetchLedger(); // reloads data
+    } else {
+      toast.error('Failed to mark as paid');
+    }
+  } catch (err) {
+    console.error('Error marking as paid:', err);
+    toast.error('Something went wrong');
+  }
+};
+
+
 const handlePartialPay = async (id) => {
   const amount = prompt('Enter partial amount to pay:');
   if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
