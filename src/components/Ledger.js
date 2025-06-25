@@ -21,7 +21,7 @@ const Ledger = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('/api/products');
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
       setProducts(res.data);
     } catch (err) {
       console.error('Error', err);
@@ -55,7 +55,7 @@ const Ledger = () => {
   const fetchLedger = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/ledger');
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`);
       const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setLedgerData(allLedgers);
       setFilteredData(groupByCustomer(allLedgers));
@@ -67,7 +67,7 @@ const Ledger = () => {
   }, []);
   const fetchCustomers = async () => {
     try {
-      const res = await axios.get('/api/customers');
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/customers`);
       setCustomers(res.data);
     } catch (err) {
       console.error('Error', err);
@@ -112,12 +112,12 @@ const handleAddLedger = async () => {
     if (existingLedger) {
       const updatedTotal = existingLedger.total + parseFloat(newTotal); 
       const updatedProducts = [...new Set([...existingLedger.products.map(p => p.name), ...productNames])]; 
-      await axios.put('/api/ledger/${existingLedger._id}', {
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${existingLedger._id}`, {
         total: updatedTotal,
         products: updatedProducts,
       });
     } else {
-      await axios.post('/api/ledger', {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
         customer: newCustomerId,
         products: productNames,
         total: parseFloat(newTotal),
@@ -165,7 +165,7 @@ const handleAddLedger = async () => {
 
 const markAsPaid = async (id) => {
   try {
-    const res = await axios.patch(`/api/ledger/${id}/mark-paid`);
+    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${id}/mark-paid`);
     if (res.data.success) {
       toast.success('Marked as paid');
       fetchLedger(); // reloads data
@@ -185,7 +185,7 @@ const handlePartialPay = async (id) => {
     return toast.warning('Please enter a valid amount');
   }
   try {
-    const res = await axios.patch('/api/ledger/${id}/partial-pay', {
+    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${id}/partial-pay`, {
       amount: parseFloat(amount),
     });
     res.data.success ? toast.success('Partial payment updated') : toast.error();
