@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import html2pdf from 'html2pdf.js';
-// import { markAsPaid } from './SalesForm';
+
 
 
 const Ledger = () => {
@@ -165,7 +165,7 @@ const handleAddLedger = async () => {
 
 const markAsPaid = async (id) => {
   try {
-    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${id}/mark-paid`);
+    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${id}/pay`);
     if (res.data.success) {
       toast.success('Marked as paid');
       fetchLedger(); // reloads data
