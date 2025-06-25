@@ -23,8 +23,8 @@ const SalesForm = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res1 = await axios.get(`/api/products`);
-        const res2 = await axios.get(`/api/customers`);
+        const res1 = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
+        const res2 = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/customers`);
         setProducts(res1.data);
         setCustomers(res2.data);
       } catch (err) {
@@ -77,7 +77,7 @@ const SalesForm = () => {
     try {
       let finalCustomerId = customerId;
       if (!finalCustomerId && newCustomerName.trim() && newCustomerAddress.trim() && newCustomerContact.trim()) {
-        const newCustomer = await axios.post(`api/customers`, {
+        const newCustomer = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/customers`, {
           name: newCustomerName.trim(),
           address: newCustomerAddress.trim(),
           contact: newCustomerContact.trim()
@@ -86,7 +86,7 @@ const SalesForm = () => {
         finalCustomerId = newCustomer.data._id;
         setCustomerId(finalCustomerId);
       }
-      const saleRes = await axios.post('/api/sales', {
+      const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, {
         customer: finalCustomerId,
         items: saleItems
       });
@@ -100,7 +100,7 @@ const SalesForm = () => {
 
   const handleAddLedger = async () => {
     try {
-      await axios.post('/api/ledger', {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
         sale: savedSaleId,
         customer: customerId,
         total: totalAmount,
@@ -116,14 +116,14 @@ const SalesForm = () => {
 
   const handleMarkAsPaid = async () => {
     try {
-      const ledgerRes = await axios.post('/api/ledger', {
+      const ledgerRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
         sale: savedSaleId,
         customer: customerId,
         total: totalAmount,
         products: saleItems.map(item => item.product),
       });
 
-      await axios.patch(`/api/ledger/${ledgerRes.data._id}/pay`);
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${ledgerRes.data._id}/pay`);
       resetForm();
     } catch (err) {
       console.error(err);
