@@ -172,14 +172,25 @@ const SalesForm = () => {
             options={customers.map(c => ({
               value: c._id,
               label: `${c.name} - ${c.contact}`
-            }))}
-            onChange={option => {
-              setCustomerId(option ? option.value : '');
+          }))}
+          onChange={option => {
+            if (option) {
+              const selected = customers.find(c => c._id === option.value);
+              setCustomerId(option.value);
+              setNewCustomerName(selected.name);
+              setNewCustomerContact(selected.contact);
+              setNewCustomerAddress(selected.address);
+            } else {
+              setCustomerId('');
               setNewCustomerName('');
-            }}
-            placeholder="Search customer..."
-            isClearable
-          />
+              setNewCustomerContact('');
+              setNewCustomerAddress('');
+            }
+         }}
+        placeholder="Search customer..."
+        isClearable
+        />
+
         </div>
 
         <div className="mb-3">
