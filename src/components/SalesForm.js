@@ -88,7 +88,11 @@ const SalesForm = () => {
       }
       const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, {
         customer: finalCustomerId,
-        items: saleItems
+        items: saleItems.map(item => ({
+  product: item.product,
+  quantity: item.quantity
+}))
+
       });
 
       setSavedSaleId(saleRes.data._id);

@@ -17,7 +17,7 @@ const Help = () => {
           <div className="card-body">
             <p><strong>Website:</strong> www.varadanalyst.com</p>
                 <p><strong>Phone:</strong> +91 8446448461</p>
-            <p><strong>Address:</strong> Shivcity center,505,Vijaynagar,Sangli 416416</p>
+            <p><strong>Address:</strong> 505,Shivcity center,Vijaynagar,Sangli 416416</p>
           </div>
         </div>
       </section>
