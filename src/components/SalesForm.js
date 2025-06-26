@@ -100,12 +100,13 @@ const SalesForm = () => {
 
   const handleAddLedger = async () => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, {
         sale: savedSaleId,
         customer: customerId,
         total: totalAmount,
         products: saleItems.map(item => item.product),
       });
+      toast.success('Ledger entry added successfully'); //
       resetForm();
     } catch (err) {
       console.error(err);
@@ -114,23 +115,24 @@ const SalesForm = () => {
     }
   };
 
-  const handleMarkAsPaid = async () => {
-    try {
-      const ledgerRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
-        sale: savedSaleId,
-        customer: customerId,
-        total: totalAmount,
-        products: saleItems.map(item => item.product),
-      });
+ const handleMarkAsPaid = async () => {
+  try {
+    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, {
+      sale: savedSaleId,
+      customer: customerId,
+      total: totalAmount,
+      products: saleItems.map(item => item.product),
+      markAsPaid: true // ✅ pays and finalizes the ledger
+    });
+    toast.success('Ledger marked as paid'); //
+    resetForm();
+  } catch (err) {
+    console.error('Error marking ledger as paid:', err);
+  } finally {
+    setShowModal(false);
+  }
+};
 
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${ledgerRes.data._id}/pay`);
-      resetForm();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setShowModal(false);
-    }
-  };
 
   const resetForm = () => {
     setSaleItems([]);
