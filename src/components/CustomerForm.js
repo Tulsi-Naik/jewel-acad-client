@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
+
+
 const CustomerForm = () => {
+  const [editingId, setEditingId] = useState(null);
+
   const [form, setForm] = useState({ name: '', address: '', contact: '' });
   const [customers, setCustomers] = useState([]);
   const fetchCustomers = async () => {
@@ -17,16 +21,31 @@ const CustomerForm = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/customers`, form)
-
-      setForm({ name: '', address: '', contact: '' });
-      fetchCustomers();
-    } catch (err) {
-      console.error('Error saving customer:', err);
+  e.preventDefault();
+  try {
+    if (editingId) {
+      await axios.put(
+        `${process.env.REACT_APP_API_BASE_URL}/api/customers/${editingId}`,
+        form
+      );
+      toast.success('Customer updated!');
+    } else {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
+        form
+      );
+      toast.success('Customer added!');
     }
-  };
+
+    setForm({ name: '', address: '', contact: '' });
+    setEditingId(null);
+    fetchCustomers();
+  } catch (err) {
+    console.error('Error saving customer:', err);
+    toast.error('Something went wrong.');
+  }
+};
+
   useEffect(() => {
     fetchCustomers();
     const interval = setInterval(fetchCustomers, 4000);
@@ -70,8 +89,22 @@ const CustomerForm = () => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">Add Customer</button>
+<button type="submit" className="btn btn-primary">
+  {editingId ? 'Update Customer' : 'Add Customer'}
+</button>
       </form>
+{editingId && (
+  <button
+    type="button"
+    className="btn btn-secondary ms-2"
+    onClick={() => {
+      setForm({ name: '', address: '', contact: '' });
+      setEditingId(null);
+    }}
+  >
+    Cancel
+  </button>
+)}
 
       <h3>Customer List</h3>
       <table className="table table-striped">
@@ -80,17 +113,30 @@ const CustomerForm = () => {
             <th>Name</th>
             <th>Address</th>
             <th>Contact</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {customers.map((c) => (
-            <tr key={c._id}>
-              <td>{c.name}</td>
-              <td>{c.address}</td>
-              <td>{c.contact}</td>
-            </tr>
-          ))}
-        </tbody>
+  {customers.map((c) => (
+    <tr key={c._id}>
+      <td>{c.name}</td>
+      <td>{c.address}</td>
+      <td>{c.contact}</td>
+      <td>
+        <button
+          className="btn btn-sm btn-warning"
+          onClick={() => {
+            setForm({ name: c.name, address: c.address, contact: c.contact });
+            setEditingId(c._id);
+          }}
+        >
+          Edit
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
       </table>
     </div>
   );
