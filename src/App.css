@@ -35,3 +35,15 @@
   font-weight: bold;
   border-bottom: 2px solid #fff;
 }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+}
+
+.card {
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
