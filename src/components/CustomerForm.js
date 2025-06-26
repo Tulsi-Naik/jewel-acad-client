@@ -51,6 +51,18 @@ const CustomerForm = () => {
     const interval = setInterval(fetchCustomers, 4000);
     return () => clearInterval(interval);
   }, []);
+const handleDelete = async (id) => {
+  if (window.confirm('Are you sure you want to delete this customer?')) {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/customers/${id}`);
+      toast.success('Customer deleted!');
+      fetchCustomers();
+    } catch (err) {
+      console.error('Error deleting customer:', err);
+      toast.error('Failed to delete customer.');
+    }
+  }
+};
 
   return (
     <div className="container mt-4">
@@ -132,6 +144,13 @@ const CustomerForm = () => {
         >
           Edit
         </button>
+
+        <button
+    className="btn btn-sm btn-danger"
+    onClick={() => handleDelete(c._id)}
+  >
+    Delete
+  </button>
       </td>
     </tr>
   ))}
