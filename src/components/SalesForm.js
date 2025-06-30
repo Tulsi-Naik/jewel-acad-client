@@ -350,8 +350,11 @@ const SalesForm = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-success me-3">Save Sale</button>
-        <button type="button" onClick={handleGeneratePDF} className="btn btn-secondary">Download Invoice PDF</button>
+        <div className="d-flex justify-content-center mt-4">
+  <button type="submit" className="btn btn-success me-3">Save Sale</button>
+  <button type="button" onClick={handleGeneratePDF} className="btn btn-secondary">Download Invoice PDF</button>
+</div>
+
       </form>
 
       {showModal && (
