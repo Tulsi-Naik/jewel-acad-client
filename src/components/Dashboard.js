@@ -16,7 +16,7 @@ const Dashboard = () => {
         <div className="row g-4 justify-content-center">
           {/* Products */}
           <div className="col-sm-6 col-md-4 col-lg-3">
-            <div className="card shadow-sm border-0 h-100 text-center">
+<div className="card shadow-sm h-100 text-center">
               <div className="card-body">
                 <i className="bi bi-box-seam fs-1 text-primary mb-2"></i>
                 <h5 className="card-title fw-semibold">Products in Stock</h5>
@@ -28,7 +28,7 @@ const Dashboard = () => {
 
           {/* Customers */}
           <div className="col-sm-6 col-md-4 col-lg-3">
-            <div className="card shadow-sm border-0 h-100 text-center">
+<div className="card shadow-sm h-100 text-center">
               <div className="card-body">
                 <i className="bi bi-people fs-1 text-warning mb-2"></i>
                 <h5 className="card-title fw-semibold">Customers</h5>
@@ -40,7 +40,7 @@ const Dashboard = () => {
 
           {/* Reports */}
           <div className="col-sm-6 col-md-4 col-lg-3">
-            <div className="card shadow-sm border-0 h-100 text-center">
+<div className="card shadow-sm h-100 text-center">
               <div className="card-body">
                 <i className="bi bi-bar-chart-line fs-1 text-danger mb-2"></i>
                 <h5 className="card-title fw-semibold">Monthly Reports</h5>
