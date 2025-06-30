@@ -290,7 +290,11 @@ const handlePartialPay = async (id) => {
     Mark as Paid
   </button>
 )}
-                 <button className="btn btn-sm btn-info me-2" onClick={() => handlePartialPay(entry._id)}>Partial Pay</button>
+{!entry.paid && (
+  <button className="btn btn-sm btn-info me-2" onClick={() => handlePartialPay(entry._id)}>
+    Partial Pay
+  </button>
+)}
                 <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>Download PDF</button>
                  
               </div>
