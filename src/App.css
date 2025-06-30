@@ -97,14 +97,16 @@ border: 3px solid #b8860b;  border-radius: 15px;
 
 /* Buttons */
 .btn-outline-primary {
-  border-color: #c79d54;
-  color: #c79d54;
+  border-color: #0d6efd;
+  color: #0d6efd;
 }
 
 .btn-outline-primary:hover {
   background-color: #0d6efd;
   color: white;
+  border-color: #0d6efd;
 }
+
 
 .btn-outline-warning:hover {
   background-color: #ffc107;
