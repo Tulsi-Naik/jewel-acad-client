@@ -285,7 +285,11 @@ const handlePartialPay = async (id) => {
 <div className={`card-header d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success text-white' : 'bg-dark text-white'}`}>
               <span><strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}</span>
               <div>
-                <button className="btn btn-sm btn-success me-2" onClick={() => markAsPaid(entry._id)}>Mark as Paid</button>
+{!entry.paid && (
+  <button className="btn btn-sm btn-success me-2" onClick={() => markAsPaid(entry._id)}>
+    Mark as Paid
+  </button>
+)}
                  <button className="btn btn-sm btn-info me-2" onClick={() => handlePartialPay(entry._id)}>Partial Pay</button>
                 <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>Download PDF</button>
                  
