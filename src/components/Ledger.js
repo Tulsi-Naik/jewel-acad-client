@@ -272,6 +272,9 @@ const handlePartialPay = async (id) => {
               <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
               <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
              <p><strong>Products Purchased:</strong> {entry.products?.map(p => p.name).join(', ') || 'None'}</p>
+{entry.paid && (
+  <p><strong>Paid Amount:</strong> ₹{entry.paidAmount?.toFixed(2) || '0.00'}</p>
+)}
 
               <p><strong>Total Pending Amount:</strong> ₹{entry.total?.toFixed(2) || '0.00'}</p>
             </div>
