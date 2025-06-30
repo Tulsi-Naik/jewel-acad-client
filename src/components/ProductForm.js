@@ -122,46 +122,41 @@ const ProductForm = () => {
       });
     }
   };
-const generatePDFWithBarcodes = (product) => {
+
+  const generatePDFWithBarcodes = (product) => {
   const canvas = barcodeRefs.current[product._id];
   if (!canvas || product.quantity <= 0) return;
 
   const barcodeImage = canvas.toDataURL("image/png");
-  const pdf = new jsPDF();
+  const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
 
-  const columns = 2;
-  const cellWidth = 100;
-  const cellHeight = 25;
-  const marginX = 10;
-  const marginY = 10;
-  const startX = 10;
-  const startY = 10;
+  const pageHeight = 297;
+  const margin = 10;
+  const rowHeight = 35;
+  const startX = margin;
+  let currentY = margin;
 
   const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
 
   for (let i = 0; i < product.quantity; i++) {
-    const col = i % columns;
-    const row = Math.floor(i / columns);
-    const x = startX + col * (cellWidth + marginX);
-    const y = startY + row * (cellHeight + marginY);
-
-    if (y + cellHeight > 280) {
+    if (currentY + rowHeight > pageHeight - margin) {
       pdf.addPage();
-      i--;
-      continue;
+      currentY = margin;
     }
 
-    // Optional border
-    pdf.setDrawColor(200);
-    pdf.rect(x, y, cellWidth, cellHeight);
+    // Draw row border
+    pdf.setDrawColor(220);
+    pdf.rect(startX, currentY, 190, rowHeight);
 
-    // Left column: Name and Price
-    pdf.setFontSize(9);
-    pdf.text(`${product.name}`, x + 4, y + 10);
-    pdf.text(`₹${cleanPrice}`, x + 4, y + 18);
+    // Name and Price (left side)
+    pdf.setFontSize(10);
+    pdf.text(`Name: ${product.name}`, startX + 4, currentY + 10);
+    pdf.text(`Price: Rs.${cleanPrice}`, startX + 4, currentY + 18);
 
-    // Right column: Barcode
-    pdf.addImage(barcodeImage, 'PNG', x + cellWidth - 52, y + 5, 48, 15);
+    // Barcode (right side)
+    pdf.addImage(barcodeImage, 'PNG', startX + 110, currentY + 6, 80, 20);
+
+    currentY += rowHeight + 5;
   }
 
   pdf.save(`${product.name}_barcodes.pdf`);
