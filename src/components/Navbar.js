@@ -4,8 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
 const Navbar = () => (
-  <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-4 py-3">
-    <NavLink className="navbar-brand" to="/"> अलंकृत </NavLink>
+  <nav className="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top px-4 py-3">
+    <NavLink className="navbar-brand fw-bold glowing-brand" to="/">अलंकृत</NavLink>
     <button
       className="navbar-toggler"
       type="button"

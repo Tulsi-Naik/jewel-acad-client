@@ -142,3 +142,36 @@ footer {
   font-size: 0.9rem;
   color: #777;
 }
+.custom-navbar {
+  background: linear-gradient(to right, #2c2c2c, #1a1a1a);
+  border-bottom: 2px solid #c79d54;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.glowing-brand {
+  color: #ffd700 !important;
+  font-size: 1.8rem;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
+  transition: text-shadow 0.3s ease;
+}
+
+.glowing-brand:hover {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.9);
+}
+
+.navbar-nav .nav-link {
+  color: #f8f9fa !important;
+  font-weight: 500;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffd700 !important;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.navbar-nav .nav-link.active {
+  color: #ffd700 !important;
+  border-bottom: 2px solid #ffd700;
+}
