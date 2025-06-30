@@ -29,8 +29,9 @@ const Ledger = () => {
   };
   const groupByCustomer = (data) => {
   const grouped = data.reduce((acc, entry) => {
-    const custId = entry.customer?._id;
-    if (!custId) return acc;
+    const custId = entry.customer?._id || entry.customer;
+if (!custId) return acc;
+
     if (!acc[custId]) {
       acc[custId] = {
         ...entry,
@@ -40,9 +41,18 @@ const Ledger = () => {
       };
     } else {
       acc[custId].total += parseFloat(entry.total);
-      acc[custId].products = Array.from(
-        new Set([...acc[custId].products.map(p => p.name), ...entry.products.map(p => p.name)])
-      ).map(name => ({ name }));
+      const allProducts = [...(acc[custId].products || []), ...(entry.products || [])];
+const uniqueMap = new Map();
+
+allProducts.forEach(p => {
+  const key = p._id?.toString?.() || p.name;  // fallback if _id missing
+  if (!uniqueMap.has(key)) {
+    uniqueMap.set(key, p);
+  }
+});
+
+acc[custId].products = Array.from(uniqueMap.values());
+
       if (new Date(entry.createdAt) > new Date(acc[custId].createdAt)) {
         acc[custId].createdAt = entry.createdAt;
       }
@@ -55,7 +65,7 @@ const Ledger = () => {
   const fetchLedger = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`);
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`);
       const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setLedgerData(allLedgers);
       setFilteredData(groupByCustomer(allLedgers));
@@ -105,7 +115,7 @@ const handleAddLedger = async () => {
   }
 
   try {
-    const productNames = newProductIds.map(id => products.find(p => p._id === id)?.name).filter(Boolean);
+    //const productNames = newProductIds.map(id => products.find(p => p._id === id)?.name).filter(Boolean);
     const existingLedger = ledgerData.find(
   ledger => ledger.customer?._id === newCustomerId && !ledger.paid
 );
@@ -113,17 +123,20 @@ const handleAddLedger = async () => {
   
     if (existingLedger) {
       const updatedTotal = existingLedger.total + parseFloat(newTotal); 
-      const updatedProducts = [...new Set([...existingLedger.products.map(p => p.name), ...productNames])]; 
-      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${existingLedger._id}`, {
-        total: updatedTotal,
-        products: updatedProducts,
-      });
+      const updatedProductIds = [...new Set([...existingLedger.products.map(p => p._id), ...newProductIds])];
+
+await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${existingLedger._id}`, {
+  total: updatedTotal,
+  products: updatedProductIds,
+});
+
     } else {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
-        customer: newCustomerId,
-        products: productNames,
-        total: parseFloat(newTotal),
-      });
+  customer: newCustomerId,
+  products: newProductIds,
+  total: parseFloat(newTotal),
+});
+
     }
     setNewCustomerId('');
     setNewProductIds([]);

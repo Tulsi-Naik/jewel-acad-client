@@ -40,10 +40,35 @@ body {
   background-color: #f8f9fa;
 }
 
+
+
 .card {
-  transition: transform 0.2s ease;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(to bottom right, #fffdf7, #f5f2ea);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  color: #6b4e23; /* Warm bronze/gold tone */
+}
+
+.card-text {
+  color: #555;
+}
+
+.btn-outline-primary {
+  border-color: #c79d54;
+  color: #c79d54;
+}
+
+.btn-outline-primary:hover {
+  background-color: #c79d54;
+  color: white;
 }
