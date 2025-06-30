@@ -123,7 +123,7 @@ const ProductForm = () => {
     }
   };
 
-  const generatePDFWithBarcodes = (product) => {
+const generatePDFWithBarcodes = (product) => {
   const canvas = barcodeRefs.current[product._id];
   if (!canvas || product.quantity <= 0) return;
 
@@ -144,17 +144,21 @@ const ProductForm = () => {
       currentY = margin;
     }
 
-    // Draw row border
+    // Outer row border
     pdf.setDrawColor(220);
     pdf.rect(startX, currentY, 190, rowHeight);
 
-    // Name and Price (left side)
-    pdf.setFontSize(10);
-    pdf.text(`Name: ${product.name}`, startX + 4, currentY + 10);
-    pdf.text(`Price: Rs.${cleanPrice}`, startX + 4, currentY + 18);
+    // Vertical divider between text and barcode
+    const dividerX = startX + 100;
+    pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
 
-    // Barcode (right side)
-    pdf.addImage(barcodeImage, 'PNG', startX + 110, currentY + 6, 80, 20);
+    // Name and Price (left column)
+    pdf.setFontSize(10);
+    pdf.text(`Name: ${product.name}`, startX + 4, currentY + 12);
+    pdf.text(`Price: Rs.${cleanPrice}`, startX + 4, currentY + 20);
+
+    // Barcode (right column)
+    pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
 
     currentY += rowHeight + 5;
   }
