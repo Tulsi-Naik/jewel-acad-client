@@ -18,8 +18,9 @@ const Dashboard = () => {
           <div className="col-sm-6 col-md-4 col-lg-3">
 <div className="card shadow-sm h-100 text-center">
               <div className="card-body">
-                <i className="bi bi-box-seam fs-1 text-primary mb-2"></i>
-                <h5 className="card-title fw-semibold">Products in Stock</h5>
+<i className="bi bi-box-seam fs-1 text-primary mb-2"></i>
+<h5 className="card-title fw-semibold text-primary">Products in Stock</h5>
+
                 <p className="card-text text-muted">Manage and update product inventory.</p>
                 <Link to="/products" className="btn btn-outline-primary mt-2">Manage Stock</Link>
               </div>
