@@ -238,6 +238,29 @@ const handlePartialPay = async (id) => {
             ))}
           </select>
         </div>
+        <div className="col-md-3">
+  <label>Payment Status</label>
+  <select
+    className="form-control"
+    onChange={(e) => {
+      const status = e.target.value;
+      let filtered = ledgerData;
+
+      if (status === 'paid') {
+        filtered = ledgerData.filter(l => l.paid);
+      } else if (status === 'unpaid') {
+        filtered = ledgerData.filter(l => !l.paid);
+      }
+
+      setFilteredData(groupByCustomer(filtered));
+    }}
+  >
+    <option value="">All</option>
+    <option value="paid">Paid</option>
+    <option value="unpaid">Unpaid</option>
+  </select>
+</div>
+
 
         <div className="col-md-3 align-self-end">
           <button className="btn btn-primary mt-2" onClick={filterByCustomer}>Filter</button>
@@ -259,7 +282,7 @@ const handlePartialPay = async (id) => {
             className="card mb-3 shadow"
             ref={(el) => (componentRefs.current[entry._id] = el)}
           >
-            <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+<div className={`card-header d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success text-white' : 'bg-dark text-white'}`}>
               <span><strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}</span>
               <div>
                 <button className="btn btn-sm btn-success me-2" onClick={() => markAsPaid(entry._id)}>Mark as Paid</button>
