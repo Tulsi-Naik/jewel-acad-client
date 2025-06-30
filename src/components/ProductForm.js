@@ -304,7 +304,7 @@ const generatePDFWithBarcodes = (product) => {
                 <td>{p.quantity}</td>
                 <td>{p.price}</td>
                 <td>
-                  {/* <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ maxWidth: '100%', transform: 'scale(0.85)', transformOrigin: 'left center' }} /> */}
+                  <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
                   <button className="btn btn-outline-success btn-sm mt-1" onClick={() => generatePDFWithBarcodes(p)}>📄 PDF</button>
                 </td>
                 <td>
