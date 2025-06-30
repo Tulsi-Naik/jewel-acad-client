@@ -237,15 +237,20 @@ const SalesForm = () => {
 
         <div className="mb-3">
           <label className="form-label">Search & Select Product</label>
-          <Select
-            options={products.map(p => ({
-              value: p._id,
-              label: `${p.name} (₹${p.price})`
-            }))}
-            onChange={option => addItem(option.value)}
-            placeholder="Type product name..."
-            isClearable
-          />
+        <Select
+  options={products
+    .filter(p => p.quantity > 0)
+    .map(p => ({
+      value: p._id,
+      label: `${p.name} (₹${p.price}) — ${p.quantity} in stock`
+    }))
+  }
+  onChange={option => addItem(option.value)}
+  placeholder="Type product name..."
+  isClearable
+/>
+
+
         </div>
 
         {saleItems.length > 0 && (
@@ -276,19 +281,21 @@ const SalesForm = () => {
                     <tr key={product._id}>
                       <td>{product.name}</td>
                       <td>
-                        <input
-                          type="number"
-                          min="1"
-                          value={item.quantity}
-                          onChange={(e) => {
-                            const newQty = parseInt(e.target.value) || 1;
-                            const updatedItems = [...saleItems];
-                            updatedItems[index].quantity = newQty;
-                            setSaleItems(updatedItems);
-                          }}
-                          className="form-control"
-                          style={{ width: '80px' }}
-                        />
+                       <input
+  type="number"
+  min="1"
+  max={product.quantity}
+  value={item.quantity}
+  onChange={(e) => {
+    const newQty = Math.min(parseInt(e.target.value) || 1, product.quantity);
+    const updatedItems = [...saleItems];
+    updatedItems[index].quantity = newQty;
+    setSaleItems(updatedItems);
+  }}
+  className="form-control"
+  style={{ width: '80px' }}
+/>
+
                       </td>
                       <td>₹{product.price}</td>
                       <td>
