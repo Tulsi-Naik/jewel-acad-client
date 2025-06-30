@@ -47,6 +47,17 @@ const SalesForm = () => {
     setTotalAmount(total);
   }, [saleItems, products]);
 
+  const fetchProducts = async () => {
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
+    setProducts(res.data);
+  } catch (err) {
+    console.error('Error fetching products:', err);
+  }
+};
+
+
+
   const addItem = (productId) => {
     const existing = saleItems.find(item => item.product === productId);
     if (existing) {
@@ -94,6 +105,8 @@ const SalesForm = () => {
 }))
 
       });
+      await fetchProducts(); // 🔄 Refresh product list to reflect updated stock
+
 
       setSavedSaleId(saleRes.data._id);
       setShowModal(true);
