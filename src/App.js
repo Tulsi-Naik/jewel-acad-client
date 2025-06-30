@@ -10,6 +10,8 @@ import Dashboard from './components/Dashboard';
 import Help from './components/Help';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 // import MarksAsPaid from './components/MarksAsPaid';
 
 function App() {
