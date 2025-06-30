@@ -144,13 +144,14 @@ const handleDelete = async (id) => {
         >
           Edit
         </button>
+<button
+  className="btn btn-sm btn-danger ms-2"
+  onClick={() => handleDelete(c._id)}
+>
+  Delete
+</button>
 
-        <button
-    className="btn btn-sm btn-danger"
-    onClick={() => handleDelete(c._id)}
-  >
-    Delete
-  </button>
+
       </td>
     </tr>
   ))}
