@@ -135,24 +135,26 @@ const handleDelete = async (id) => {
       <td>{c.address}</td>
       <td>{c.contact}</td>
       <td>
-        <button
-          className="btn btn-sm btn-warning"
-          onClick={() => {
-            setForm({ name: c.name, address: c.address, contact: c.contact });
-            setEditingId(c._id);
-          }}
-        >
-          Edit
-        </button>
-<button
-  className="btn btn-sm btn-danger ms-2"
-  onClick={() => handleDelete(c._id)}
->
-  Delete
-</button>
+  <div className="d-flex gap-2">
+    <button
+      className="btn btn-sm btn-warning"
+      onClick={() => {
+        setForm({ name: c.name, address: c.address, contact: c.contact });
+        setEditingId(c._id);
+      }}
+    >
+      Edit
+    </button>
 
+    <button
+      className="btn btn-sm btn-danger"
+      onClick={() => handleDelete(c._id)}
+    >
+      Delete
+    </button>
+  </div>
+</td>
 
-      </td>
     </tr>
   ))}
 </tbody>
