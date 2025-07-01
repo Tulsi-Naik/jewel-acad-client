@@ -93,8 +93,12 @@ const [labelProduct, setLabelProduct] = useState(null);
     }
 
     try {
+      console.log("Updating product:", editId, editForm);
+
       await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/products/${editId}`, editForm);
       fetchProducts();
+      toast.success("Product updated successfully!");
+
       setShowModal(false);
       setEditId(null);
     } catch (err) {
