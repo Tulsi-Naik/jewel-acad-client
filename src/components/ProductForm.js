@@ -309,9 +309,15 @@ for (let i = 0; i < count; i++) {
           </thead>
           <tbody>
             {filteredProducts.map((p) => (
-              <tr key={p._id}>
+<tr key={p._id} className={p.quantity === 0 ? 'table-danger' : ''}>
                 <td>{p.name}</td>
-                <td>{p.quantity}</td>
+<td>
+  {p.quantity === 0 ? (
+    <span className="badge bg-danger">Out of Stock</span>
+  ) : (
+    p.quantity
+  )}
+</td>
                 <td>{p.price}</td>
                 <td>
                   <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
