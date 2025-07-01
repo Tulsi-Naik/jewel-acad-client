@@ -5,7 +5,7 @@ import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 // import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
-import svg2pdf from 'svg2pdf.js';
+import { svg2pdf } from 'svg2pdf.js';
 
 
 
