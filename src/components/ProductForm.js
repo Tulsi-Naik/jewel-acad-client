@@ -176,7 +176,7 @@ for (let i = 0; i < count; i++) {
 
   pdf.setFont('NotoSansDevanagari');
 pdf.setFontSize(9);
-pdf.text("अलंकृत ज्वेल हब", startX + 4, currentY + 7);
+pdf.text("Alankrut Jewel Hub", startX + 4, currentY + 7);
 
   // Product Name (no label)
   pdf.setFontSize(10);
