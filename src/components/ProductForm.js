@@ -4,12 +4,11 @@ import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
-import '../fonts/NotoSansDevanagari'; // adjust path if needed
+import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
 
-jsPDF.API.events.push(['addFonts', function () {
-  this.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
-  this.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
-}]);
+jsPDF.API.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
+jsPDF.API.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
+
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
