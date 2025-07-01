@@ -137,48 +137,39 @@ const openLabelModal = (product) => {
 };
 
 
-const generatePDFWithBarcodes = (product, count = 1) => {
-  const canvas = barcodeRefs.current[product._id];
-  if (!canvas || product.quantity <= 0) return;
-
-  const barcodeImage = canvas.toDataURL("image/png");
-  const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
-
-  const pageHeight = 297;
-  const margin = 10;
-  const rowHeight = 35;
-  const startX = margin;
-  let currentY = margin;
-
-  const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
-
 for (let i = 0; i < count; i++) {
-    if (currentY + rowHeight > pageHeight - margin) {
-      pdf.addPage();
-      currentY = margin;
-    }
-
-    // Outer row border
-    pdf.setDrawColor(220);
-    pdf.rect(startX, currentY, 190, rowHeight);
-
-    // Vertical divider between text and barcode
-    const dividerX = startX + 100;
-    pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
-
-    // Name and Price (left column)
-    pdf.setFontSize(10);
-    pdf.text(`Name: ${product.name}`, startX + 4, currentY + 12);
-    pdf.text(`Price: Rs.${cleanPrice}`, startX + 4, currentY + 20);
-
-    // Barcode (right column)
-    pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
-
-    currentY += rowHeight + 5;
+  if (currentY + rowHeight > pageHeight - margin) {
+    pdf.addPage();
+    currentY = margin;
   }
 
-  pdf.save(`${product.name}_barcodes.pdf`);
-};
+  // Outer border
+  pdf.setDrawColor(220);
+  pdf.rect(startX, currentY, 190, rowHeight);
+
+  // Divider
+  const dividerX = startX + 100;
+  pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
+
+  // Business Name (top)
+  pdf.setFontSize(9);
+  pdf.setFont(undefined, 'bold');
+  pdf.text("अलंकृत ज्वेल हब", startX + 4, currentY + 7);
+
+  // Product Name (no label)
+  pdf.setFontSize(10);
+  pdf.setFont(undefined, 'normal');
+  pdf.text(product.name, startX + 4, currentY + 14);
+
+  // MRP
+  pdf.text(`MRP: ₹${cleanPrice}`, startX + 4, currentY + 22);
+
+  // Barcode
+  pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
+
+  currentY += rowHeight + 5;
+}
+
 
 
   const handleBarcodeScan = async (barcode) => {
