@@ -19,6 +19,10 @@ const ProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const barcodeRefs = useRef({});
+  const [showLabelModal, setShowLabelModal] = useState(false);
+const [labelQty, setLabelQty] = useState(1);
+const [labelProduct, setLabelProduct] = useState(null);
+
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -122,8 +126,14 @@ const ProductForm = () => {
       });
     }
   };
+const openLabelModal = (product) => {
+  setLabelProduct(product);
+  setLabelQty(product.quantity || 1); // default to current quantity
+  setShowLabelModal(true);
+};
 
-const generatePDFWithBarcodes = (product) => {
+
+const generatePDFWithBarcodes = (product, count = 1) => {
   const canvas = barcodeRefs.current[product._id];
   if (!canvas || product.quantity <= 0) return;
 
@@ -138,7 +148,7 @@ const generatePDFWithBarcodes = (product) => {
 
   const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
 
-  for (let i = 0; i < product.quantity; i++) {
+for (let i = 0; i < count; i++) {
     if (currentY + rowHeight > pageHeight - margin) {
       pdf.addPage();
       currentY = margin;
@@ -305,7 +315,7 @@ const generatePDFWithBarcodes = (product) => {
                 <td>{p.price}</td>
                 <td>
                   <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
-                  <button className="btn btn-outline-success btn-sm mt-1" onClick={() => generatePDFWithBarcodes(p)}>📄 PDF</button>
+<button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
                 </td>
                 <td>
                   <div className="d-flex gap-1">
@@ -333,7 +343,35 @@ const generatePDFWithBarcodes = (product) => {
           <Button variant="primary" onClick={handleSaveEdit}>Save Changes</Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal show={showLabelModal} onHide={() => setShowLabelModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Print Barcode Labels</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>How many labels do you want to print for <strong>{labelProduct?.name}</strong>?</p>
+    <input
+      type="number"
+      min="1"
+      value={labelQty}
+      onChange={(e) => setLabelQty(parseInt(e.target.value) || 1)}
+      className="form-control"
+    />
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowLabelModal(false)}>Cancel</Button>
+    <Button variant="primary" onClick={() => {
+      generatePDFWithBarcodes(labelProduct, labelQty);
+      setShowLabelModal(false);
+    }}>
+      Generate PDF
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
+
+
   );
 };
 
