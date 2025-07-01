@@ -4,6 +4,12 @@ import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
+import '../fonts/NotoSansDevanagari'; // adjust path if needed
+
+jsPDF.API.events.push(['addFonts', function () {
+  this.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
+  this.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
+}]);
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -166,19 +172,18 @@ for (let i = 0; i < count; i++) {
   const dividerX = startX + 100;
   pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
 
-  // Business Name (top)
-  pdf.setFontSize(9);
-  pdf.setFont(undefined, 'bold');
-  pdf.text("अलंकृत ज्वेल हब", startX + 4, currentY + 7);
+  pdf.setFont('NotoSansDevanagari');
+pdf.setFontSize(9);
+pdf.text("अलंकृत ज्वेल हब", startX + 4, currentY + 7);
 
   // Product Name (no label)
   pdf.setFontSize(10);
   pdf.setFont(undefined, 'normal');
   pdf.text(product.name, startX + 4, currentY + 14);
 
-  // MRP
-  pdf.text(`MRP: ₹${cleanPrice}`, startX + 4, currentY + 22);
-
+ pdf.setFontSize(10);
+pdf.text(product.name, startX + 4, currentY + 14);
+pdf.text(`MRP: ₹${cleanPrice}`, startX + 4, currentY + 22);
   // Barcode
   pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
 
