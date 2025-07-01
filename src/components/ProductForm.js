@@ -6,9 +6,10 @@ import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
 
-jsPDF.API.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
-jsPDF.API.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
-
+const pdf = new jsPDF();
+pdf.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
+pdf.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
+pdf.setFont('NotoSansDevanagari');
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
