@@ -6,10 +6,7 @@ import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
 
-const pdf = new jsPDF();
-pdf.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
-pdf.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
-pdf.setFont('NotoSansDevanagari');
+
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -149,6 +146,11 @@ const generatePDFWithBarcodes = (product, count = 1) => {
 
   const barcodeImage = canvas.toDataURL("image/png");
   const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
+
+  
+pdf.addFileToVFS('NotoSansDevanagari.ttf', NotoSansDevanagari);
+pdf.addFont('NotoSansDevanagari.ttf', 'NotoSansDevanagari', 'normal');
+pdf.setFont('NotoSansDevanagari');
 
   const pageHeight = 297;
   const margin = 10;
