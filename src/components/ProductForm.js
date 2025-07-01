@@ -5,7 +5,7 @@ import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 // import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
-import { SVGGraphics } from 'svg2pdf.js';
+import svg2pdf from 'svg2pdf.js';
 
 
 
@@ -180,8 +180,11 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
       </svg>
     `;
     const svgElement = new DOMParser().parseFromString(svgText, 'image/svg+xml').documentElement;
-    const svgGfx = new SVGGraphics(pdf.context2d);
-    await svgGfx.svgElementToPdf(svgElement, pdf, startX + 4, currentY + 4);
+await svg2pdf(svgElement, pdf, {
+  x: startX + 4,
+  y: currentY + 4,
+});
+
 
     // Product name and MRP
     pdf.setFont('helvetica');
