@@ -137,6 +137,21 @@ const openLabelModal = (product) => {
 };
 
 
+const generatePDFWithBarcodes = (product, count = 1) => {
+  const canvas = barcodeRefs.current[product._id];
+  if (!canvas || product.quantity <= 0) return;
+
+  const barcodeImage = canvas.toDataURL("image/png");
+  const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
+
+  const pageHeight = 297;
+  const margin = 10;
+  const rowHeight = 35;
+  const startX = margin;
+  let currentY = margin;
+
+  const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
+
 for (let i = 0; i < count; i++) {
   if (currentY + rowHeight > pageHeight - margin) {
     pdf.addPage();
