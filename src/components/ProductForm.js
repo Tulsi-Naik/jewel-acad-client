@@ -186,6 +186,9 @@ for (let i = 0; i < count; i++) {
 }
 
 
+  pdf.save(`${product.name}_barcodes.pdf`);
+};
+
 
   const handleBarcodeScan = async (barcode) => {
     try {
