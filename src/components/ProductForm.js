@@ -143,9 +143,12 @@ const openLabelModal = (product) => {
 
 
 
-const generatePDFWithBarcodes = async (product, count = 1) => {
+const generatePDFWithBarcodes = (product, count = 1) => {
   const canvas = barcodeRefs.current[product._id];
-  if (!canvas || product.quantity <= 0) return;
+  if (!canvas || product.quantity <= 0) {
+    alert("Barcode not ready yet. Try again in a moment.");
+    return;
+  }
 
   const barcodeImage = canvas.toDataURL("image/png");
   const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
@@ -158,41 +161,34 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
   const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
 
-  const img = new Image();
-  img.src = logoMarathi;
-
-  img.onload = () => {
-    for (let i = 0; i < count; i++) {
-      if (currentY + rowHeight > pageHeight - margin) {
-        pdf.addPage();
-        currentY = margin;
-      }
-
-      // Outer border
-      pdf.setDrawColor(220);
-      pdf.rect(startX, currentY, 190, rowHeight);
-
-      // Divider
-      const dividerX = startX + 100;
-      pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
-
-      // ✅ Marathi logo image
-      pdf.addImage(img, 'PNG', startX + 4, currentY + 4, 60, 10);
-
-      // Product name and MRP
-      pdf.setFont('helvetica');
-      pdf.setFontSize(10);
-      pdf.text(product.name, startX + 4, currentY + 18);
-      pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 26);
-
-      // Barcode
-      pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
-
-      currentY += rowHeight + 5;
+  for (let i = 0; i < count; i++) {
+    if (currentY + rowHeight > pageHeight - margin) {
+      pdf.addPage();
+      currentY = margin;
     }
 
-    pdf.save(`${product.name}_barcodes.pdf`);
-  };
+    pdf.setDrawColor(220);
+    pdf.rect(startX, currentY, 190, rowHeight);
+
+    const dividerX = startX + 100;
+    pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
+
+    // ✅ Use image directly
+    pdf.addImage(logoMarathi, 'PNG', startX + 4, currentY + 4, 60, 10);
+
+    pdf.setFont('helvetica');
+    pdf.setFontSize(10);
+    pdf.text(product.name, startX + 4, currentY + 18);
+    pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 26);
+
+    pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
+
+    currentY += rowHeight + 5;
+  }
+
+  pdf.save(`${product.name}_barcodes.pdf`);
+};
+
 };
 
 
@@ -387,12 +383,15 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
   </Modal.Body>
   <Modal.Footer>
     <Button variant="secondary" onClick={() => setShowLabelModal(false)}>Cancel</Button>
-    <Button variant="primary" onClick={() => {
-      generatePDFWithBarcodes(labelProduct, labelQty);
-      setShowLabelModal(false);
-    }}>
-      Generate PDF
-    </Button>
+   <Button variant="primary" onClick={() => {
+  setShowLabelModal(false);
+  setTimeout(() => {
+    generatePDFWithBarcodes(labelProduct, labelQty);
+  }, 300); // small delay ensures barcode is ready
+}}>
+  Generate PDF
+</Button>
+
   </Modal.Footer>
 </Modal>
 
@@ -400,6 +399,6 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
 
   );
-};
+
 
 export default ProductForm;
