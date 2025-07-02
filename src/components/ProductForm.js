@@ -174,12 +174,12 @@ const generatePDFWithBarcodes = (product, count = 1) => {
     pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
 
     // ✅ Use image directly
-pdf.addImage(logoMarathi, 'AUTO', startX + 4, currentY + 5, 55, 10);
+pdf.addImage(logoMarathi, 'AUTO', startX + 4, currentY + 6, 50, 9);
 
     pdf.setFont('helvetica');
     pdf.setFontSize(10);
     pdf.text(product.name, startX + 4, currentY + 18);
-    pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 26);
+    pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 25);
 
     pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
 
