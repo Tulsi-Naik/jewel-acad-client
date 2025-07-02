@@ -189,7 +189,7 @@ const generatePDFWithBarcodes = (product, count = 1) => {
   pdf.save(`${product.name}_barcodes.pdf`);
 };
 
-};
+
 
 
 
@@ -400,5 +400,5 @@ const generatePDFWithBarcodes = (product, count = 1) => {
 
   );
 
-
+};
 export default ProductForm;
