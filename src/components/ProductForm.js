@@ -5,7 +5,8 @@ import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 // import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
-import { svg2pdf } from 'svg2pdf.js';
+// import { svg2pdf } from 'svg2pdf.js';
+import logoMarathi from '../assets/logo-marathi.png';
 
 
 
@@ -157,49 +158,43 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
   const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
 
-  for (let i = 0; i < count; i++) {
-    if (currentY + rowHeight > pageHeight - margin) {
-      pdf.addPage();
-      currentY = margin;
+  const img = new Image();
+  img.src = logoMarathi;
+
+  img.onload = () => {
+    for (let i = 0; i < count; i++) {
+      if (currentY + rowHeight > pageHeight - margin) {
+        pdf.addPage();
+        currentY = margin;
+      }
+
+      // Outer border
+      pdf.setDrawColor(220);
+      pdf.rect(startX, currentY, 190, rowHeight);
+
+      // Divider
+      const dividerX = startX + 100;
+      pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
+
+      // ✅ Marathi logo image
+      pdf.addImage(img, 'PNG', startX + 4, currentY + 4, 60, 10);
+
+      // Product name and MRP
+      pdf.setFont('helvetica');
+      pdf.setFontSize(10);
+      pdf.text(product.name, startX + 4, currentY + 18);
+      pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 26);
+
+      // Barcode
+      pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
+
+      currentY += rowHeight + 5;
     }
 
-    // Outer border
-    pdf.setDrawColor(220);
-    pdf.rect(startX, currentY, 190, rowHeight);
-
-    // Divider
-    const dividerX = startX + 100;
-    pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
-
-    // ✅ SVG Marathi Business Name
-    const svgText = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="30">
-        <text x="0" y="16" font-family="Noto Sans Devanagari, sans-serif" font-size="14" fill="black">
-          अलंकृत ज्वेल हब
-        </text>
-      </svg>
-    `;
-    const svgElement = new DOMParser().parseFromString(svgText, 'image/svg+xml').documentElement;
-await svg2pdf(svgElement, pdf, {
-  x: startX + 4,
-  y: currentY + 4,
-});
-
-
-    // Product name and MRP
-    pdf.setFont('helvetica');
-    pdf.setFontSize(10);
-    pdf.text(product.name, startX + 4, currentY + 20);
-    pdf.text(`MRP: ₹${cleanPrice}`, startX + 4, currentY + 28);
-
-    // Barcode
-    pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
-
-    currentY += rowHeight + 5;
-  }
-
-  pdf.save(`${product.name}_barcodes.pdf`);
+    pdf.save(`${product.name}_barcodes.pdf`);
+  };
 };
+
 
 
 
