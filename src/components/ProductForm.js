@@ -6,7 +6,7 @@ import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 // import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
 // import { svg2pdf } from 'svg2pdf.js';
-import logoMarathi from '../assets/logo-marathi.png';
+import logoMarathi from '../components/assets/logo-marathi.png';
 
 
 
