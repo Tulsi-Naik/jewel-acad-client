@@ -174,7 +174,7 @@ const generatePDFWithBarcodes = (product, count = 1) => {
     pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
 
     // ✅ Use image directly
-    pdf.addImage(logoMarathi, 'PNG', startX + 4, currentY + 4, 60, 10);
+pdf.addImage(logoMarathi, 'AUTO', startX + 4, currentY + 5, 55, 10);
 
     pdf.setFont('helvetica');
     pdf.setFontSize(10);
