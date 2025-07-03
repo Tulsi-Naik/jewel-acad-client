@@ -8,6 +8,9 @@ import Reports from './components/Reports';
 import Ledger from './components/Ledger';
 import Dashboard from './components/Dashboard';
 import Help from './components/Help';
+
+import Login from './components/Login';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -27,6 +30,9 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/ledger" element={<Ledger />} />
         <Route path="/help" element={<Help />} />
+
+        <Route path="/login" element={<Login />} />
+        
       </Routes>
 
       <ToastContainer position="top-center" autoClose={2000} />
