@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -17,8 +18,16 @@ const handleSubmit = async (e) => {
     const token = res.data.token;
     localStorage.setItem('token', token);
 
-    alert('Login successful!');
-    // We'll redirect based on role in the next step
+    const decoded = jwtDecode(token);
+    const role = decoded.role;
+
+    alert(`Login successful as ${role}`);
+
+    if (role === 'admin') {
+      window.location.href = '/admin';
+    } else {
+      window.location.href = '/sales';
+    }
   } catch (err) {
     alert('Login failed. Please check your credentials.');
   }
