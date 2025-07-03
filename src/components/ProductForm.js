@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+
 import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
-// import NotoSansDevanagari from '../fonts/NotoSansDevanagari';
-// import { svg2pdf } from 'svg2pdf.js';
 import logoMarathi from '../components/assets/logo-marathi.png';
 
+import { getUserFromToken } from '../utils/auth';
+import axios from '../utils/axiosInstance';
 
+const user = getUserFromToken();
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -29,20 +30,21 @@ const [labelQty, setLabelQty] = useState(1);
 const [labelProduct, setLabelProduct] = useState(null);
 
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
-      setProducts(res.data);
-      setTimeout(() => {
-        res.data.forEach((p) => generateBarcode(p._id));
-      }, 100);
-    } catch (err) {
-      console.error('Error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchProducts = async () => {
+  setLoading(true);
+  try {
+    const res = await axios.get('/products');
+    setProducts(res.data);
+    setTimeout(() => {
+      res.data.forEach((p) => generateBarcode(p._id));
+    }, 100);
+  } catch (err) {
+    console.error('Error:', err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
