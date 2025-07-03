@@ -279,12 +279,8 @@ const SalesForm = () => {
                   <th>Product</th>
                   <th>Qty</th>
                   <th>Rate</th>
-<th>
-  Discount
-  <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>
-    Enter % or ₹ 
-  </div>
-</th>
+<th>Discount (%)</th>
+    <th>Discount (₹)</th>
                   <th>Total</th>
                   <th>Action</th>
 
@@ -323,51 +319,52 @@ const SalesForm = () => {
                       <td>₹{product.price}</td>
                       
                   <td>
-  <div className="d-flex gap-2 align-items-center">
-    <div className="d-flex align-items-center">
-      <input
-        type="number"
-        min="0"
-        placeholder="%"
-        value={item.discount || 0}
-        onChange={(e) => {
-          const discount = parseFloat(e.target.value) || 0;
-          const product = products.find(p => p._id === item.product);
-          const price = product?.price || 0;
-          const discountAmount = (price * discount) / 100;
+  <div className="d-flex align-items-center">
+    <input
+      type="number"
+      min="0"
+      placeholder="%"
+      value={item.discount || 0}
+      onChange={(e) => {
+        const discount = parseFloat(e.target.value) || 0;
+        const product = products.find(p => p._id === item.product);
+        const price = product?.price || 0;
+        const discountAmount = (price * discount) / 100;
 
-          const updatedItems = [...saleItems];
-          updatedItems[index].discount = discount;
-          updatedItems[index].discountAmount = discountAmount;
-          setSaleItems(updatedItems);
-        }}
-        className="form-control"
-        style={{ width: '70px' }}
-      />
-      <span className="ms-1">%</span>
-    </div>
-    <div className="d-flex align-items-center">
-      <input
-        type="number"
-        min="0"
-        placeholder="₹"
-        value={item.discountAmount || 0}
-        onChange={(e) => {
-          const discountAmount = parseFloat(e.target.value) || 0;
-          const product = products.find(p => p._id === item.product);
-          const price = product?.price || 0;
-          const discount = price ? (discountAmount / price) * 100 : 0;
+        const updatedItems = [...saleItems];
+        updatedItems[index].discount = discount;
+        updatedItems[index].discountAmount = discountAmount;
+        setSaleItems(updatedItems);
+      }}
+      className="form-control"
+      style={{ width: '70px' }}
+    />
+    <span className="ms-1">%</span>
+  </div>
+</td>
 
-          const updatedItems = [...saleItems];
-          updatedItems[index].discountAmount = discountAmount;
-          updatedItems[index].discount = discount;
-          setSaleItems(updatedItems);
-        }}
-        className="form-control"
-        style={{ width: '70px' }}
-      />
-      <span className="ms-1">₹</span>
-    </div>
+<td>
+  <div className="d-flex align-items-center">
+    <input
+      type="number"
+      min="0"
+      placeholder="₹"
+      value={item.discountAmount || 0}
+      onChange={(e) => {
+        const discountAmount = parseFloat(e.target.value) || 0;
+        const product = products.find(p => p._id === item.product);
+        const price = product?.price || 0;
+        const discount = price ? (discountAmount / price) * 100 : 0;
+
+        const updatedItems = [...saleItems];
+        updatedItems[index].discountAmount = discountAmount;
+        updatedItems[index].discount = discount;
+        setSaleItems(updatedItems);
+      }}
+      className="form-control"
+      style={{ width: '70px' }}
+    />
+    <span className="ms-1">₹</span>
   </div>
 </td>
 
