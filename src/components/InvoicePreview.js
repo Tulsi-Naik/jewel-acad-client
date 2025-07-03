@@ -59,7 +59,14 @@ const InvoicePreview = forwardRef(({ customer = {}, saleItems = [], products = [
           <td>{product.name}</td>
           <td>{item.quantity}</td>
           <td>₹{price.toFixed(2)}</td>
-          <td>{discount} %</td>
+          <td>
+  {item.discountAmount > 0
+    ? `₹${item.discountAmount.toFixed(2)} (${discount.toFixed(1)}%)`
+    : discount > 0
+    ? `${discount.toFixed(1)}%`
+    : '—'}
+</td>
+
           <td>₹{totalPrice.toFixed(2)}</td>
         </tr>
       );

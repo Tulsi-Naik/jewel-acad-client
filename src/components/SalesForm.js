@@ -279,7 +279,12 @@ const SalesForm = () => {
                   <th>Product</th>
                   <th>Qty</th>
                   <th>Rate</th>
-                  <th>Discount</th>
+<th>
+  Discount
+  <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>
+    Enter % or ₹ — both sync
+  </div>
+</th>
                   <th>Total</th>
                   <th>Action</th>
 
@@ -317,8 +322,9 @@ const SalesForm = () => {
                       </td>
                       <td>₹{product.price}</td>
                       
-                     <td>
+                   <td>
   <div className="d-flex flex-column">
+    <label className="form-label mb-1" style={{ fontSize: '0.85rem' }}>Discount (%)</label>
     <input
       type="number"
       min="0"
@@ -335,9 +341,10 @@ const SalesForm = () => {
         updatedItems[index].discountAmount = discountAmount;
         setSaleItems(updatedItems);
       }}
-      className="form-control mb-1"
+      className="form-control mb-2"
       style={{ width: '100px' }}
     />
+    <label className="form-label mb-1" style={{ fontSize: '0.85rem' }}>Discount (₹)</label>
     <input
       type="number"
       min="0"
@@ -359,6 +366,7 @@ const SalesForm = () => {
     />
   </div>
 </td>
+
 
                       <td>₹{itemTotal.toFixed(2)}</td>
                       <td>
