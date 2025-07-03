@@ -9,7 +9,9 @@ const InvoicePreview = forwardRef(({ customer = {}, saleItems = [], products = [
     const discountedPrice = price - (price * discount) / 100;
     return sum + discountedPrice * item.quantity;
   }, 0);
-  const currentDate = new Date().toLocaleDateString();
+  const date = new Date();
+const currentDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+
   return (
     <div
       ref={ref}
