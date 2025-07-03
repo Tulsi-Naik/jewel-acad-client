@@ -4,7 +4,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  import axios from 'axios';
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
