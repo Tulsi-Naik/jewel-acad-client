@@ -37,13 +37,14 @@ const SalesForm = () => {
   useEffect(() => {
      setInvoiceNo('#' + Math.floor(100000 + Math.random() * 900000));
     const total = saleItems.reduce((acc, item) => {
-      const product = products.find(p => p._id === item.product);
-      if (!product) return acc;
-      const price = product.price;
-      const discount = item.discount || 0; 
-      const discountedPrice = price * (1 - discount / 100);
-      return acc + discountedPrice * item.quantity;
-    }, 0);
+  const product = products.find(p => p._id === item.product);
+  if (!product) return acc;
+  const price = product.price;
+  const discountAmount = item.discountAmount || (price * item.discount / 100);
+  const discountedPrice = price - discountAmount;
+  return acc + discountedPrice * item.quantity;
+}, 0);
+
     setTotalAmount(total);
   }, [saleItems, products]);
 
@@ -70,7 +71,8 @@ const SalesForm = () => {
       setSaleItems([...saleItems, {
         product: productId,
         quantity: 0,
-        discount: 0 
+        discount: 0 ,
+        discountAmount: 0
       }]);
     }
   };
@@ -99,10 +101,13 @@ const SalesForm = () => {
       }
       const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, {
         customer: finalCustomerId,
-        items: saleItems.map(item => ({
+   items: saleItems.map(item => ({
   product: item.product,
-  quantity: item.quantity
+  quantity: item.quantity,
+  discount: item.discount,
+  discountAmount: item.discountAmount
 }))
+
 
       });
       await fetchProducts(); // 🔄 Refresh product list to reflect updated stock
@@ -311,21 +316,50 @@ const SalesForm = () => {
 
                       </td>
                       <td>₹{product.price}</td>
-                      <td>
-                        <input
-                          type="number"
-                          min="0"
-                          value={item.discount || 0}
-                          onChange={(e) => {
-                            const newDiscount = parseFloat(e.target.value) || 0;
-                            const updatedItems = [...saleItems];
-                            updatedItems[index].discount = newDiscount;
-                            setSaleItems(updatedItems);
-                          }}
-                          className="form-control"
-                          style={{ width: '100px' }}
-                        />
-                      </td>
+                      
+                     <td>
+  <div className="d-flex flex-column">
+    <input
+      type="number"
+      min="0"
+      placeholder="%"
+      value={item.discount || 0}
+      onChange={(e) => {
+        const discount = parseFloat(e.target.value) || 0;
+        const product = products.find(p => p._id === item.product);
+        const price = product?.price || 0;
+        const discountAmount = (price * discount) / 100;
+
+        const updatedItems = [...saleItems];
+        updatedItems[index].discount = discount;
+        updatedItems[index].discountAmount = discountAmount;
+        setSaleItems(updatedItems);
+      }}
+      className="form-control mb-1"
+      style={{ width: '100px' }}
+    />
+    <input
+      type="number"
+      min="0"
+      placeholder="₹"
+      value={item.discountAmount || 0}
+      onChange={(e) => {
+        const discountAmount = parseFloat(e.target.value) || 0;
+        const product = products.find(p => p._id === item.product);
+        const price = product?.price || 0;
+        const discount = price ? (discountAmount / price) * 100 : 0;
+
+        const updatedItems = [...saleItems];
+        updatedItems[index].discountAmount = discountAmount;
+        updatedItems[index].discount = discount;
+        setSaleItems(updatedItems);
+      }}
+      className="form-control"
+      style={{ width: '100px' }}
+    />
+  </div>
+</td>
+
                       <td>₹{itemTotal.toFixed(2)}</td>
                       <td>
                         <button
