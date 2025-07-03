@@ -322,10 +322,9 @@ const SalesForm = () => {
                       </td>
                       <td>₹{product.price}</td>
                       
-                   <td>
-  <div className="d-flex gap-2 align-items-start">
-    <div>
-      <label style={{ fontSize: '0.75rem' }}>%</label>
+                  <td>
+  <div className="d-flex gap-2 align-items-center">
+    <div className="d-flex align-items-center">
       <input
         type="number"
         min="0"
@@ -345,9 +344,9 @@ const SalesForm = () => {
         className="form-control"
         style={{ width: '70px' }}
       />
+      <span className="ms-1">%</span>
     </div>
-    <div>
-      <label style={{ fontSize: '0.75rem' }}>₹</label>
+    <div className="d-flex align-items-center">
       <input
         type="number"
         min="0"
@@ -367,9 +366,11 @@ const SalesForm = () => {
         className="form-control"
         style={{ width: '70px' }}
       />
+      <span className="ms-1">₹</span>
     </div>
   </div>
 </td>
+
 
 
                       <td>₹{itemTotal.toFixed(2)}</td>
