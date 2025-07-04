@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosInstance';
+
 import { FaCalendarDay, FaCalendarAlt } from 'react-icons/fa';
 
 const Reports = () => {
@@ -12,9 +13,9 @@ const Reports = () => {
     setLoading(true);
     setError('');
     try {
-      const daily = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/reports/daily`);
-      const monthly = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/reports/monthly`);
-      setDailyReport(daily.data);
+    const daily = await axios.get('/reports/daily');
+    const monthly = await axios.get('/reports/monthly');
+          setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
