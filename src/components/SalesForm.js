@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosInstance';
 import Select from 'react-select';
 import InvoicePreview from './InvoicePreview';
 import html2pdf from 'html2pdf.js';
 import { toast, ToastContainer } from 'react-toastify';
 
+import { getUserFromToken } from '../utils/auth';
+
+const user = getUserFromToken();
 
 const SalesForm = () => {
   const [products, setProducts] = useState([]);
@@ -23,8 +26,8 @@ const SalesForm = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res1 = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
-        const res2 = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/customers`);
+const res1 = await axios.get('/products');
+const res2 = await axios.get('/customers');
         setProducts(res1.data);
         setCustomers(res2.data);
       } catch (err) {
@@ -50,7 +53,7 @@ const SalesForm = () => {
 
   const fetchProducts = async () => {
   try {
-    const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
+const res = await axios.get('/products');
     setProducts(res.data);
   } catch (err) {
     console.error('Error fetching products:', err);
