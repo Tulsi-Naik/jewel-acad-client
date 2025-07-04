@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 
 
@@ -10,7 +10,8 @@ const CustomerForm = () => {
   const [customers, setCustomers] = useState([]);
   const fetchCustomers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/customers`)
+      const res = await axios.get('/customers')
+
 
       setCustomers(res.data);
     } catch (err) {
@@ -24,16 +25,12 @@ const CustomerForm = () => {
   e.preventDefault();
   try {
     if (editingId) {
-      await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/api/customers/${editingId}`,
-        form
-      );
+      await await axios.put(`/customers/${editingId}`, form);
+
       toast.success('Customer updated!');
     } else {
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
-        form
-      );
+      await await axios.post('/customers', form);
+
       toast.success('Customer added!');
     }
 
@@ -54,7 +51,8 @@ const CustomerForm = () => {
 const handleDelete = async (id) => {
   if (window.confirm('Are you sure you want to delete this customer?')) {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/customers/${id}`);
+      await axios.delete(`/customers/${id}`);
+
       toast.success('Customer deleted!');
       fetchCustomers();
     } catch (err) {
