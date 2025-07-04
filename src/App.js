@@ -11,6 +11,8 @@ import Help from './components/Help';
 
 import Login from './components/Login';
 
+import RequireAuth from './components/RequireAuth';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -21,19 +23,53 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <Routes>
+     <Routes>
+  <Route path="/" element={<Dashboard />} />
 
-        <Route path='/' element={<Dashboard />} />
-        <Route path="/products" element={<ProductForm />} />
-        <Route path="/sales" element={<SalesForm />} />
-        <Route path="/customers" element={<CustomerForm />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/ledger" element={<Ledger />} />
-        <Route path="/help" element={<Help />} />
+  <Route
+    path="/products"
+    element={
+      <RequireAuth>
+        <ProductForm />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/sales"
+    element={
+      <RequireAuth>
+        <SalesForm />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/customers"
+    element={
+      <RequireAuth>
+        <CustomerForm />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/reports"
+    element={
+      <RequireAuth>
+        <Reports />
+      </RequireAuth>
+    }
+  />
+  <Route
+    path="/ledger"
+    element={
+      <RequireAuth>
+        <Ledger />
+      </RequireAuth>
+    }
+  />
+  <Route path="/help" element={<Help />} />
+  <Route path="/login" element={<Login />} />
+</Routes>
 
-        <Route path="/login" element={<Login />} />
-        
-      </Routes>
 
       <ToastContainer position="top-center" autoClose={2000} />
 
