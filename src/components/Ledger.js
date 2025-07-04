@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import html2pdf from 'html2pdf.js';
@@ -21,7 +21,7 @@ const Ledger = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products`);
+const res = await axios.get('/products');
       setProducts(res.data);
     } catch (err) {
       console.error('Error', err);
@@ -65,7 +65,7 @@ acc[custId].products = Array.from(uniqueMap.values());
   const fetchLedger = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`);
+      const res = await axios.get('/ledger');
       const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setLedgerData(allLedgers);
       setFilteredData(groupByCustomer(allLedgers));
@@ -77,7 +77,7 @@ acc[custId].products = Array.from(uniqueMap.values());
   }, []);
   const fetchCustomers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/customers`);
+      const res = await axios.get('/customers');
       setCustomers(res.data);
     } catch (err) {
       console.error('Error', err);
@@ -125,17 +125,18 @@ const handleAddLedger = async () => {
       const updatedTotal = existingLedger.total + parseFloat(newTotal); 
       const updatedProductIds = [...new Set([...existingLedger.products.map(p => p._id), ...newProductIds])];
 
-await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${existingLedger._id}`, {
+await axios.put(`/ledger/${existingLedger._id}`, {
   total: updatedTotal,
   products: updatedProductIds,
 });
 
     } else {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger`, {
+   await axios.post('/ledger', {
   customer: newCustomerId,
   products: newProductIds,
   total: parseFloat(newTotal),
 });
+
 
     }
     setNewCustomerId('');
@@ -180,7 +181,8 @@ await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${existingLedg
 
 const markAsPaid = async (id) => {
   try {
-    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${id}/pay`);
+    const res = await axios.patch(`/ledger/${id}/pay`);
+
     if (res.data.success) {
       toast.success('Marked as paid');
       fetchLedger(); // reloads data
@@ -200,9 +202,10 @@ const handlePartialPay = async (id) => {
     return toast.warning('Please enter a valid amount');
   }
   try {
-    const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/${id}/partial-pay`, {
-      amount: parseFloat(amount),
-    });
+    const res = await axios.patch(`/ledger/${id}/partial-pay`, {
+  amount: parseFloat(amount),
+});
+
     res.data.success ? toast.success('Partial payment updated') : toast.error();
     fetchLedger();
   } catch (err) {
