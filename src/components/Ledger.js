@@ -62,19 +62,32 @@ acc[custId].products = Array.from(uniqueMap.values());
 
   return Object.values(grouped);
 };
-  const fetchLedger = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get('/ledger');
-      const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setLedgerData(allLedgers);
-      setFilteredData(groupByCustomer(allLedgers));
-    } catch (err) {
-      console.error('Error fetching ledger:', err);
-    } finally {
-      setLoading(false);
+ const fetchLedger = useCallback(async () => {
+  try {
+    setLoading(true);
+    const res = await axios.get('/ledger');
+
+    if (!res.data || !Array.isArray(res.data)) {
+      console.error('⚠️ Unexpected response:', res);
+      toast.error('Unexpected response from server');
+      return;
     }
-  }, []);
+
+    const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    setLedgerData(allLedgers);
+    setFilteredData(groupByCustomer(allLedgers));
+  } catch (err) {
+    if (err.response) {
+      console.error('❌ Ledger fetch failed:', err.response.data);
+    } else {
+      console.error('❌ Error fetching ledger:', err.message || err);
+    }
+    toast.error('Failed to load ledger data');
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
   const fetchCustomers = async () => {
     try {
       const res = await axios.get('/customers');
