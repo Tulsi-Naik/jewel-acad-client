@@ -41,10 +41,15 @@ const [newPassword, setNewPassword] = useState('');
 
   const handleSaveVendor = async () => {
     const { username, password, dbName } = newVendor;
-    if (!username || !dbName || (!editVendor && !password)) {
-      toast.error('All fields are required');
-      return;
-    }
+    if (!username.trim() || !dbName.trim()) {
+  toast.error('Username and DB Name are required');
+  return;
+}
+if (!editVendor && (!password || password.length < 6)) {
+  toast.error('Password must be at least 6 characters');
+  return;
+}
+
 
     try {
       if (editVendor) {
@@ -212,7 +217,9 @@ const [newPassword, setNewPassword] = useState('');
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={() => setResetVendor(null)}>Cancel</button>
           <button className="btn btn-primary" onClick={async () => {
-            if (!newPassword) return toast.error('Password is required');
+if (!newPassword || newPassword.length < 6) {
+  return toast.error('Password must be at least 6 characters');
+}
             try {
               await axios.put(`/admin/vendors/${resetVendor._id}/password`, { password: newPassword });
               toast.success('Password updated');
