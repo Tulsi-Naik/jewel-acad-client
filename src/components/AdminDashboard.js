@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
+import { toast } from 'react-toastify';
+
 
 const AdminDashboard = () => {
   const [vendors, setVendors] = useState([]);
@@ -40,17 +42,17 @@ const [newPassword, setNewPassword] = useState('');
   const handleSaveVendor = async () => {
     const { username, password, dbName } = newVendor;
     if (!username || !dbName || (!editVendor && !password)) {
-      alert('All fields are required');
+      toast.error('All fields are required');
       return;
     }
 
     try {
       if (editVendor) {
         await axios.put(`/admin/vendors/${editVendor._id}`, { username, dbName });
-        alert('Vendor updated');
+        toast.success('Vendor updated');
       } else {
         await axios.post('/admin/vendors', { username, password, dbName });
-        alert('Vendor added');
+        toast.success('Vendor added');
       }
 
       setShowModal(false);
@@ -59,7 +61,7 @@ const [newPassword, setNewPassword] = useState('');
       fetchVendors();
     } catch (err) {
       console.error('Error saving vendor:', err);
-      alert(err.response?.data?.message || 'Failed to save vendor');
+      toast.error(err.response?.data?.message || 'Failed to save vendor');
     }
   };
 
@@ -68,11 +70,11 @@ const [newPassword, setNewPassword] = useState('');
 
     try {
       await axios.delete(`/admin/vendors/${id}`);
-      alert('Vendor deleted');
+      toast.success('Vendor deleted');
       fetchVendors();
     } catch (err) {
       console.error('Error deleting vendor:', err);
-      alert('Failed to delete vendor');
+      toast.error('Failed to delete vendor');
     }
   };
 
@@ -210,15 +212,15 @@ const [newPassword, setNewPassword] = useState('');
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={() => setResetVendor(null)}>Cancel</button>
           <button className="btn btn-primary" onClick={async () => {
-            if (!newPassword) return alert('Password is required');
+            if (!newPassword) return toast.error('Password is required');
             try {
               await axios.put(`/admin/vendors/${resetVendor._id}/password`, { password: newPassword });
-              alert('Password updated');
+              toast.success('Password updated');
               setResetVendor(null);
               setNewPassword('');
             } catch (err) {
               console.error('Error resetting password:', err);
-              alert('Failed to reset password');
+              toast.error('Failed to reset password');
             }
           }}>
             Update Password
