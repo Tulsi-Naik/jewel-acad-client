@@ -12,6 +12,7 @@ import Help from './components/Help';
 import Login from './components/Login';
 
 import RequireAuth from './components/RequireAuth';
+import AdminDashboard from './components/AdminDashboard';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -68,6 +69,7 @@ function App() {
   />
   <Route path="/help" element={<Help />} />
   <Route path="/login" element={<Login />} />
+  <Route path="/admin" element={<AdminDashboard />} />
 </Routes>
 
 
