@@ -129,7 +129,7 @@ const [newPassword, setNewPassword] = useState('');
       setNewPassword('');
     }}
   >
-    Reset
+    Reset Password
   </button>
 </td>
 
