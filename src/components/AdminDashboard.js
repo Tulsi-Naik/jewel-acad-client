@@ -103,8 +103,8 @@ const [newPassword, setNewPassword] = useState('');
               <td>{v.username}</td>
               <td>{v.dbName}</td>
               <td>{v.role}</td>
-            <td className="text-nowrap">
-  <div className="btn-group" role="group">
+            <td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+  <div className="d-flex flex-column gap-1">
     <button
       className="btn btn-sm btn-warning"
       onClick={() => {
@@ -131,6 +131,7 @@ const [newPassword, setNewPassword] = useState('');
     </button>
   </div>
 </td>
+
 
 
             </tr>
