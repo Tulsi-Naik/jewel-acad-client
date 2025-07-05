@@ -21,10 +21,11 @@ const [vendorStats, setVendorStats] = useState({ total: 0, dbs: 0 });
   const fetchVendors = async () => {
     try {
       const res = await axios.get('/admin/vendors');
-      const dbNames = new Set(res.data.map(v => v.dbName));
-setVendorStats({ total: res.data.length, dbs: dbNames.size });
+setVendors(res.data); // ✅ First update the vendors list
 
-      setVendors(res.data);
+const dbNames = new Set(res.data.map(v => v.dbName));
+setVendorStats({ total: res.data.length, dbs: dbNames.size }); // ✅ Then calculate stats
+
     } catch (err) {
       console.error('Failed to fetch vendors:', err);
     }
