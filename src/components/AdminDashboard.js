@@ -46,6 +46,19 @@ const [newVendor, setNewVendor] = useState({
     alert(err.response?.data?.message || 'Failed to add vendor');
   }
 };
+const handleDeleteVendor = async (id) => {
+  if (!window.confirm('Are you sure you want to delete this vendor?')) return;
+
+  try {
+    await axios.delete(`/admin/vendors/${id}`);
+    alert('Vendor deleted');
+    fetchVendors(); // refresh list
+  } catch (err) {
+    console.error('Error deleting vendor:', err);
+    alert('Failed to delete vendor');
+  }
+};
+
 
 
  return (
@@ -62,6 +75,7 @@ const [newVendor, setNewVendor] = useState({
           <th>Username</th>
           <th>DB Name</th>
           <th>Role</th>
+           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -70,6 +84,15 @@ const [newVendor, setNewVendor] = useState({
             <td>{v.username}</td>
             <td>{v.dbName}</td>
             <td>{v.role}</td>
+            <td>
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => handleDeleteVendor(v._id)}
+        >
+          Delete
+        </button>
+      </td>
+            
           </tr>
         ))}
       </tbody>
