@@ -14,11 +14,16 @@ const AdminDashboard = () => {
   });
   const [resetVendor, setResetVendor] = useState(null);
 const [newPassword, setNewPassword] = useState('');
+const [vendorStats, setVendorStats] = useState({ total: 0, dbs: 0 });
+
 
 
   const fetchVendors = async () => {
     try {
       const res = await axios.get('/admin/vendors');
+      const dbNames = new Set(res.data.map(v => v.dbName));
+setVendorStats({ total: res.data.length, dbs: dbNames.size });
+
       setVendors(res.data);
     } catch (err) {
       console.error('Failed to fetch vendors:', err);
@@ -87,6 +92,18 @@ if (!editVendor && (!password || password.length < 6)) {
     <div className="container mt-4">
       <h2 className="text-primary mb-4">Admin Dashboard – Vendor Management</h2>
 
+      
+<div className="mb-3 d-flex gap-4">
+  <div className="bg-light border rounded p-3">
+    <h6 className="text-muted mb-1">Total Vendors</h6>
+    <h4 className="text-primary">{vendorStats.total}</h4>
+  </div>
+  <div className="bg-light border rounded p-3">
+    <h6 className="text-muted mb-1">Active Databases</h6>
+    <h4 className="text-success">{vendorStats.dbs}</h4>
+  </div>
+</div>
+
       <button className="btn btn-success mb-3" onClick={() => {
         setEditVendor(null);
         setNewVendor({ username: '', password: '', dbName: '' });
@@ -94,6 +111,8 @@ if (!editVendor && (!password || password.length < 6)) {
       }}>
         ➕ Add Vendor
       </button>
+
+      
 
 <table className="table table-bordered" style={{ tableLayout: 'auto', width: '100%' }}>
       <thead className="table-dark">
