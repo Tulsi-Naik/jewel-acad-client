@@ -94,7 +94,7 @@ const [newPassword, setNewPassword] = useState('');
             <th>Username</th>
             <th>DB Name</th>
             <th>Role</th>
-            <th>Actions</th>
+<th style={{ width: '220px' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -104,32 +104,34 @@ const [newPassword, setNewPassword] = useState('');
               <td>{v.dbName}</td>
               <td>{v.role}</td>
               <td>
-                <button
-                  className="btn btn-warning btn-sm me-2"
-                  onClick={() => {
-                    setEditVendor(v);
-                    setShowModal(true);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleDeleteVendor(v._id)}
-                >
-                  Delete
-                </button>
-                <button
-  className="btn btn-outline-secondary btn-sm me-2"
-  onClick={() => {
-    setResetVendor(v);
-    setNewPassword('');
-  }}
->
-  Reset Password
-</button>
+  <div className="d-flex gap-2 flex-wrap">
+    <button
+      className="btn btn-warning btn-sm"
+      onClick={() => {
+        setEditVendor(v);
+        setShowModal(true);
+      }}
+    >
+      Edit
+    </button>
+    <button
+      className="btn btn-danger btn-sm"
+      onClick={() => handleDeleteVendor(v._id)}
+    >
+      Delete
+    </button>
+    <button
+      className="btn btn-outline-secondary btn-sm"
+      onClick={() => {
+        setResetVendor(v);
+        setNewPassword('');
+      }}
+    >
+      Reset Password
+    </button>
+  </div>
+</td>
 
-              </td>
             </tr>
           ))}
         </tbody>
