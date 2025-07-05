@@ -88,49 +88,49 @@ const [newPassword, setNewPassword] = useState('');
         ➕ Add Vendor
       </button>
 
-      <table className="table table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Username</th>
-            <th>DB Name</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+<table className="table table-bordered" style={{ tableLayout: 'auto', width: '100%' }}>
+      <thead className="table-dark">
+  <tr>
+    <th>Username</th>
+    <th>DB Name</th>
+    <th>Role</th>
+    <th className="text-center">Actions</th>
+  </tr>
+</thead>
+
         <tbody>
           {vendors.map(v => (
             <tr key={v._id}>
               <td>{v.username}</td>
               <td>{v.dbName}</td>
               <td>{v.role}</td>
-            <td style={{ width: '1%', whiteSpace: 'nowrap' }}>
-  <div className="d-flex flex-column gap-1">
-    <button
-      className="btn btn-sm btn-warning"
-      onClick={() => {
-        setEditVendor(v);
-        setShowModal(true);
-      }}
-    >
-      Edit
-    </button>
-    <button
-      className="btn btn-sm btn-danger"
-      onClick={() => handleDeleteVendor(v._id)}
-    >
-      Delete
-    </button>
-    <button
-      className="btn btn-sm btn-secondary"
-      onClick={() => {
-        setResetVendor(v);
-        setNewPassword('');
-      }}
-    >
-      Reset Password
-    </button>
-  </div>
+            <td className="text-center" style={{ whiteSpace: 'nowrap' }}>
+  <button
+    className="btn btn-sm btn-warning me-2"
+    onClick={() => {
+      setEditVendor(v);
+      setShowModal(true);
+    }}
+  >
+    Edit
+  </button>
+  <button
+    className="btn btn-sm btn-danger me-2"
+    onClick={() => handleDeleteVendor(v._id)}
+  >
+    Delete
+  </button>
+  <button
+    className="btn btn-sm btn-outline-secondary"
+    onClick={() => {
+      setResetVendor(v);
+      setNewPassword('');
+    }}
+  >
+    Reset
+  </button>
 </td>
+
 
 
 
