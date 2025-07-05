@@ -3,6 +3,26 @@ import axios from '../utils/axiosInstance';
 import { toast } from 'react-toastify';
 
 
+const exportToCSV = (data, filename = 'vendors.csv') => {
+  const headers = ['Username', 'DB Name', 'Role'];
+  const rows = data.map(v => [v.username, v.dbName, v.role]);
+
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(cell => `"${cell}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
 const AdminDashboard = () => {
   const [vendors, setVendors] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -105,13 +125,20 @@ if (!editVendor && (!password || password.length < 6)) {
   </div>
 </div>
 
-      <button className="btn btn-success mb-3" onClick={() => {
-        setEditVendor(null);
-        setNewVendor({ username: '', password: '', dbName: '' });
-        setShowModal(true);
-      }}>
-        ➕ Add Vendor
-      </button>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+  <button className="btn btn-success" onClick={() => {
+    setEditVendor(null);
+    setNewVendor({ username: '', password: '', dbName: '' });
+    setShowModal(true);
+  }}>
+    ➕ Add Vendor
+  </button>
+
+  <button className="btn btn-outline-primary" onClick={() => exportToCSV(vendors)}>
+    📤 Export CSV
+  </button>
+</div>
+
 
       
 
