@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
 
-
-
 const AdminDashboard = () => {
-
   const [vendors, setVendors] = useState([]);
-
   const [showModal, setShowModal] = useState(false);
-const [newVendor, setNewVendor] = useState({
-  username: '',
-  password: '',
-  dbName: ''
-});
-
+  const [editVendor, setEditVendor] = useState(null);
+  const [newVendor, setNewVendor] = useState({
+    username: '',
+    password: '',
+    dbName: ''
+  });
 
   const fetchVendors = async () => {
     try {
@@ -28,117 +24,157 @@ const [newVendor, setNewVendor] = useState({
     fetchVendors();
   }, []);
 
-  const handleAddVendor = async () => {
-  const { username, password, dbName } = newVendor;
-  if (!username || !password || !dbName) {
-    alert('All fields are required');
-    return;
-  }
+  useEffect(() => {
+    if (editVendor) {
+      setNewVendor({
+        username: editVendor.username,
+        password: '',
+        dbName: editVendor.dbName
+      });
+    }
+  }, [editVendor]);
 
-  try {
-    await axios.post('/admin/vendors', { username, password, dbName });
-    alert('Vendor added successfully');
-    setShowModal(false);
-    setNewVendor({ username: '', password: '', dbName: '' });
-    fetchVendors(); // refresh list
-  } catch (err) {
-    console.error('Error adding vendor:', err);
-    alert(err.response?.data?.message || 'Failed to add vendor');
-  }
-};
-const handleDeleteVendor = async (id) => {
-  if (!window.confirm('Are you sure you want to delete this vendor?')) return;
+  const handleSaveVendor = async () => {
+    const { username, password, dbName } = newVendor;
+    if (!username || !dbName || (!editVendor && !password)) {
+      alert('All fields are required');
+      return;
+    }
 
-  try {
-    await axios.delete(`/admin/vendors/${id}`);
-    alert('Vendor deleted');
-    fetchVendors(); // refresh list
-  } catch (err) {
-    console.error('Error deleting vendor:', err);
-    alert('Failed to delete vendor');
-  }
-};
+    try {
+      if (editVendor) {
+        await axios.put(`/admin/vendors/${editVendor._id}`, { username, dbName });
+        alert('Vendor updated');
+      } else {
+        await axios.post('/admin/vendors', { username, password, dbName });
+        alert('Vendor added');
+      }
 
+      setShowModal(false);
+      setEditVendor(null);
+      setNewVendor({ username: '', password: '', dbName: '' });
+      fetchVendors();
+    } catch (err) {
+      console.error('Error saving vendor:', err);
+      alert(err.response?.data?.message || 'Failed to save vendor');
+    }
+  };
 
+  const handleDeleteVendor = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this vendor?')) return;
 
- return (
-  <div className="container mt-4">
-    <h2 className="text-primary mb-4">Admin Dashboard – Vendor Management</h2>
+    try {
+      await axios.delete(`/admin/vendors/${id}`);
+      alert('Vendor deleted');
+      fetchVendors();
+    } catch (err) {
+      console.error('Error deleting vendor:', err);
+      alert('Failed to delete vendor');
+    }
+  };
 
-    <button className="btn btn-success mb-3" onClick={() => setShowModal(true)}>
-      ➕ Add Vendor
-    </button>
+  return (
+    <div className="container mt-4">
+      <h2 className="text-primary mb-4">Admin Dashboard – Vendor Management</h2>
 
-    <table className="table table-bordered">
-      <thead className="table-dark">
-        <tr>
-          <th>Username</th>
-          <th>DB Name</th>
-          <th>Role</th>
-           <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {vendors.map(v => (
-          <tr key={v._id}>
-            <td>{v.username}</td>
-            <td>{v.dbName}</td>
-            <td>{v.role}</td>
-            <td>
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={() => handleDeleteVendor(v._id)}
-        >
-          Delete
-        </button>
-      </td>
-            
+      <button className="btn btn-success mb-3" onClick={() => {
+        setEditVendor(null);
+        setNewVendor({ username: '', password: '', dbName: '' });
+        setShowModal(true);
+      }}>
+        ➕ Add Vendor
+      </button>
+
+      <table className="table table-bordered">
+        <thead className="table-dark">
+          <tr>
+            <th>Username</th>
+            <th>DB Name</th>
+            <th>Role</th>
+            <th>Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {vendors.map(v => (
+            <tr key={v._id}>
+              <td>{v.username}</td>
+              <td>{v.dbName}</td>
+              <td>{v.role}</td>
+              <td>
+                <button
+                  className="btn btn-warning btn-sm me-2"
+                  onClick={() => {
+                    setEditVendor(v);
+                    setShowModal(true);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDeleteVendor(v._id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-    {showModal && (
-      <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Add New Vendor</h5>
-              <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-            </div>
-            <div className="modal-body">
-              <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="Username"
-                value={newVendor.username}
-                onChange={(e) => setNewVendor({ ...newVendor, username: e.target.value })}
-              />
-              <input
-                type="password"
-                className="form-control mb-2"
-                placeholder="Password"
-                value={newVendor.password}
-                onChange={(e) => setNewVendor({ ...newVendor, password: e.target.value })}
-              />
-              <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="DB Name"
-                value={newVendor.dbName}
-                onChange={(e) => setNewVendor({ ...newVendor, dbName: e.target.value })}
-              />
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleAddVendor}>Add Vendor</button>
+      {showModal && (
+        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{editVendor ? 'Edit Vendor' : 'Add New Vendor'}</h5>
+                <button type="button" className="btn-close" onClick={() => {
+                  setShowModal(false);
+                  setEditVendor(null);
+                  setNewVendor({ username: '', password: '', dbName: '' });
+                }}></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Username"
+                  value={newVendor.username}
+                  onChange={(e) => setNewVendor({ ...newVendor, username: e.target.value })}
+                />
+                {!editVendor && (
+                  <input
+                    type="password"
+                    className="form-control mb-2"
+                    placeholder="Password"
+                    value={newVendor.password}
+                    onChange={(e) => setNewVendor({ ...newVendor, password: e.target.value })}
+                  />
+                )}
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="DB Name"
+                  value={newVendor.dbName}
+                  onChange={(e) => setNewVendor({ ...newVendor, dbName: e.target.value })}
+                />
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => {
+                  setShowModal(false);
+                  setEditVendor(null);
+                  setNewVendor({ username: '', password: '', dbName: '' });
+                }}>Cancel</button>
+                <button className="btn btn-primary" onClick={handleSaveVendor}>
+                  {editVendor ? 'Update Vendor' : 'Add Vendor'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
-
+      )}
+    </div>
+  );
 };
+
 export default AdminDashboard;
