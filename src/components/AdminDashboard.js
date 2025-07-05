@@ -94,7 +94,7 @@ const [newPassword, setNewPassword] = useState('');
             <th>Username</th>
             <th>DB Name</th>
             <th>Role</th>
-<th style={{ width: '220px' }}>Actions</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -103,10 +103,10 @@ const [newPassword, setNewPassword] = useState('');
               <td>{v.username}</td>
               <td>{v.dbName}</td>
               <td>{v.role}</td>
-              <td>
-  <div className="d-flex gap-2 flex-wrap">
+            <td className="text-nowrap">
+  <div className="btn-group" role="group">
     <button
-      className="btn btn-warning btn-sm"
+      className="btn btn-sm btn-warning"
       onClick={() => {
         setEditVendor(v);
         setShowModal(true);
@@ -115,13 +115,13 @@ const [newPassword, setNewPassword] = useState('');
       Edit
     </button>
     <button
-      className="btn btn-danger btn-sm"
+      className="btn btn-sm btn-danger"
       onClick={() => handleDeleteVendor(v._id)}
     >
       Delete
     </button>
     <button
-      className="btn btn-outline-secondary btn-sm"
+      className="btn btn-sm btn-secondary"
       onClick={() => {
         setResetVendor(v);
         setNewPassword('');
@@ -131,6 +131,7 @@ const [newPassword, setNewPassword] = useState('');
     </button>
   </div>
 </td>
+
 
             </tr>
           ))}
