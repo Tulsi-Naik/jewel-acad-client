@@ -10,6 +10,9 @@ const AdminDashboard = () => {
     password: '',
     dbName: ''
   });
+  const [resetVendor, setResetVendor] = useState(null);
+const [newPassword, setNewPassword] = useState('');
+
 
   const fetchVendors = async () => {
     try {
@@ -116,6 +119,16 @@ const AdminDashboard = () => {
                 >
                   Delete
                 </button>
+                <button
+  className="btn btn-outline-secondary btn-sm me-2"
+  onClick={() => {
+    setResetVendor(v);
+    setNewPassword('');
+  }}
+>
+  Reset Password
+</button>
+
               </td>
             </tr>
           ))}
@@ -173,7 +186,47 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+      {resetVendor && (
+  <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal-dialog">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Reset Password for {resetVendor.username}</h5>
+          <button type="button" className="btn-close" onClick={() => setResetVendor(null)}></button>
+        </div>
+        <div className="modal-body">
+          <input
+            type="password"
+            className="form-control"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={() => setResetVendor(null)}>Cancel</button>
+          <button className="btn btn-primary" onClick={async () => {
+            if (!newPassword) return alert('Password is required');
+            try {
+              await axios.put(`/admin/vendors/${resetVendor._id}/password`, { password: newPassword });
+              alert('Password updated');
+              setResetVendor(null);
+              setNewPassword('');
+            } catch (err) {
+              console.error('Error resetting password:', err);
+              alert('Failed to reset password');
+            }
+          }}>
+            Update Password
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+)}
+
+    </div>
+    
   );
 };
 
