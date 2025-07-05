@@ -18,6 +18,7 @@ const Ledger = () => {
   const [newTotal, setNewTotal] = useState('');
   const [loading, setLoading] = useState(false);
   const componentRefs = useRef({});  
+const [noData, setNoData] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -74,7 +75,10 @@ acc[custId].products = Array.from(uniqueMap.values());
     }
 
     const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    setLedgerData(allLedgers);
+setLedgerData(allLedgers);
+setFilteredData(groupByCustomer(allLedgers));
+setNoData(allLedgers.length === 0); // ✅ this line tracks if there's no data
+
     setFilteredData(groupByCustomer(allLedgers));
   } catch (err) {
     if (err.response) {
@@ -287,47 +291,47 @@ const handlePartialPay = async (id) => {
       
 
       {/* Ledger Display */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : filteredData.length === 0 ? (
-        <p>No Data Available.</p>
-      ) : (
-        filteredData.map((entry, index) => (
-          <div
-            key={index}
-            className="card mb-3 shadow"
-            ref={(el) => (componentRefs.current[entry._id] = el)}
-          >
-<div className={`card-header d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success text-white' : 'bg-dark text-white'}`}>
-              <span><strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}</span>
-              <div>
-{!entry.paid && (
-  <button className="btn btn-sm btn-success me-2" onClick={() => markAsPaid(entry._id)}>
-    Mark as Paid
-  </button>
-)}
-{!entry.paid && (
-  <button className="btn btn-sm btn-info me-2" onClick={() => handlePartialPay(entry._id)}>
-    Partial Pay
-  </button>
-)}
-                <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>Download PDF</button>
-                 
-              </div>
-            </div>
-            <div className="card-body">
-              <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
-              <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
-             <p><strong>Products Purchased:</strong> {entry.products?.map(p => p.name).join(', ') || 'None'}</p>
-{entry.paid && (
-  <p><strong>Paid Amount:</strong> ₹{entry.paidAmount?.toFixed(2) || '0.00'}</p>
+     {loading ? (
+  <p>Loading...</p>
+) : noData ? (
+  <p className="text-center text-muted mt-4">No ledger entries yet. Add one to get started!</p>
+) : (
+  filteredData.map((entry, index) => (
+    <div
+      key={index}
+      className="card mb-3 shadow"
+      ref={(el) => (componentRefs.current[entry._id] = el)}
+    >
+      <div className={`card-header d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success text-white' : 'bg-dark text-white'}`}>
+        <span><strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}</span>
+        <div>
+          {!entry.paid && (
+            <button className="btn btn-sm btn-success me-2" onClick={() => markAsPaid(entry._id)}>
+              Mark as Paid
+            </button>
+          )}
+          {!entry.paid && (
+            <button className="btn btn-sm btn-info me-2" onClick={() => handlePartialPay(entry._id)}>
+              Partial Pay
+            </button>
+          )}
+          <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>Download PDF</button>
+        </div>
+      </div>
+      <div className="card-body">
+        <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
+        <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
+        <p><strong>Products Purchased:</strong> {entry.products?.map(p => p.name).join(', ') || 'None'}</p>
+        {entry.paid && (
+          <p><strong>Paid Amount:</strong> ₹{entry.paidAmount?.toFixed(2) || '0.00'}</p>
+        )}
+        <p><strong>Total Pending Amount:</strong> ₹{entry.total?.toFixed(2) || '0.00'}</p>
+      </div>
+    </div>
+  ))
 )}
 
-              <p><strong>Total Pending Amount:</strong> ₹{entry.total?.toFixed(2) || '0.00'}</p>
-            </div>
-          </div>
-        ))
-      )}
+      
 
     </div>
   );
