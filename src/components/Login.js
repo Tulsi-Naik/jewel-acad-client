@@ -11,10 +11,13 @@ const Login = () => {
  const handleSubmit = async (e) => {
   e.preventDefault();
   try {
+    console.log('Submitting login request...');
     const res = await axios.post('https://jewellery-backend-7st1.onrender.com/api/auth/login', {
       username,
       password
     });
+
+    console.log('Login response:', res.data);
 
     const token = res.data.token;
     if (!token) {
@@ -24,15 +27,7 @@ const Login = () => {
 
     localStorage.setItem('token', token);
 
-    let decoded;
-    try {
-      decoded = jwtDecode(token);
-    } catch (err) {
-      console.error('Token decode failed:', err);
-      toast.error('Invalid token received');
-      return;
-    }
-
+    const decoded = jwtDecode(token);
     const role = decoded.role;
 
     if (role === 'vendor') {
@@ -53,6 +48,7 @@ const Login = () => {
     toast.error('Login failed. Please check your credentials.');
   }
 };
+
 
 
   return (
