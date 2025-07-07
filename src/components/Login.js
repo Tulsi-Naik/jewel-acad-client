@@ -8,42 +8,52 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post('https://jewellery-backend-7st1.onrender.com/api/auth/login', {
-        username,
-        password
-      });
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post('https://jewellery-backend-7st1.onrender.com/api/auth/login', {
+      username,
+      password
+    });
 
-      const token = res.data.token;
-      localStorage.setItem('token', token);
-
-      const decoded = jwtDecode(token);
-      const role = decoded.role;
-
-      // ✅ Store vendor branding info
-      if (role === 'vendor') {
-        localStorage.setItem('vendorInfo', JSON.stringify({
-          businessName: decoded.businessName,
-          address: decoded.address,
-          contact: decoded.contact
-        }));
-      }
-
-      toast.success(`Login successful as ${role}`);
-
-      setTimeout(() => {
-        if (role === 'admin') {
-          window.location.href = '/admin';
-        } else {
-          window.location.href = '/';
-        }
-      }, 1000);
-    } catch (err) {
-      toast.error('Login failed. Please check your credentials.');
+    const token = res.data.token;
+    if (!token) {
+      toast.error('No token received from server');
+      return;
     }
-  };
+
+    localStorage.setItem('token', token);
+
+    let decoded;
+    try {
+      decoded = jwtDecode(token);
+    } catch (err) {
+      console.error('Token decode failed:', err);
+      toast.error('Invalid token received');
+      return;
+    }
+
+    const role = decoded.role;
+
+    if (role === 'vendor') {
+      localStorage.setItem('vendorInfo', JSON.stringify({
+        businessName: decoded.businessName,
+        address: decoded.address,
+        contact: decoded.contact
+      }));
+    }
+
+    toast.success(`Login successful as ${role}`);
+
+    setTimeout(() => {
+      window.location.href = role === 'admin' ? '/admin' : '/';
+    }, 1000);
+  } catch (err) {
+    console.error('Login error:', err);
+    toast.error('Login failed. Please check your credentials.');
+  }
+};
+
 
   return (
     <div style={{ maxWidth: '400px', margin: '100px auto' }}>
