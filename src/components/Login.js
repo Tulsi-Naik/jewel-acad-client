@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -22,15 +25,17 @@ const handleSubmit = async (e) => {
     const decoded = jwtDecode(token);
     const role = decoded.role;
 
-    alert(`Login successful as ${role}`);
+    toast.success(`Login successful as ${role}`);
 
-    if (role === 'admin') {
-      window.location.href = '/admin';
-    } else {
-      window.location.href = '/sales';
-    }
+    setTimeout(() => {
+      if (role === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/sales';
+      }
+    }, 1000);
   } catch (err) {
-    alert('Login failed. Please check your credentials.');
+    toast.error('Login failed. Please check your credentials.');
   }
 };
 
