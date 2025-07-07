@@ -95,7 +95,14 @@ if (!editVendor && (!password || password.length < 6)) {
 
       setShowModal(false);
       setEditVendor(null);
-      setNewVendor({ username: '', password: '', dbName: '' });
+setNewVendor({
+  username: '',
+  password: '',
+  dbName: '',
+  businessName: '',
+  address: '',
+  contact: ''
+});
       fetchVendors();
     } catch (err) {
       console.error('Error saving vendor:', err);
@@ -218,7 +225,14 @@ setShowModal(true);
                 <button type="button" className="btn-close" onClick={() => {
                   setShowModal(false);
                   setEditVendor(null);
-                  setNewVendor({ username: '', password: '', dbName: '' });
+setNewVendor({
+  username: '',
+  password: '',
+  dbName: '',
+  businessName: '',
+  address: '',
+  contact: ''
+});
                 }}></button>
               </div>
               <div className="modal-body">
@@ -245,19 +259,20 @@ setShowModal(true);
                   value={newVendor.dbName}
                   onChange={(e) => setNewVendor({ ...newVendor, dbName: e.target.value })}
                 />
-                <input
+              <input
   type="text"
   className="form-control mb-2"
   placeholder="Business Name"
-  value={newVendor.businessName}
+  value={newVendor.businessName || ''}
   onChange={(e) => setNewVendor({ ...newVendor, businessName: e.target.value })}
 />
+
 
 <input
   type="text"
   className="form-control mb-2"
   placeholder="Business Address"
-  value={newVendor.address}
+value={newVendor.address || ''}
   onChange={(e) => setNewVendor({ ...newVendor, address: e.target.value })}
 />
 
@@ -265,7 +280,7 @@ setShowModal(true);
   type="text"
   className="form-control mb-2"
   placeholder="Contact Number"
-  value={newVendor.contact}
+value={newVendor.contact || ''}
   onChange={(e) => setNewVendor({ ...newVendor, contact: e.target.value })}
 />
 
