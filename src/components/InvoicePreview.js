@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+const vendor = JSON.parse(localStorage.getItem('vendorInfo') || '{}');
 
 const InvoicePreview = forwardRef(({ customer = {}, saleItems = [], products = [], invoiceNo = '', totalAmount = 0 }, ref) => {
   const total = saleItems.reduce((sum, item) => {
@@ -21,9 +22,10 @@ const currentDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.ge
       {/* Company Header */}
       <div className="text-center mb-4">
        
-        <h3 className="mt-2"> Jewel Hub </h3>
-        <p> Address: Shop No.4, Arthav CHS, Plot No.C-5, Sector 20, Gavdevi Chowk, Near NR Bhagat School, Nerul , Navi Mumbai.  </p>
-        <p> Contact: 9920445447/ 7066670566 </p>
+       <h3 className="mt-2">{vendor.businessName || 'Jewel Hub'}</h3>
+<p>Address: {vendor.address || 'Default address'}</p>
+<p>Contact: {vendor.contact || 'Default contact'}</p>
+
         <hr />
       </div>
       <div className="d-flex justify-content-between mb-3">
