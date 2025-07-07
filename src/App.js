@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import VendorNavbar from './components/Navbar';
 import ProductForm from './components/ProductForm';
 import SalesForm from './components/SalesForm';
@@ -8,20 +8,15 @@ import Reports from './components/Reports';
 import Ledger from './components/Ledger';
 import Dashboard from './components/Dashboard';
 import Help from './components/Help';
-
 import Login from './components/Login';
-
 import RequireAuth from './components/RequireAuth';
 import AdminDashboard from './components/AdminDashboard';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { useLocation } from 'react-router-dom';
 
-// import MarksAsPaid from './components/MarksAsPaid';
-import { useNavigate } from 'react-router-dom';
-
+// ✅ AdminNavbar defined inline
 const AdminNavbar = () => {
   const navigate = useNavigate();
 
@@ -75,6 +70,5 @@ function App() {
     </>
   );
 }
-
 
 export default App;
