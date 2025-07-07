@@ -169,21 +169,25 @@ await axios.put(`/ledger/${existingLedger._id}`, {
   const entry = filteredData.find(e => e._id === ledgerId);
   if (!entry) return toast.error(" ");
   const pdfContent = document.createElement('div');
-  pdfContent.innerHTML = `
-    <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
-      <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
-      <hr />
-      <p><strong>Customer Name:</strong> ${entry.customer?.name || 'N/A'}</p>
-      <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
-      <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
-      <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
-      <p><strong>Products:</strong> ${entry.products?.map(p => p.name).join(', ') || 'None'}</p>
-      <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
-      <div style="margin-top: 30px; text-align: right;">
-        <p>Authorized Signature __________________</p>
-      </div>
+pdfContent.innerHTML = `
+  <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
+    <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
+    <hr />
+    <p><strong>Customer Name:</strong> ${entry.customer?.name || 'N/A'}</p>
+    <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
+    <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
+    <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
+    <p><strong>Products:</strong> ${entry.products?.map(p => p.name).join(', ') || 'None'}</p>
+    <p><strong>Amount Paid:</strong> ₹${entry.paidAmount?.toFixed(2) || '0.00'}</p>
+    <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
+    <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
+    ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
+    <div style="margin-top: 30px; text-align: right;">
+      <p>Authorized Signature __________________</p>
     </div>
-  `;
+  </div>
+`;
+
 
   const opt = {
     margin: 0.3,
