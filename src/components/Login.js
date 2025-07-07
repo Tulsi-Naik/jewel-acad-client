@@ -31,7 +31,7 @@ const handleSubmit = async (e) => {
       if (role === 'admin') {
         window.location.href = '/admin';
       } else {
-        window.location.href = '/sales';
+        window.location.href = '/';
       }
     }, 1000);
   } catch (err) {

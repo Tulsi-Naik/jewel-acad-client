@@ -40,6 +40,7 @@ function App() {
   const path = location.pathname;
 
   const showVendorNavbar =
+  path === '/' ||
     path.startsWith('/products') ||
     path.startsWith('/sales') ||
     path.startsWith('/customers') ||
@@ -55,7 +56,7 @@ function App() {
       {showAdminNavbar && <AdminNavbar />}
 
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+<Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/products" element={<RequireAuth><ProductForm /></RequireAuth>} />
         <Route path="/sales" element={<RequireAuth><SalesForm /></RequireAuth>} />
         <Route path="/customers" element={<RequireAuth><CustomerForm /></RequireAuth>} />
