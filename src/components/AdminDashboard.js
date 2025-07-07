@@ -27,11 +27,15 @@ const AdminDashboard = () => {
   const [vendors, setVendors] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editVendor, setEditVendor] = useState(null);
-  const [newVendor, setNewVendor] = useState({
-    username: '',
-    password: '',
-    dbName: ''
-  });
+const [newVendor, setNewVendor] = useState({
+  username: '',
+  password: '',
+  dbName: '',
+  businessName: '',
+  address: '',
+  contact: ''
+});
+
   const [resetVendor, setResetVendor] = useState(null);
 const [newPassword, setNewPassword] = useState('');
 const [vendorStats, setVendorStats] = useState({ total: 0, dbs: 0 });
@@ -55,19 +59,22 @@ setVendorStats({ total: res.data.length, dbs: dbNames.size }); // ✅ Then calcu
     fetchVendors();
   }, []);
 
-  useEffect(() => {
-    if (editVendor) {
-      setNewVendor({
-        username: editVendor.username,
-        password: '',
-        dbName: editVendor.dbName
-      });
-    }
-  }, [editVendor]);
+useEffect(() => {
+  if (editVendor) {
+    setNewVendor({
+      username: editVendor.username,
+      password: '',
+      dbName: editVendor.dbName,
+      businessName: editVendor.businessName || '',
+      address: editVendor.address || '',
+      contact: editVendor.contact || ''
+    });
+  }
+}, [editVendor]);
+
 
   const handleSaveVendor = async () => {
-    const { username, password, dbName } = newVendor;
-    if (!username.trim() || !dbName.trim()) {
+const { username, password, dbName, businessName, address, contact } = newVendor;    if (!username.trim() || !dbName.trim()) {
   toast.error('Username and DB Name are required');
   return;
 }
@@ -79,10 +86,10 @@ if (!editVendor && (!password || password.length < 6)) {
 
     try {
       if (editVendor) {
-        await axios.put(`/admin/vendors/${editVendor._id}`, { username, dbName });
+        await axios.put(`/admin/vendors/${editVendor._id}`, { username, dbName, businessName, address, contact });
         toast.success('Vendor updated');
       } else {
-        await axios.post('/admin/vendors', { username, password, dbName });
+        await axios.post('/admin/vendors', { username, password, dbName, businessName, address, contact });
         toast.success('Vendor added');
       }
 
@@ -230,12 +237,43 @@ if (!editVendor && (!password || password.length < 6)) {
                   value={newVendor.dbName}
                   onChange={(e) => setNewVendor({ ...newVendor, dbName: e.target.value })}
                 />
+                <input
+  type="text"
+  className="form-control mb-2"
+  placeholder="Business Name"
+  value={newVendor.businessName}
+  onChange={(e) => setNewVendor({ ...newVendor, businessName: e.target.value })}
+/>
+
+<input
+  type="text"
+  className="form-control mb-2"
+  placeholder="Business Address"
+  value={newVendor.address}
+  onChange={(e) => setNewVendor({ ...newVendor, address: e.target.value })}
+/>
+
+<input
+  type="text"
+  className="form-control mb-2"
+  placeholder="Contact Number"
+  value={newVendor.contact}
+  onChange={(e) => setNewVendor({ ...newVendor, contact: e.target.value })}
+/>
+
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={() => {
                   setShowModal(false);
                   setEditVendor(null);
-                  setNewVendor({ username: '', password: '', dbName: '' });
+setNewVendor({
+  username: '',
+  password: '',
+  dbName: '',
+  businessName: '',
+  address: '',
+  contact: ''
+});
                 }}>Cancel</button>
                 <button className="btn btn-primary" onClick={handleSaveVendor}>
                   {editVendor ? 'Update Vendor' : 'Add Vendor'}
