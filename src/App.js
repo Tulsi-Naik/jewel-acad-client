@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import VendorNavbar from './components/Navbar';
 import ProductForm from './components/ProductForm';
 import SalesForm from './components/SalesForm';
 import CustomerForm from './components/CustomerForm';
@@ -17,67 +17,64 @@ import AdminDashboard from './components/AdminDashboard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { useLocation } from 'react-router-dom';
 
 // import MarksAsPaid from './components/MarksAsPaid';
+import { useNavigate } from 'react-router-dom';
+
+const AdminNavbar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  return (
+    <nav className="navbar navbar-dark bg-dark px-4 py-3">
+      <span className="navbar-brand fw-bold">Admin dashboard</span>
+      <button className="btn btn-outline-light btn-sm ms-auto" onClick={handleLogout}>
+        Logout
+      </button>
+    </nav>
+  );
+};
 
 function App() {
+  const location = useLocation();
+  const path = location.pathname;
+
+  const showVendorNavbar =
+    path.startsWith('/products') ||
+    path.startsWith('/sales') ||
+    path.startsWith('/customers') ||
+    path.startsWith('/reports') ||
+    path.startsWith('/ledger') ||
+    path === '/help';
+
+  const showAdminNavbar = path === '/admin';
+
   return (
-    <Router>
-      <Navbar />
-     <Routes>
-  <Route path="/" element={<Dashboard />} />
+    <>
+      {showVendorNavbar && <VendorNavbar />}
+      {showAdminNavbar && <AdminNavbar />}
 
-  <Route
-    path="/products"
-    element={
-      <RequireAuth>
-        <ProductForm />
-      </RequireAuth>
-    }
-  />
-  <Route
-    path="/sales"
-    element={
-      <RequireAuth>
-        <SalesForm />
-      </RequireAuth>
-    }
-  />
-  <Route
-    path="/customers"
-    element={
-      <RequireAuth>
-        <CustomerForm />
-      </RequireAuth>
-    }
-  />
-  <Route
-    path="/reports"
-    element={
-      <RequireAuth>
-        <Reports />
-      </RequireAuth>
-    }
-  />
-  <Route
-    path="/ledger"
-    element={
-      <RequireAuth>
-        <Ledger />
-      </RequireAuth>
-    }
-  />
-  <Route path="/help" element={<Help />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/admin" element={<AdminDashboard />} />
-</Routes>
-
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/products" element={<RequireAuth><ProductForm /></RequireAuth>} />
+        <Route path="/sales" element={<RequireAuth><SalesForm /></RequireAuth>} />
+        <Route path="/customers" element={<RequireAuth><CustomerForm /></RequireAuth>} />
+        <Route path="/reports" element={<RequireAuth><Reports /></RequireAuth>} />
+        <Route path="/ledger" element={<RequireAuth><Ledger /></RequireAuth>} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
 
       <ToastContainer position="top-center" autoClose={2000} />
-
-    </Router>
-
+    </>
   );
 }
+
 
 export default App;

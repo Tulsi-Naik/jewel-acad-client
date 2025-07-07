@@ -6,7 +6,7 @@ import '../App.css';
 import { useNavigate } from 'react-router-dom';
 
 
-const Navbar = () => {
+const VendorNavbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -60,4 +60,4 @@ const Navbar = () => {
 };
 
 
-export default Navbar;
+export default VendorNavbar;
