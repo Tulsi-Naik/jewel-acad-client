@@ -125,7 +125,7 @@ if (!editVendor && (!password || password.length < 6)) {
   </div>
 </div>
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
+     <div className="d-flex gap-2 mb-3">
   <button className="btn btn-success" onClick={() => {
     setEditVendor(null);
     setNewVendor({ username: '', password: '', dbName: '' });
@@ -138,6 +138,7 @@ if (!editVendor && (!password || password.length < 6)) {
     📤 Export CSV
   </button>
 </div>
+
 
 
       
