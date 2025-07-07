@@ -147,10 +147,14 @@ const openLabelModal = (product) => {
 
 const generatePDFWithBarcodes = (product, count = 1) => {
   const canvas = barcodeRefs.current[product._id];
-  if (!canvas || product.quantity <= 0) {
-    alert("Barcode not ready yet. Try again in a moment.");
-    return;
-  }
+  if (!canvas) {
+  toast.error("Barcode not ready yet. Please wait a moment.");
+  return;
+}
+if (product.quantity <= 0) {
+  toast.error("This product is out of stock. Please update quantity before printing labels.");
+  return;
+}
 
   const barcodeImage = canvas.toDataURL("image/png");
   const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
