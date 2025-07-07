@@ -134,9 +134,17 @@ if (!editVendor && (!password || password.length < 6)) {
 
      <div className="d-flex gap-2 mb-3">
   <button className="btn btn-success" onClick={() => {
-    setEditVendor(null);
-    setNewVendor({ username: '', password: '', dbName: '' });
-    setShowModal(true);
+   setEditVendor(null);
+setNewVendor({
+  username: '',
+  password: '',
+  dbName: '',
+  businessName: '',
+  address: '',
+  contact: ''
+});
+setShowModal(true);
+
   }}>
     ➕ Add Vendor
   </button>
