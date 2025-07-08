@@ -28,6 +28,12 @@ const ProductForm = () => {
   const [showLabelModal, setShowLabelModal] = useState(false);
 const [labelQty, setLabelQty] = useState(1);
 const [labelProduct, setLabelProduct] = useState(null);
+const [showStockModal, setShowStockModal] = useState(false);
+const [stockType, setStockType] = useState('in'); // 'in' or 'out'
+const [stockQty, setStockQty] = useState(1);
+const [stockNote, setStockNote] = useState('');
+const [selectedProduct, setSelectedProduct] = useState(null);
+
 
 
  const fetchProducts = async () => {
@@ -92,6 +98,39 @@ const [labelProduct, setLabelProduct] = useState(null);
     });
     setShowModal(true);
   };
+
+  const openStockModal = (product, type) => {
+  setSelectedProduct(product);
+  setStockType(type);
+  setStockQty(1);
+  setStockNote('');
+  setShowStockModal(true);
+};
+
+const handleStockSubmit = async () => {
+  if (!selectedProduct || stockQty <= 0) {
+    toast.error("Please enter a valid quantity");
+    return;
+  }
+
+  try {
+    const endpoint = `/products/${selectedProduct._id}/${stockType === 'in' ? 'stockin' : 'stockout'}`;
+    const payload = {
+      amount: stockQty,
+      note: stockNote
+    };
+
+    await axios.put(endpoint, payload);
+    toast.success(`Stock ${stockType === 'in' ? 'added' : 'removed'} successfully`);
+
+    setShowStockModal(false);
+    fetchProducts(); // refresh list
+  } catch (err) {
+    console.error('Stock update error:', err);
+    toast.error(err.response?.data?.message || 'Stock update failed');
+  }
+};
+
 
   const handleSaveEdit = async () => {
     const { name, quantity, price } = editForm;
@@ -231,6 +270,8 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
     fetchProducts();
   }, []);
 
+
+
   return (
     <div className="container mt-4">
       <ToastContainer position="top-center" autoClose={2000} />
@@ -347,11 +388,14 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
 <button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
                 </td>
                 <td>
-                  <div className="d-flex gap-1">
-                    <button className="btn btn-warning btn-sm" onClick={() => handleEdit(p)}>Edit</button>
-                    <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(p._id)}>Delete</button>
-                  </div>
-                </td>
+  <div className="d-flex flex-wrap gap-1">
+    <button className="btn btn-warning btn-sm" onClick={() => handleEdit(p)}>Edit</button>
+    <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(p._id)}>Delete</button>
+    <button className="btn btn-outline-primary btn-sm" onClick={() => openStockModal(p, 'in')}>Stock In</button>
+    <button className="btn btn-outline-secondary btn-sm" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
+  </div>
+</td>
+
               </tr>
             ))}
           </tbody>
@@ -400,6 +444,32 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
 
   </Modal.Footer>
 </Modal>
+<Modal show={showStockModal} onHide={() => setShowStockModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>{stockType === 'in' ? 'Add Stock' : 'Remove Stock'}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>How many units do you want to {stockType} for <strong>{selectedProduct?.name}</strong>?</p>
+    <input
+      type="number"
+      min="1"
+      value={stockQty}
+      onChange={(e) => setStockQty(parseInt(e.target.value) || 1)}
+      className="form-control mb-3"
+    />
+    <textarea
+      placeholder="Optional note (e.g. Restocked, Sold, Damaged)"
+      className="form-control"
+      value={stockNote}
+      onChange={(e) => setStockNote(e.target.value)}
+    />
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowStockModal(false)}>Cancel</Button>
+    <Button variant="primary" onClick={handleStockSubmit}>Submit</Button>
+  </Modal.Footer>
+</Modal>
+
 
     </div>
 
