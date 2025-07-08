@@ -368,7 +368,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
               <th>Quantity</th>
               <th>Price (₹)</th>
               <th style={{ width: '140px' }}>Barcode</th>
-<th style={{ width: '220px' }}>Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
