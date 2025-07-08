@@ -391,7 +391,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
                 </td>
  <td>
   <div className="d-flex gap-1 flex-nowrap">
-    <button className="btn btn-sm btn-warning" onClick={() => handleEdit(p)}>Edit</button>
+    <button className="btn btn-sm btn-outline-warning" onClick={() => handleEdit(p)}>Edit</button>
     <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
     <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>Stock In</button>
     <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
