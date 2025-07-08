@@ -143,19 +143,24 @@ const res = await axios.get('/products');
     }
   };
 
- const handleMarkAsPaid = async () => {
+const handleMarkAsPaid = async () => {
   try {
-    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, {
+    const payload = {
       sale: savedSaleId,
       customer: customerId,
       total: totalAmount,
-      markAsPaid: true ,
+      markAsPaid: true,
       products: saleItems.map(item => ({
-    product: item.product,
-    quantity: item.quantity
-  }))
-    });
-    toast.success('Ledger marked as paid'); //
+        product: item.product,
+        quantity: item.quantity
+      }))
+    };
+
+    console.log("🧾 Sending to ledger:", payload);
+
+    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
+
+    toast.success('Ledger marked as paid');
     resetForm();
   } catch (err) {
     console.error('Error marking ledger as paid:', err);
@@ -163,6 +168,7 @@ const res = await axios.get('/products');
     setShowModal(false);
   }
 };
+
 
 
   const resetForm = () => {
