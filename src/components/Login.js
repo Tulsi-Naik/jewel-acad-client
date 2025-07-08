@@ -64,8 +64,13 @@ const Login = () => {
         maxWidth: '400px',
         textAlign: 'center'
       }}>
-        <h2 style={{ marginBottom: '10px', color: '#8B5E3C' }}>Welcome to अलंकृत</h2>
-        <p style={{ marginBottom: '30px', color: '#555' }}>Start your business journey with brilliance ✨</p>
+        <h2 style={{ marginBottom: '10px', color: '#8B5E3C' }}>
+  Welcome back
+</h2>
+<p style={{ marginBottom: '30px', color: '#555' }}>
+  Let’s shine today ✨
+</p>
+
         <form onSubmit={handleSubmit}>
           <input
             type="text"
