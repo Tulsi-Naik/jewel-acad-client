@@ -361,16 +361,17 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
       {loading ? (
         <div className="text-center my-5"><Spinner animation="border" /></div>
       ) : (
-        <table className="table table-bordered table-hover">
+<table className="table table-bordered table-hover" style={{ tableLayout: 'fixed' }}>
           <thead className="table-dark">
-            <tr>
-              <th>Name</th>
-              <th>Quantity</th>
-              <th>Price (₹)</th>
-              <th style={{ width: '140px' }}>Barcode</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+  <tr>
+    <th style={{ width: '25%' }}>Name</th>
+    <th style={{ width: '10%' }}>Quantity</th>
+    <th style={{ width: '15%' }}>Price (₹)</th>
+    <th style={{ width: '15%' }}>Barcode</th>
+    <th style={{ width: '35%' }}>Actions</th>
+  </tr>
+</thead>
+
           <tbody>
             {filteredProducts.map((p) => (
 <tr key={p._id} className={p.quantity === 0 ? 'table-danger' : ''}>
@@ -389,7 +390,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
                 </td>
       <td>
   <div className="d-flex flex-wrap gap-1" style={{ maxWidth: '180px' }}>
-    <button className="btn btn-sm btn-warning" onClick={() => handleEdit(p)}>Edit</button>
+    <button className="btn btn-sm btn-outline-warning" onClick={() => handleEdit(p)}>Edit</button>
     <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
     <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>In</button>
     <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Out</button>
