@@ -387,7 +387,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
                   <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
 <button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
                 </td>
-               <td>
+            <td style={{ minWidth: '200px' }}>
   <div className="d-flex flex-wrap gap-1">
     <button className="btn btn-warning btn-sm" onClick={() => handleEdit(p)}>Edit</button>
     <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(p._id)}>Delete</button>
@@ -395,6 +395,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
     <button className="btn btn-outline-secondary btn-sm" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
   </div>
 </td>
+
 
 
               </tr>
