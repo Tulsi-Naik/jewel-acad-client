@@ -387,18 +387,15 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
                   <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
 <button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
                 </td>
-          <td>
-  <div className="d-grid gap-1">
-    <div className="d-flex gap-1">
-      <button className="btn btn-warning btn-sm w-50" onClick={() => handleEdit(p)}>Edit</button>
-      <button className="btn btn-outline-danger btn-sm w-50" onClick={() => handleDelete(p._id)}>Delete</button>
-    </div>
-    <div className="d-flex gap-1">
-      <button className="btn btn-outline-primary btn-sm w-50" onClick={() => openStockModal(p, 'in')}>Stock In</button>
-      <button className="btn btn-outline-secondary btn-sm w-50" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
-    </div>
+       <td>
+  <div className="d-flex flex-wrap gap-1">
+    <button className="btn btn-warning btn-sm" onClick={() => handleEdit(p)}>Edit</button>
+    <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(p._id)}>Delete</button>
+    <button className="btn btn-outline-primary btn-sm" onClick={() => openStockModal(p, 'in')}>Stock In</button>
+    <button className="btn btn-outline-secondary btn-sm" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
   </div>
 </td>
+
 
 
 
