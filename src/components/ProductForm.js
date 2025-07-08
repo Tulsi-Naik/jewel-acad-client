@@ -361,7 +361,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
       {loading ? (
         <div className="text-center my-5"><Spinner animation="border" /></div>
       ) : (
-<table className="table table-bordered table-hover" style={{ tableLayout: 'fixed', width: '100%' }}>
+<table className="table table-bordered table-hover">
         <thead className="table-dark">
   <tr>
     <th style={{ width: '25%' }}>Name</th>
@@ -389,19 +389,14 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
                   <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
 <button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
                 </td>
-    <td>
-  <div className="d-grid gap-1">
-    <div className="d-flex gap-1">
-      <button className="btn btn-sm btn-warning" onClick={() => handleEdit(p)}>Edit</button>
-      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
-    </div>
-    <div className="d-flex gap-1">
-      <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>In</button>
-      <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Out</button>
-    </div>
+ <td>
+  <div className="d-flex gap-1 flex-nowrap">
+    <button className="btn btn-sm btn-warning" onClick={() => handleEdit(p)}>Edit</button>
+    <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
+    <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>Stock In</button>
+    <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
   </div>
 </td>
-
               </tr>
             ))}
           </tbody>
