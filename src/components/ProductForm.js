@@ -33,6 +33,8 @@ const [stockType, setStockType] = useState('in'); // 'in' or 'out'
 const [stockQty, setStockQty] = useState(1);
 const [stockNote, setStockNote] = useState('');
 const [selectedProduct, setSelectedProduct] = useState(null);
+const [showHistoryModal, setShowHistoryModal] = useState(false);
+const [stockHistory, setStockHistory] = useState([]);
 
 
 
@@ -234,11 +236,6 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
   pdf.save(`${product.name}_barcodes.pdf`);
 };
 
-
-
-
-
-
   const handleBarcodeScan = async (barcode) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/barcode/${barcode}`);
@@ -270,6 +267,15 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
     fetchProducts();
   }, []);
 
+const openHistoryModal = async (productId) => {
+  try {
+    const res = await axios.get(`/products/stock-history/${productId}`);
+    setStockHistory(res.data);
+    setShowHistoryModal(true);
+  } catch (err) {
+    console.error('Error fetching stock history:', err);
+  }
+};
 
 
   return (
@@ -395,6 +401,7 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
     <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
     <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>Stock In</button>
     <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
+      <button className="btn btn-sm btn-outline-info" onClick={() => openHistoryModal(p._id)}>History</button>
   </div>
 </td>
               </tr>
@@ -470,6 +477,38 @@ pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spac
     <Button variant="primary" onClick={handleStockSubmit}>Submit</Button>
   </Modal.Footer>
 </Modal>
+<Modal show={showHistoryModal} onHide={() => setShowHistoryModal(false)} size="lg">
+  <Modal.Header closeButton>
+    <Modal.Title>Stock History</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {stockHistory.length === 0 ? (
+      <p>No stock movements found.</p>
+    ) : (
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stockHistory.map((entry) => (
+            <tr key={entry._id}>
+              <td>{new Date(entry.date).toLocaleDateString()}</td>
+              <td>{entry.type}</td>
+              <td>{entry.quantity}</td>
+              <td>{entry.note || '-'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </Modal.Body>
+</Modal>
+
 
 
     </div>
