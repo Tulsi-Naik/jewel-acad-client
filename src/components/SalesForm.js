@@ -129,7 +129,10 @@ const res = await axios.get('/products');
         sale: savedSaleId,
         customer: customerId,
         total: totalAmount,
-        products: saleItems.map(item => item.product),
+        products: saleItems.map(item => ({
+    product: item.product,
+    quantity: item.quantity
+  }))
       });
       toast.success('Ledger entry added successfully'); //
       resetForm();
@@ -146,8 +149,11 @@ const res = await axios.get('/products');
       sale: savedSaleId,
       customer: customerId,
       total: totalAmount,
-      products: saleItems.map(item => item.product),
-      markAsPaid: true // ✅ pays and finalizes the ledger
+      markAsPaid: true ,
+      products: saleItems.map(item => ({
+    product: item.product,
+    quantity: item.quantity
+  }))
     });
     toast.success('Ledger marked as paid'); //
     resetForm();
