@@ -325,7 +325,12 @@ const handlePartialPay = async (id) => {
       <div className="card-body">
         <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
         <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
-        <p><strong>Products Purchased:</strong> {entry.products?.map(p => p.name).join(', ') || 'None'}</p>
+<p><strong>Products Purchased:</strong></p>
+<ul className="mb-2">
+  {entry.products?.map((p, i) => (
+    <li key={i}>{p.product?.name || 'Unnamed'} — Qty: {p.quantity}</li>
+  )) || <li>None</li>}
+</ul>
         {entry.paid && (
           <p><strong>Paid Amount:</strong> ₹{entry.paidAmount?.toFixed(2) || '0.00'}</p>
         )}
