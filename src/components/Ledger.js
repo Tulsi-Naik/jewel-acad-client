@@ -94,7 +94,7 @@ setNoData(allLedgers.length === 0); // ✅ this line tracks if there's no data
   const handleClearFilters = () => {
     setCustomerId('');
     setCustomerName('');
-    setFilteredData(groupByCustomer(ledgerData));
+    setFilteredData(ledgerData);
     toast.info('Filters Cleared');
   };
 const handleAddLedger = async () => {
@@ -266,7 +266,7 @@ const handlePartialPay = async (id) => {
         filtered = ledgerData.filter(l => !l.paid);
       }
 
-      setFilteredData(groupByCustomer(filtered));
+      setFilteredData(filtered);
     }}
   >
     <option value="">All</option>
