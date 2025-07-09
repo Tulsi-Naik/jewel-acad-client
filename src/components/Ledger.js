@@ -66,7 +66,9 @@ acc[custId].products = Array.from(uniqueMap.values());
  const fetchLedger = useCallback(async () => {
   try {
     setLoading(true);
-const res = await axios.get('/api/ledger');
+    const res = await axios.get('/ledger');
+    console.log('📦 Ledger response:', res.data);
+
 
     if (!res.data || !Array.isArray(res.data)) {
       console.error('⚠️ Unexpected response:', res);
