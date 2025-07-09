@@ -137,58 +137,40 @@ await axios.put(`/ledger/${existingLedger._id}`, {
 };
 
 const handleGeneratePDF = (ledgerId) => {
-  const group = filteredData.find(g => g.entries.some(e => e._id === ledgerId));
-  const entry = group?.entries.find(e => e._id === ledgerId);
+  const entry = filteredData.find(e => e._id === ledgerId);
+  if (!entry) return toast.error("Ledger entry not found");
 
-  if (!entry || !group) return toast.error("Ledger entry not found");
-
-  const totalPaid = group.entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
-  const totalPending = group.entries.reduce((sum, e) => sum + (e.total || 0), 0);
+  const total = entry.total || 0;
+  const paidAmount = entry.paidAmount || 0;
 
   const pdfContent = document.createElement('div');
   pdfContent.innerHTML = `
-    <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
+    <div style="padding: 20px; font-family: Arial; border: 2px solid #000;">
       <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
-      <hr />
-      <p><strong>Customer Name:</strong> ${group.customer?.name || 'N/A'}</p>
-      <p><strong>Contact:</strong> ${group.customer?.contact || 'N/A'}</p>
-      <p><strong>Address:</strong> ${group.customer?.address || 'N/A'}</p>
+      <p><strong>Name:</strong> ${entry.customer?.name || 'N/A'}</p>
+      <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
+      <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
       <p><strong>Date:</strong> ${entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>
-      <p><strong>Ledger Entries:</strong></p>
+      <p><strong>Products:</strong></p>
       <ul>
-        ${group.entries.map(e => {
-          const date = new Date(e.createdAt).toLocaleString();
-          const products = e.products?.map(p => {
-            const name = p.product?.name || 'Unnamed';
-            const qty = p.quantity || 0;
-            const price = p.product?.price || 0;
-            const total = qty * price;
-            return `${name} x${qty} — ₹${total.toFixed(2)}`;
-          }).join(', ') || '—';
-          const paid = e.paidAmount ? `Paid: ₹${e.paidAmount.toFixed(2)}` : '';
-          return `<li>${date} — ${products} ${paid}</li>`;
+        ${entry.products?.map(p => {
+          const name = p.product?.name || 'Unnamed';
+          const qty = p.quantity || 0;
+          const price = p.product?.price || 0;
+          const lineTotal = qty * price;
+          return `<li>${name} x${qty} — ₹${lineTotal.toFixed(2)}</li>`;
         }).join('')}
       </ul>
-      <p><strong>Amount Paid:</strong> ₹${totalPaid.toFixed(2)}</p>
-      <p><strong>Total Pending:</strong> ₹${totalPending.toFixed(2)}</p>
+      <p><strong>Paid:</strong> ₹${paidAmount.toFixed(2)}</p>
+      <p><strong>Total:</strong> ₹${total.toFixed(2)}</p>
       <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
       ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
-      <div style="margin-top: 30px; text-align: right;">
-        <p>Authorized Signature __________________</p>
-      </div>
     </div>
   `;
 
-  const opt = {
-    margin: 0.3,
-    filename: `ledger_${ledgerId}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-  };
-
-  html2pdf().from(pdfContent).set(opt).save();
+  html2pdf().from(pdfContent).save();
 };
+
 
 const markAsPaid = async (id) => {
   try {
@@ -294,8 +276,11 @@ const handlePartialPay = async (id) => {
   <div key={index} className="card mb-3 shadow">
     <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <div>
-        <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
-      </div>
+  <strong style={{ color: entry.paid ? 'lightgreen' : 'white' }}>
+    {entry.customer?.name || 'Unknown'}
+  </strong> | {entry.customer?.contact || 'N/A'}
+</div>
+
       <div className="d-flex gap-2">
         {!entry.paid && (
           <>
