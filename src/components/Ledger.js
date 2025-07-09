@@ -140,36 +140,43 @@ const handleGeneratePDF = (ledgerId) => {
   const entry = filteredData.find(e => e._id === ledgerId);
   if (!entry) return toast.error("Ledger entry not found");
 
-  const total = entry.total || 0;
-  const paidAmount = entry.paidAmount || 0;
-
   const pdfContent = document.createElement('div');
   pdfContent.innerHTML = `
-    <div style="padding: 20px; font-family: Arial; border: 2px solid #000;">
+    <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
       <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
-      <p><strong>Name:</strong> ${entry.customer?.name || 'N/A'}</p>
+      <hr />
+      <p><strong>Customer Name:</strong> ${entry.customer?.name || 'N/A'}</p>
       <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
       <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
-      <p><strong>Date:</strong> ${entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>
+      <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
       <p><strong>Products:</strong></p>
       <ul>
         ${entry.products?.map(p => {
-          const name = p.product?.name || 'Unnamed';
+          const name = p.product?.name || p.name || 'Unnamed';
           const qty = p.quantity || 0;
           const price = p.product?.price || 0;
           const lineTotal = qty * price;
           return `<li>${name} x${qty} — ₹${lineTotal.toFixed(2)}</li>`;
-        }).join('')}
+        }).join('') || '<li>None</li>'}
       </ul>
-      <p><strong>Paid:</strong> ₹${paidAmount.toFixed(2)}</p>
-      <p><strong>Total:</strong> ₹${total.toFixed(2)}</p>
-      <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
-      ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
+      <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
+      <div style="margin-top: 30px; text-align: right;">
+        <p>Authorized Signature __________________</p>
+      </div>
     </div>
   `;
 
-  html2pdf().from(pdfContent).save();
+  const opt = {
+    margin: 0.3,
+    filename: `ledger_${ledgerId}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  html2pdf().from(pdfContent).set(opt).save();
 };
+
 
 
 const markAsPaid = async (id) => {
