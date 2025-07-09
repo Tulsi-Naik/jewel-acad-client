@@ -26,33 +26,7 @@ const res = await axios.get('/products');
       console.error('Error', err);
     }
   };
-  const groupByCustomer = (data) => {
-  const grouped = {};
-
-  data.forEach(entry => {
-    const cust = entry.customer;
-    const custId = cust?._id || cust;
-
-    if (!grouped[custId]) {
-      grouped[custId] = {
-        customer: cust,
-        entries: []
-      };
-    }
-
-    grouped[custId].entries.push({
-      _id: entry._id,
-      createdAt: entry.createdAt,
-      products: entry.products,
-      total: entry.total,
-      paid: entry.paid,
-      paidAmount: entry.paidAmount,
-      paidAt: entry.paidAt
-    });
-  });
-
-  return Object.values(grouped);
-};
+  
 
  const fetchLedger = useCallback(async () => {
   try {
@@ -69,10 +43,9 @@ const res = await axios.get('/products');
 
     const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 setLedgerData(allLedgers);
-setFilteredData(groupByCustomer(allLedgers));
+setFilteredData(allLedgers);
 setNoData(allLedgers.length === 0); // ✅ this line tracks if there's no data
 
-    setFilteredData(groupByCustomer(allLedgers));
   } catch (err) {
     if (err.response) {
       console.error('❌ Ledger fetch failed:', err.response.data);
@@ -101,13 +74,14 @@ setNoData(allLedgers.length === 0); // ✅ this line tracks if there's no data
   }, [fetchLedger]);
 
   const filterByCustomer = () => {
-  const filtered = ledgerData.filter(group => {
-    const matchesCustomerId = customerId ? group.customer?._id === customerId : true;
-    const matchesCustomerName = customerName
-      ? group.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
-      : true;
-    return matchesCustomerId && matchesCustomerName;
-  });
+ const filtered = ledgerData.filter(entry => {
+  const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
+  const matchesCustomerName = customerName
+    ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
+    : true;
+  return matchesCustomerId && matchesCustomerName;
+});
+
 
   setFilteredData(filtered);
 
@@ -316,65 +290,58 @@ const handlePartialPay = async (id) => {
 ) : noData ? (
   <p className="text-center text-muted mt-4">No ledger entries yet. Add one to get started!</p>
 ) : (
- filteredData.map((group, index) => (
+ filteredData.map((entry, index) => (
   <div key={index} className="card mb-3 shadow">
-    <div className="card-header bg-dark text-white">
-      <strong>{group.customer?.name || 'Unknown'}</strong> | {group.customer?.contact || 'N/A'}
-    </div>
-    <div className="card-body">
-      <p><strong>Address:</strong> {group.customer?.address || 'N/A'}</p>
-
-     {group.entries
-  .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  .map((entry, i) => {
-    console.log('🧾 Rendering entry:', entry); // ✅ Add this
-
-    return (
-      <div key={i} className="mb-3 border-bottom pb-2">
-        <p><strong>Date:</strong> {entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>
-        {entry.products?.length > 0 && (
+    <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
+      </div>
+      <div className="d-flex gap-2">
+        {!entry.paid && (
           <>
-            <p><strong>Products:</strong></p>
-            <ul>
-              {entry.products.map((p, idx) => {
-                const name = p.product?.name || 'Unnamed';
-                const qty = p.quantity || 0;
-                const price = p.product?.price || 0;
-                const total = qty * price;
-
-                return (
-                  <li key={idx}>
-                    {name} — Qty: {qty} — ₹{total.toFixed(2)}
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
-        {entry.paidAmount > 0 && (
-          <p><strong>Paid:</strong> ₹{(entry.paidAmount ?? 0).toFixed(2)}</p>
-        )}
-        <p><strong>Total:</strong> ₹{(entry.total ?? 0).toFixed(2)}</p>
-        <div className="d-flex gap-2 mb-2">
-          {!entry.paid && (
             <button className="btn btn-sm btn-success" onClick={() => markAsPaid(entry._id)}>
               Mark as Paid
             </button>
-          )}
-          {!entry.paid && (
             <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
               Partial Pay
             </button>
-          )}
-          <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
-            Download PDF
-          </button>
-        </div>
-        <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
+          </>
+        )}
+        <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
+          Download PDF
+        </button>
       </div>
-    );
-  })}
+    </div>
+    <div className="card-body">
+      <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
+      <p><strong>Date:</strong> {entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>
+      {entry.paid && entry.paidAt && (
+        <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
+      )}
+      {entry.products?.length > 0 && (
+        <>
+          <p><strong>Products:</strong></p>
+          <ul>
+            {entry.products.map((p, idx) => {
+              const name = p.product?.name || 'Unnamed';
+              const qty = p.quantity || 0;
+              const price = p.product?.price || 0;
+              const total = qty * price;
 
+              return (
+                <li key={idx}>
+                  {name} — Qty: {qty} — ₹{total.toFixed(2)}
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+      {entry.paidAmount > 0 && (
+        <p><strong>Paid:</strong> ₹{(entry.paidAmount ?? 0).toFixed(2)}</p>
+      )}
+      <p><strong>Total:</strong> ₹{(entry.total ?? 0).toFixed(2)}</p>
+      <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
     </div>
   </div>
 ))
