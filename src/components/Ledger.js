@@ -4,8 +4,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import html2pdf from 'html2pdf.js';
 
-
-
 const Ledger = () => {
   const [ledgerData, setLedgerData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -29,40 +27,33 @@ const res = await axios.get('/products');
     }
   };
   const groupByCustomer = (data) => {
-  const grouped = data.reduce((acc, entry) => {
-    const custId = entry.customer?._id || entry.customer;
-if (!custId) return acc;
+  const grouped = {};
 
-    if (!acc[custId]) {
-      acc[custId] = {
-        ...entry,
-        total: parseFloat(entry.total),
-        products: [...(entry.products || [])],
-        createdAt: entry.createdAt,
+  data.forEach(entry => {
+    const cust = entry.customer;
+    const custId = cust?._id || cust;
+
+    if (!grouped[custId]) {
+      grouped[custId] = {
+        customer: cust,
+        entries: []
       };
-    } else {
-      acc[custId].total += parseFloat(entry.total);
-      const allProducts = [...(acc[custId].products || []), ...(entry.products || [])];
-const uniqueMap = new Map();
-
-allProducts.forEach(p => {
-  const key = p._id?.toString?.() || p.name;  // fallback if _id missing
-  if (!uniqueMap.has(key)) {
-    uniqueMap.set(key, p);
-  }
-});
-
-acc[custId].products = Array.from(uniqueMap.values());
-
-      if (new Date(entry.createdAt) > new Date(acc[custId].createdAt)) {
-        acc[custId].createdAt = entry.createdAt;
-      }
     }
-    return acc;
-  }, {});
+
+    grouped[custId].entries.push({
+      _id: entry._id,
+      createdAt: entry.createdAt,
+      products: entry.products,
+      total: entry.total,
+      paid: entry.paid,
+      paidAmount: entry.paidAmount,
+      paidAt: entry.paidAt
+    });
+  });
 
   return Object.values(grouped);
 };
+
  const fetchLedger = useCallback(async () => {
   try {
     setLoading(true);
@@ -179,7 +170,23 @@ pdfContent.innerHTML = `
     <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
     <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
     <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
-    <p><strong>Products:</strong> ${entry.products?.map(p => p.name).join(', ') || 'None'}</p>
+<p><strong>Ledger Entries:</strong></p>
+<ul>
+  ${entry.entries
+    .map(e => {
+      const date = new Date(e.createdAt).toLocaleString();
+const products = e.products?.map(p => {
+  const name = p.product?.name || 'Unnamed';
+  const qty = p.quantity || 0;
+  const price = p.product?.price || 0;
+  const total = qty * price;
+  return `${name} x${qty} — ₹${total.toFixed(2)}`;
+}).join(', ') || '—';
+      const paid = e.paidAmount ? `Paid: ₹${e.paidAmount.toFixed(2)}` : '';
+      return `<li>${date} — ${products} ${paid}</li>`;
+    })
+    .join('')}
+</ul>
     <p><strong>Amount Paid:</strong> ₹${entry.paidAmount?.toFixed(2) || '0.00'}</p>
     <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
     <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
@@ -302,44 +309,50 @@ const handlePartialPay = async (id) => {
 ) : noData ? (
   <p className="text-center text-muted mt-4">No ledger entries yet. Add one to get started!</p>
 ) : (
-  filteredData.map((entry, index) => (
-    <div
-      key={index}
-      className="card mb-3 shadow"
-      ref={(el) => (componentRefs.current[entry._id] = el)}
-    >
-      <div className={`card-header d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success text-white' : 'bg-dark text-white'}`}>
-        <span><strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}</span>
-        <div>
-          {!entry.paid && (
-            <button className="btn btn-sm btn-success me-2" onClick={() => markAsPaid(entry._id)}>
-              Mark as Paid
-            </button>
-          )}
-          {!entry.paid && (
-            <button className="btn btn-sm btn-info me-2" onClick={() => handlePartialPay(entry._id)}>
-              Partial Pay
-            </button>
-          )}
-          <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>Download PDF</button>
-        </div>
-      </div>
-      <div className="card-body">
-        <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
-        <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
-<p><strong>Products Purchased:</strong></p>
-<ul className="mb-2">
-  {entry.products?.map((p, i) => (
-    <li key={i}>{p.product?.name || 'Unnamed'} — Qty: {p.quantity}</li>
-  )) || <li>None</li>}
-</ul>
-        {entry.paid && (
-          <p><strong>Paid Amount:</strong> ₹{entry.paidAmount?.toFixed(2) || '0.00'}</p>
-        )}
-        <p><strong>Total Pending Amount:</strong> ₹{entry.total?.toFixed(2) || '0.00'}</p>
-      </div>
+ filteredData.map((group, index) => (
+  <div key={index} className="card mb-3 shadow">
+    <div className="card-header bg-dark text-white">
+      <strong>{group.customer?.name || 'Unknown'}</strong> | {group.customer?.contact || 'N/A'}
     </div>
-  ))
+    <div className="card-body">
+      <p><strong>Address:</strong> {group.customer?.address || 'N/A'}</p>
+
+      {group.entries
+        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        .map((entry, i) => (
+          <div key={i} className="mb-3 border-bottom pb-2">
+            <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
+            {entry.products?.length > 0 && (
+              <>
+                <p><strong>Products:</strong></p>
+                <ul>
+  {entry.products.map((p, idx) => {
+    const name = p.product?.name || 'Unnamed';
+    const qty = p.quantity || 0;
+    const price = p.product?.price || 0;
+    const total = qty * price;
+
+    return (
+      <li key={idx}>
+        {name} — Qty: {qty} — ₹{total.toFixed(2)}
+      </li>
+    );
+  })}
+</ul>
+
+              </>
+            )}
+            {entry.paidAmount > 0 && (
+              <p><strong>Paid:</strong> ₹{entry.paidAmount.toFixed(2)}</p>
+            )}
+            <p><strong>Total:</strong> ₹{entry.total.toFixed(2)}</p>
+            <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
+          </div>
+        ))}
+    </div>
+  </div>
+))
+
 )}
 
       
