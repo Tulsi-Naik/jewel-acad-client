@@ -274,13 +274,10 @@ const handlePartialPay = async (id) => {
 ) : (
  filteredData.map((entry, index) => (
   <div key={index} className="card mb-3 shadow">
-    <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+<div className={`card-header text-white d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success' : 'bg-dark'}`}>
       <div>
-  <strong style={{ color: entry.paid ? 'lightgreen' : 'white' }}>
-    {entry.customer?.name || 'Unknown'}
-  </strong> | {entry.customer?.contact || 'N/A'}
-</div>
-
+        <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
+      </div>
       <div className="d-flex gap-2">
         {!entry.paid && (
           <>
