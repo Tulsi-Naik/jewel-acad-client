@@ -101,17 +101,21 @@ setNoData(allLedgers.length === 0); // ✅ this line tracks if there's no data
   }, [fetchLedger]);
 
   const filterByCustomer = () => {
-    const filtered = ledgerData.filter(entry => {
-      const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
-      const matchesCustomerName = customerName ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase()) : true;
-      return matchesCustomerId && matchesCustomerName;
-    });
-    setFilteredData(groupByCustomer(filtered));
-    
-    filtered.length > 0
-      ? toast.info(`Filtered ${filtered.length} record(s)`)
-      : toast.warning('No Matching Records Found');
-  };
+  const filtered = ledgerData.filter(group => {
+    const matchesCustomerId = customerId ? group.customer?._id === customerId : true;
+    const matchesCustomerName = customerName
+      ? group.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
+      : true;
+    return matchesCustomerId && matchesCustomerName;
+  });
+
+  setFilteredData(filtered);
+
+  filtered.length > 0
+    ? toast.info(`Filtered ${filtered.length} record(s)`)
+    : toast.warning('No Matching Records Found');
+};
+
 
   const handleClearFilters = () => {
     setCustomerId('');
@@ -161,6 +165,9 @@ await axios.put(`/ledger/${existingLedger._id}`, {
      const handleGeneratePDF = (ledgerId) => {
   const entry = filteredData.find(e => e._id === ledgerId);
   if (!entry) return toast.error(" ");
+  const totalPaid = entry.entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
+const totalPending = entry.entries.reduce((sum, e) => sum + (e.total || 0), 0);
+
   const pdfContent = document.createElement('div');
 pdfContent.innerHTML = `
   <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
@@ -187,8 +194,9 @@ const products = e.products?.map(p => {
     })
     .join('')}
 </ul>
-    <p><strong>Amount Paid:</strong> ₹${entry.paidAmount?.toFixed(2) || '0.00'}</p>
-    <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
+   <p><strong>Amount Paid:</strong> ₹${totalPaid.toFixed(2)}</p>
+<p><strong>Total Pending:</strong> ₹${totalPending.toFixed(2)}</p>
+
     <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
     ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
     <div style="margin-top: 30px; text-align: right;">
@@ -356,9 +364,10 @@ const handlePartialPay = async (id) => {
       Partial Pay
     </button>
   )}
-  <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(group._id)}>
-    Download PDF
-  </button>
+ <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
+  Download PDF
+</button>
+
 </div>
 
             <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
