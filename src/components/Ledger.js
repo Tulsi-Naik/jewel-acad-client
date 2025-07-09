@@ -321,8 +321,7 @@ const handlePartialPay = async (id) => {
         .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         .map((entry, i) => (
           <div key={i} className="mb-3 border-bottom pb-2">
-            <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
-            {entry.products?.length > 0 && (
+<p><strong>Date:</strong> {entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>            {entry.products?.length > 0 && (
               <>
                 <p><strong>Products:</strong></p>
                 <ul>
@@ -342,10 +341,25 @@ const handlePartialPay = async (id) => {
 
               </>
             )}
-            {entry.paidAmount > 0 && (
+           {entry.paidAmount > 0 && (
   <p><strong>Paid:</strong> ₹{(entry.paidAmount ?? 0).toFixed(2)}</p>
 )}
-<p><strong>Total:</strong> ₹{(entry.total ?? 0).toFixed(2)}</p>
+
+<p><strong>Total:</strong> ₹{(entry.total ?? 0).toFixed(2)}</p><div className="d-flex gap-2 mb-2">
+  {!entry.paid && (
+    <button className="btn btn-sm btn-success" onClick={() => markAsPaid(entry._id)}>
+      Mark as Paid
+    </button>
+  )}
+  {!entry.paid && (
+    <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
+      Partial Pay
+    </button>
+  )}
+  <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(group._id)}>
+    Download PDF
+  </button>
+</div>
 
             <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
           </div>
