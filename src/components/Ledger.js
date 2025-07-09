@@ -301,37 +301,44 @@ const handlePartialPay = async (id) => {
         </button>
       </div>
     </div>
-    <div className="card-body">
-      <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
-      <p><strong>Date:</strong> {entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>
-      {entry.paid && entry.paidAt && (
-        <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
-      )}
-      {entry.products?.length > 0 && (
-        <>
-          <p><strong>Products:</strong></p>
-          <ul>
-            {entry.products.map((p, idx) => {
-              const name = p.product?.name || 'Unnamed';
-              const qty = p.quantity || 0;
-              const price = p.product?.price || 0;
-              const total = qty * price;
+  <div className="card-body">
+  <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
+  <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
 
-              return (
-                <li key={idx}>
-                  {name} — Qty: {qty} — ₹{total.toFixed(2)}
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      )}
-      {entry.paidAmount > 0 && (
-        <p><strong>Paid:</strong> ₹{(entry.paidAmount ?? 0).toFixed(2)}</p>
-      )}
-      <p><strong>Total:</strong> ₹{(entry.total ?? 0).toFixed(2)}</p>
-      <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
-    </div>
+  {entry.paid && entry.paidAt && (
+    <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
+  )}
+
+  <p><strong>Products:</strong></p>
+  <ul className="mb-2">
+    {entry.products?.map((p, idx) => {
+      const name = p.product?.name || 'Unnamed';
+      const qty = p.quantity || 0;
+      const price = p.product?.price || 0;
+      const lineTotal = qty * price;
+
+      return (
+        <li key={idx}>
+          {name} — Qty: {qty} — ₹{lineTotal.toFixed(2)}
+        </li>
+      );
+    })}
+  </ul>
+
+  {entry.paidAmount > 0 && (
+    <p><strong>Paid:</strong> ₹{entry.paidAmount.toFixed(2)}</p>
+  )}
+
+  <p><strong>Total Remaining:</strong> ₹{entry.total.toFixed(2)}</p>
+
+  <p>
+    <strong>Status:</strong>{' '}
+    <span style={{ color: entry.paid ? 'green' : 'red', fontWeight: 'bold' }}>
+      {entry.paid ? 'Paid' : 'Unpaid'}
+    </span>
+  </p>
+</div>
+
   </div>
 ))
 
