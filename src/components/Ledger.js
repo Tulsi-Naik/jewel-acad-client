@@ -162,49 +162,48 @@ await axios.put(`/ledger/${existingLedger._id}`, {
   }
 };
 
-     const handleGeneratePDF = (ledgerId) => {
-  const entry = filteredData.find(e => e._id === ledgerId);
-  if (!entry) return toast.error(" ");
-  const totalPaid = entry.entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
-const totalPending = entry.entries.reduce((sum, e) => sum + (e.total || 0), 0);
+const handleGeneratePDF = (ledgerId) => {
+  const group = filteredData.find(g => g.entries.some(e => e._id === ledgerId));
+  const entry = group?.entries.find(e => e._id === ledgerId);
+
+  if (!entry || !group) return toast.error("Ledger entry not found");
+
+  const totalPaid = group.entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
+  const totalPending = group.entries.reduce((sum, e) => sum + (e.total || 0), 0);
 
   const pdfContent = document.createElement('div');
-pdfContent.innerHTML = `
-  <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
-    <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
-    <hr />
-    <p><strong>Customer Name:</strong> ${entry.customer?.name || 'N/A'}</p>
-    <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
-    <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
-    <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
-<p><strong>Ledger Entries:</strong></p>
-<ul>
-  ${entry.entries
-    .map(e => {
-      const date = new Date(e.createdAt).toLocaleString();
-const products = e.products?.map(p => {
-  const name = p.product?.name || 'Unnamed';
-  const qty = p.quantity || 0;
-  const price = p.product?.price || 0;
-  const total = qty * price;
-  return `${name} x${qty} — ₹${total.toFixed(2)}`;
-}).join(', ') || '—';
-      const paid = e.paidAmount ? `Paid: ₹${e.paidAmount.toFixed(2)}` : '';
-      return `<li>${date} — ${products} ${paid}</li>`;
-    })
-    .join('')}
-</ul>
-   <p><strong>Amount Paid:</strong> ₹${totalPaid.toFixed(2)}</p>
-<p><strong>Total Pending:</strong> ₹${totalPending.toFixed(2)}</p>
-
-    <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
-    ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
-    <div style="margin-top: 30px; text-align: right;">
-      <p>Authorized Signature __________________</p>
+  pdfContent.innerHTML = `
+    <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
+      <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
+      <hr />
+      <p><strong>Customer Name:</strong> ${group.customer?.name || 'N/A'}</p>
+      <p><strong>Contact:</strong> ${group.customer?.contact || 'N/A'}</p>
+      <p><strong>Address:</strong> ${group.customer?.address || 'N/A'}</p>
+      <p><strong>Date:</strong> ${entry.createdAt ? new Date(entry.createdAt).toLocaleString() : '—'}</p>
+      <p><strong>Ledger Entries:</strong></p>
+      <ul>
+        ${group.entries.map(e => {
+          const date = new Date(e.createdAt).toLocaleString();
+          const products = e.products?.map(p => {
+            const name = p.product?.name || 'Unnamed';
+            const qty = p.quantity || 0;
+            const price = p.product?.price || 0;
+            const total = qty * price;
+            return `${name} x${qty} — ₹${total.toFixed(2)}`;
+          }).join(', ') || '—';
+          const paid = e.paidAmount ? `Paid: ₹${e.paidAmount.toFixed(2)}` : '';
+          return `<li>${date} — ${products} ${paid}</li>`;
+        }).join('')}
+      </ul>
+      <p><strong>Amount Paid:</strong> ₹${totalPaid.toFixed(2)}</p>
+      <p><strong>Total Pending:</strong> ₹${totalPending.toFixed(2)}</p>
+      <p><strong>Status:</strong> ${entry.paid ? 'Paid' : 'Unpaid'}</p>
+      ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
+      <div style="margin-top: 30px; text-align: right;">
+        <p>Authorized Signature __________________</p>
+      </div>
     </div>
-  </div>
-`;
-
+  `;
 
   const opt = {
     margin: 0.3,
