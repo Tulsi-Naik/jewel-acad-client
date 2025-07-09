@@ -129,10 +129,11 @@ const res = await axios.get('/products');
         sale: savedSaleId,
         customer: customerId,
         total: totalAmount,
-        products: saleItems.map(item => ({
-    product: item.product,
-    quantity: item.quantity
-  }))
+      products: saleItems.map(item => ({
+  product: item.product._id || item.product, // ✅ handles both object and ID
+  quantity: item.quantity
+}))
+
       });
       toast.success('Ledger entry added successfully'); //
       resetForm();
@@ -151,9 +152,10 @@ const handleMarkAsPaid = async () => {
       total: totalAmount,
       markAsPaid: true,
       products: saleItems.map(item => ({
-        product: item.product,
-        quantity: item.quantity
-      }))
+  product: item.product._id || item.product, // ✅ handles both object and ID
+  quantity: item.quantity
+}))
+
     };
 
     console.log("🧾 Sending to ledger:", payload);
