@@ -343,9 +343,10 @@ const handlePartialPay = async (id) => {
               </>
             )}
             {entry.paidAmount > 0 && (
-              <p><strong>Paid:</strong> ₹{entry.paidAmount.toFixed(2)}</p>
-            )}
-            <p><strong>Total:</strong> ₹{entry.total.toFixed(2)}</p>
+  <p><strong>Paid:</strong> ₹{(entry.paidAmount ?? 0).toFixed(2)}</p>
+)}
+<p><strong>Total:</strong> ₹{(entry.total ?? 0).toFixed(2)}</p>
+
             <p><strong>Status:</strong> {entry.paid ? 'Paid' : 'Unpaid'}</p>
           </div>
         ))}
