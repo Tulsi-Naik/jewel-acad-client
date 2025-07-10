@@ -1,22 +1,25 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-
-import { useNavigate } from 'react-router-dom';
-
 
 const VendorNavbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('vendorInfo'); // 🔁 Optional: clean up
     navigate('/login');
   };
 
+  const vendor = JSON.parse(localStorage.getItem('vendorInfo') || '{}');
+  const brandShort = vendor.brandShort || 'Jewel Hub'; // fallback
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top px-4 py-3">
-      <NavLink className="navbar-brand fw-bold glowing-brand" to="/">अलंकृत</NavLink>
+      <NavLink className="navbar-brand fw-bold glowing-brand" to="/">
+        {brandShort}
+      </NavLink>
       <button
         className="navbar-toggler"
         type="button"
@@ -58,6 +61,5 @@ const VendorNavbar = () => {
     </nav>
   );
 };
-
 
 export default VendorNavbar;
