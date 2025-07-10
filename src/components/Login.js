@@ -29,7 +29,8 @@ const Login = () => {
 
       if (role === 'vendor') {
         localStorage.setItem('vendorInfo', JSON.stringify({
-          businessName: decoded.businessName,
+          brandFull: decoded.brandFull,
+          brandShort: decoded.brandShort,
           address: decoded.address,
           contact: decoded.contact
         }));
@@ -65,11 +66,11 @@ const Login = () => {
         textAlign: 'center'
       }}>
         <h2 style={{ marginBottom: '10px', color: '#8B5E3C' }}>
-  Welcome back
-</h2>
-<p style={{ marginBottom: '30px', color: '#555' }}>
-  Let’s shine today ✨
-</p>
+          Welcome back
+        </h2>
+        <p style={{ marginBottom: '30px', color: '#555' }}>
+          Let’s shine today ✨
+        </p>
 
         <form onSubmit={handleSubmit}>
           <input
