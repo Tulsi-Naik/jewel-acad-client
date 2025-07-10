@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from '../utils/axiosInstance';
 import { toast } from 'react-toastify';
 
-
 const exportToCSV = (data, filename = 'vendors.csv') => {
   const headers = ['Username', 'DB Name', 'Role'];
   const rows = data.map(v => [v.username, v.dbName, v.role]);
@@ -22,34 +21,30 @@ const exportToCSV = (data, filename = 'vendors.csv') => {
   document.body.removeChild(link);
 };
 
-
 const AdminDashboard = () => {
   const [vendors, setVendors] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editVendor, setEditVendor] = useState(null);
-const [newVendor, setNewVendor] = useState({
-  username: '',
-  password: '',
-  dbName: '',
-  businessName: '',
-  address: '',
-  contact: ''
-});
+  const [newVendor, setNewVendor] = useState({
+    username: '',
+    password: '',
+    dbName: '',
+    brandFull: '',
+    brandShort: '',
+    address: '',
+    contact: ''
+  });
 
   const [resetVendor, setResetVendor] = useState(null);
-const [newPassword, setNewPassword] = useState('');
-const [vendorStats, setVendorStats] = useState({ total: 0, dbs: 0 });
-
-
+  const [newPassword, setNewPassword] = useState('');
+  const [vendorStats, setVendorStats] = useState({ total: 0, dbs: 0 });
 
   const fetchVendors = async () => {
     try {
       const res = await axios.get('/admin/vendors');
-setVendors(res.data); // ✅ First update the vendors list
-
-const dbNames = new Set(res.data.map(v => v.dbName));
-setVendorStats({ total: res.data.length, dbs: dbNames.size }); // ✅ Then calculate stats
-
+      setVendors(res.data);
+      const dbNames = new Set(res.data.map(v => v.dbName));
+      setVendorStats({ total: res.data.length, dbs: dbNames.size });
     } catch (err) {
       console.error('Failed to fetch vendors:', err);
     }
@@ -59,50 +54,55 @@ setVendorStats({ total: res.data.length, dbs: dbNames.size }); // ✅ Then calcu
     fetchVendors();
   }, []);
 
-useEffect(() => {
-  if (editVendor) {
-    setNewVendor({
-      username: editVendor.username,
-      password: '',
-      dbName: editVendor.dbName,
-      businessName: editVendor.businessName || '',
-      address: editVendor.address || '',
-      contact: editVendor.contact || ''
-    });
-  }
-}, [editVendor]);
-
+  useEffect(() => {
+    if (editVendor) {
+      setNewVendor({
+        username: editVendor.username,
+        password: '',
+        dbName: editVendor.dbName,
+        brandFull: editVendor.brandFull || '',
+        brandShort: editVendor.brandShort || '',
+        address: editVendor.address || '',
+        contact: editVendor.contact || ''
+      });
+    }
+  }, [editVendor]);
 
   const handleSaveVendor = async () => {
-const { username, password, dbName, businessName, address, contact } = newVendor;    if (!username.trim() || !dbName.trim()) {
-  toast.error('Username and DB Name are required');
-  return;
-}
-if (!editVendor && (!password || password.length < 6)) {
-  toast.error('Password must be at least 6 characters');
-  return;
-}
-
+    const { username, password, dbName, brandFull, brandShort, address, contact } = newVendor;
+    if (!username.trim() || !dbName.trim()) {
+      toast.error('Username and DB Name are required');
+      return;
+    }
+    if (!editVendor && (!password || password.length < 6)) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
 
     try {
       if (editVendor) {
-        await axios.put(`/admin/vendors/${editVendor._id}`, { username, dbName, businessName, address, contact });
+        await axios.put(`/admin/vendors/${editVendor._id}`, {
+          username, dbName, brandFull, brandShort, address, contact
+        });
         toast.success('Vendor updated');
       } else {
-        await axios.post('/admin/vendors', { username, password, dbName, businessName, address, contact });
+        await axios.post('/admin/vendors', {
+          username, password, dbName, brandFull, brandShort, address, contact
+        });
         toast.success('Vendor added');
       }
 
       setShowModal(false);
       setEditVendor(null);
-setNewVendor({
-  username: '',
-  password: '',
-  dbName: '',
-  businessName: '',
-  address: '',
-  contact: ''
-});
+      setNewVendor({
+        username: '',
+        password: '',
+        dbName: '',
+        brandFull: '',
+        brandShort: '',
+        address: '',
+        contact: ''
+      });
       fetchVendors();
     } catch (err) {
       console.error('Error saving vendor:', err);
@@ -127,90 +127,80 @@ setNewVendor({
     <div className="container mt-4">
       <h2 className="text-primary mb-4">Admin Dashboard – Vendor Management</h2>
 
-      
-<div className="mb-3 d-flex gap-4">
-  <div className="bg-light border rounded p-3">
-    <h6 className="text-muted mb-1">Total Vendors</h6>
-    <h4 className="text-primary">{vendorStats.total}</h4>
-  </div>
-  <div className="bg-light border rounded p-3">
-    <h6 className="text-muted mb-1">Active Databases</h6>
-    <h4 className="text-success">{vendorStats.dbs}</h4>
-  </div>
-</div>
+      <div className="mb-3 d-flex gap-4">
+        <div className="bg-light border rounded p-3">
+          <h6 className="text-muted mb-1">Total Vendors</h6>
+          <h4 className="text-primary">{vendorStats.total}</h4>
+        </div>
+        <div className="bg-light border rounded p-3">
+          <h6 className="text-muted mb-1">Active Databases</h6>
+          <h4 className="text-success">{vendorStats.dbs}</h4>
+        </div>
+      </div>
 
-     <div className="d-flex gap-2 mb-3">
-  <button className="btn btn-success" onClick={() => {
-   setEditVendor(null);
-setNewVendor({
-  username: '',
-  password: '',
-  dbName: '',
-  businessName: '',
-  address: '',
-  contact: ''
-});
-setShowModal(true);
+      <div className="d-flex gap-2 mb-3">
+        <button className="btn btn-success" onClick={() => {
+          setEditVendor(null);
+          setNewVendor({
+            username: '',
+            password: '',
+            dbName: '',
+            brandFull: '',
+            brandShort: '',
+            address: '',
+            contact: ''
+          });
+          setShowModal(true);
+        }}>
+          ➕ Add Vendor
+        </button>
 
-  }}>
-    ➕ Add Vendor
-  </button>
+        <button className="btn btn-outline-primary" onClick={() => exportToCSV(vendors)}>
+          📤 Export CSV
+        </button>
+      </div>
 
-  <button className="btn btn-outline-primary" onClick={() => exportToCSV(vendors)}>
-    📤 Export CSV
-  </button>
-</div>
-
-
-
-      
-
-<table className="table table-bordered" style={{ tableLayout: 'auto', width: '100%' }}>
-      <thead className="table-dark">
-  <tr>
-    <th>Username</th>
-    <th>DB Name</th>
-    <th>Role</th>
-    <th className="text-center">Actions</th>
-  </tr>
-</thead>
-
+      <table className="table table-bordered" style={{ tableLayout: 'auto', width: '100%' }}>
+        <thead className="table-dark">
+          <tr>
+            <th>Username</th>
+            <th>DB Name</th>
+            <th>Role</th>
+            <th className="text-center">Actions</th>
+          </tr>
+        </thead>
         <tbody>
           {vendors.map(v => (
             <tr key={v._id}>
               <td>{v.username}</td>
               <td>{v.dbName}</td>
               <td>{v.role}</td>
-            <td className="text-center" style={{ whiteSpace: 'nowrap' }}>
-  <button
-    className="btn btn-sm btn-warning me-2"
-    onClick={() => {
-      setEditVendor(v);
-      setShowModal(true);
-    }}
-  >
-    Edit
-  </button>
-  <button
-    className="btn btn-sm btn-danger me-2"
-    onClick={() => handleDeleteVendor(v._id)}
-  >
-    Delete
-  </button>
-  <button
-    className="btn btn-sm btn-outline-secondary"
-    onClick={() => {
-      setResetVendor(v);
-      setNewPassword('');
-    }}
-  >
-    Reset Password
-  </button>
-</td>
-
-
-
-
+              <td className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                <button
+                  className="btn btn-sm btn-warning me-2"
+                  onClick={() => {
+                    setEditVendor(v);
+                    setShowModal(true);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-sm btn-danger me-2"
+                  onClick={() => handleDeleteVendor(v._id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={() => {
+                    setResetVendor(v);
+                    setNewPassword('');
+                  }}
+                >
+                  Reset Password
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -225,14 +215,15 @@ setShowModal(true);
                 <button type="button" className="btn-close" onClick={() => {
                   setShowModal(false);
                   setEditVendor(null);
-setNewVendor({
-  username: '',
-  password: '',
-  dbName: '',
-  businessName: '',
-  address: '',
-  contact: ''
-});
+                  setNewVendor({
+                    username: '',
+                    password: '',
+                    dbName: '',
+                    brandFull: '',
+                    brandShort: '',
+                    address: '',
+                    contact: ''
+                  });
                 }}></button>
               </div>
               <div className="modal-body">
@@ -259,44 +250,48 @@ setNewVendor({
                   value={newVendor.dbName}
                   onChange={(e) => setNewVendor({ ...newVendor, dbName: e.target.value })}
                 />
-              <input
-  type="text"
-  className="form-control mb-2"
-  placeholder="Business Name"
-  value={newVendor.businessName || ''}
-  onChange={(e) => setNewVendor({ ...newVendor, businessName: e.target.value })}
-/>
-
-
-<input
-  type="text"
-  className="form-control mb-2"
-  placeholder="Business Address"
-value={newVendor.address || ''}
-  onChange={(e) => setNewVendor({ ...newVendor, address: e.target.value })}
-/>
-
-<input
-  type="text"
-  className="form-control mb-2"
-  placeholder="Contact Number"
-value={newVendor.contact || ''}
-  onChange={(e) => setNewVendor({ ...newVendor, contact: e.target.value })}
-/>
-
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Brand Full Name (e.g. अलंकृत ज्वेल हब)"
+                  value={newVendor.brandFull || ''}
+                  onChange={(e) => setNewVendor({ ...newVendor, brandFull: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Brand Short Name (e.g. अलंकृत)"
+                  value={newVendor.brandShort || ''}
+                  onChange={(e) => setNewVendor({ ...newVendor, brandShort: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Business Address"
+                  value={newVendor.address || ''}
+                  onChange={(e) => setNewVendor({ ...newVendor, address: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Contact Number"
+                  value={newVendor.contact || ''}
+                  onChange={(e) => setNewVendor({ ...newVendor, contact: e.target.value })}
+                />
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={() => {
                   setShowModal(false);
                   setEditVendor(null);
-setNewVendor({
-  username: '',
-  password: '',
-  dbName: '',
-  businessName: '',
-  address: '',
-  contact: ''
-});
+                  setNewVendor({
+                    username: '',
+                    password: '',
+                    dbName: '',
+                    brandFull: '',
+                    brandShort: '',
+                    address: '',
+                    contact: ''
+                  });
                 }}>Cancel</button>
                 <button className="btn btn-primary" onClick={handleSaveVendor}>
                   {editVendor ? 'Update Vendor' : 'Add Vendor'}
@@ -306,49 +301,48 @@ setNewVendor({
           </div>
         </div>
       )}
-      {resetVendor && (
-  <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-    <div className="modal-dialog">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Reset Password for {resetVendor.username}</h5>
-          <button type="button" className="btn-close" onClick={() => setResetVendor(null)}></button>
-        </div>
-        <div className="modal-body">
-          <input
-            type="password"
-            className="form-control"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={() => setResetVendor(null)}>Cancel</button>
-          <button className="btn btn-primary" onClick={async () => {
-if (!newPassword || newPassword.length < 6) {
-  return toast.error('Password must be at least 6 characters');
-}
-            try {
-              await axios.put(`/admin/vendors/${resetVendor._id}/password`, { password: newPassword });
-              toast.success('Password updated');
-              setResetVendor(null);
-              setNewPassword('');
-            } catch (err) {
-              console.error('Error resetting password:', err);
-              toast.error('Failed to reset password');
-            }
-          }}>
-            Update Password
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
 
+      {resetVendor && (
+        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Reset Password for {resetVendor.username}</h5>
+                <button type="button" className="btn-close" onClick={() => setResetVendor(null)}></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setResetVendor(null)}>Cancel</button>
+                <button className="btn btn-primary" onClick={async () => {
+                  if (!newPassword || newPassword.length < 6) {
+                    return toast.error('Password must be at least 6 characters');
+                  }
+                  try {
+                    await axios.put(`/admin/vendors/${resetVendor._id}/password`, { password: newPassword });
+                    toast.success('Password updated');
+                    setResetVendor(null);
+                    setNewPassword('');
+                  } catch (err) {
+                    console.error('Error resetting password:', err);
+                    toast.error('Failed to reset password');
+                  }
+                }}>
+                  Update Password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-    
   );
 };
 
