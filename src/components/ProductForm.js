@@ -39,7 +39,7 @@ const [showHistoryModal, setShowHistoryModal] = useState(false);
 const [stockHistory, setStockHistory] = useState([]);
 const labelRef = useRef(null);
 const [barcodeDataUrl, setBarcodeDataUrl] = useState('');
-const [branding, setBranding] = useState({ brandFull: '' }); // Replace later with real vendor info
+const [branding, setBranding] = useState({ brandFull: '', brandShort: '' });
 const user = getUserFromToken();
 
 useEffect(() => {
@@ -208,31 +208,59 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
   }
 
   const barcodeImage = canvas.toDataURL("image/png");
-  setBarcodeDataUrl(barcodeImage);
-  setLabelProduct(product);
 
-  setTimeout(() => {
-    const originalElement = labelRef.current;
-    if (!originalElement) return;
+  // Dynamically create temporary container
+  const tempContainer = document.createElement('div');
 
-    // Create temporary wrapper for multiple labels
-    const tempContainer = document.createElement('div');
-    for (let i = 0; i < count; i++) {
-      const clone = originalElement.cloneNode(true);
-      tempContainer.appendChild(clone);
-    }
+  for (let i = 0; i < count; i++) {
+    const label = document.createElement('div');
+    label.style.width = '80mm';
+    label.style.border = '1px solid #ccc';
+    label.style.padding = '6px';
+    label.style.fontFamily = 'Arial, sans-serif';
+    label.style.fontSize = '10px';
+    label.style.display = 'flex';
+    label.style.justifyContent = 'space-between';
+    label.style.alignItems = 'center';
+    label.style.marginBottom = '6px';
 
-    const opt = {
-      margin:       0.5,
-      filename:     `${product.name}_barcode.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    // Left side: brand + product details
+    const leftDiv = document.createElement('div');
+    leftDiv.style.flex = '1';
+    leftDiv.innerHTML = `
+      <strong style="font-size:12px;">${branding?.brandFull || 'Business Name'}</strong>
+      <div>${product.name}</div>
+      <div>MRP: ₹ ${product.price}</div>
+    `;
 
-    html2pdf().set(opt).from(tempContainer).save();
-  }, 300);
+    // Right side: barcode image
+    const rightDiv = document.createElement('div');
+    rightDiv.style.marginLeft = '10px';
+    const img = document.createElement('img');
+    img.src = barcodeImage;
+    img.style.height = '35px';
+    img.style.maxWidth = '100%';
+    rightDiv.appendChild(img);
+
+    // Append both to label
+    label.appendChild(leftDiv);
+    label.appendChild(rightDiv);
+    tempContainer.appendChild(label);
+  }
+
+  // PDF Options
+  const opt = {
+    margin: 0,
+    filename: `${product.name.replace(/\s+/g, '_')}_barcode.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(tempContainer).save();
 };
+
+
 
 
   const handleBarcodeScan = async (barcode) => {
@@ -510,35 +538,39 @@ const openHistoryModal = async (productId) => {
 
 <div style={{ display: 'none' }}>
   <div id="barcode-label-template" ref={labelRef}>
-    <div style={{
-      width: '190mm',
-      border: '1px solid #ccc',
-      padding: '10px',
-      fontFamily: 'Arial, sans-serif',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
-      {/* Left: Product Details */}
-      <div style={{ flex: 1 }}>
-        <h4 style={{ margin: 0, fontSize: '14px' }}>{branding?.brandFull || 'Business Name'}</h4>
-        <p style={{ margin: '4px 0' }}>{labelProduct?.name}</p>
-        <p style={{ margin: '4px 0' }}>MRP: ₹ {labelProduct?.price}</p>
-      </div>
+  <div style={{
+    width: '80mm',
+    border: '1px solid #ccc',
+    padding: '6px',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '10px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  }}>
+    {/* Left: Product Details */}
+    <div style={{ flex: 1 }}>
+      <strong style={{ fontSize: '12px' }}>{branding?.brandFull || 'Business Name'}</strong>
+      <div>{labelProduct?.name}</div>
+      <div>MRP: ₹ {labelProduct?.price}</div>
+    </div>
 
-      {/* Right: Barcode */}
-      <div style={{ marginLeft: '20px' }}>
-        <img src={barcodeDataUrl} alt="barcode" style={{ height: '50px' }} />
-      </div>
+    {/* Right: Barcode Image */}
+    <div style={{ marginLeft: '10px' }}>
+      <img
+        src={barcodeDataUrl}
+        alt="barcode"
+        style={{ height: '35px', maxWidth: '100%' }}
+      />
     </div>
   </div>
 </div>
 
 
 
-    </div>
 
+    </div>
+</div>
 
   );
 
