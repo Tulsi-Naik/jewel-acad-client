@@ -39,17 +39,17 @@ const [showHistoryModal, setShowHistoryModal] = useState(false);
 const [stockHistory, setStockHistory] = useState([]);
 const labelRef = useRef(null);
 const [barcodeDataUrl, setBarcodeDataUrl] = useState('');
-const [branding, setBranding] = useState({ brandFull: '', brandShort: '' });
+// const [branding, setBranding] = useState({ brandFull: '', brandShort: '' });
 const user = getUserFromToken();
 
-useEffect(() => {
-  if (user?.vendor) {
-    setBranding({
-      brandFull: user.vendor.brandFull || 'Default Brand Name',
-      brandShort: user.vendor.brandShort || 'Default Short Name',
-    });
-  }
-}, []);
+// useEffect(() => {
+//   if (user?.vendor) {
+//     setBranding({
+//       brandFull: user.vendor.brandFull || 'Default Brand Name',
+//       brandShort: user.vendor.brandShort || 'Default Short Name',
+//     });
+//   }
+// }, []);
 
  const fetchProducts = async () => {
   setLoading(true);
@@ -209,7 +209,11 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
   const barcodeImage = canvas.toDataURL("image/png");
 
-  // Dynamically create temporary container
+  // ✅ NEW: get brand from localStorage like in invoice
+  const vendor = JSON.parse(localStorage.getItem('vendorInfo') || '{}');
+  const brand = vendor.brandFull || 'Business Name';
+
+  // Create a temporary container
   const tempContainer = document.createElement('div');
 
   for (let i = 0; i < count; i++) {
@@ -224,16 +228,15 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
     label.style.alignItems = 'center';
     label.style.marginBottom = '6px';
 
-    // Left side: brand + product details
+    // ✅ Use brand variable here
     const leftDiv = document.createElement('div');
     leftDiv.style.flex = '1';
     leftDiv.innerHTML = `
-      <strong style="font-size:12px;">${branding?.brandFull || 'Business Name'}</strong>
+      <strong style="font-size:12px;">${brand}</strong>
       <div>${product.name}</div>
       <div>MRP: ₹ ${product.price}</div>
     `;
 
-    // Right side: barcode image
     const rightDiv = document.createElement('div');
     rightDiv.style.marginLeft = '10px';
     const img = document.createElement('img');
@@ -242,13 +245,11 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
     img.style.maxWidth = '100%';
     rightDiv.appendChild(img);
 
-    // Append both to label
     label.appendChild(leftDiv);
     label.appendChild(rightDiv);
     tempContainer.appendChild(label);
   }
 
-  // PDF Options
   const opt = {
     margin: 0,
     filename: `${product.name.replace(/\s+/g, '_')}_barcode.pdf`,
@@ -259,6 +260,7 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
   html2pdf().set(opt).from(tempContainer).save();
 };
+
 
 
 
@@ -536,40 +538,8 @@ const openHistoryModal = async (productId) => {
   </Modal.Body>
 </Modal>
 
-<div style={{ display: 'none' }}>
-  <div id="barcode-label-template" ref={labelRef}>
-  <div style={{
-    width: '80mm',
-    border: '1px solid #ccc',
-    padding: '6px',
-    fontFamily: 'Arial, sans-serif',
-    fontSize: '10px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  }}>
-    {/* Left: Product Details */}
-    <div style={{ flex: 1 }}>
-      <strong style={{ fontSize: '12px' }}>{branding?.brandFull || 'Business Name'}</strong>
-      <div>{labelProduct?.name}</div>
-      <div>MRP: ₹ {labelProduct?.price}</div>
-    </div>
-
-    {/* Right: Barcode Image */}
-    <div style={{ marginLeft: '10px' }}>
-      <img
-        src={barcodeDataUrl}
-        alt="barcode"
-        style={{ height: '35px', maxWidth: '100%' }}
-      />
-    </div>
-  </div>
-</div>
 
 
-
-
-    </div>
 </div>
 
   );
