@@ -217,32 +217,46 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
   const tempContainer = document.createElement('div');
 
   for (let i = 0; i < count; i++) {
-    const label = document.createElement('div');
-label.style.width = '60mm'; // Scaled down from 100%
+   const label = document.createElement('div');
+label.style.width = '80mm';
 label.style.border = '1px solid #ccc';
-label.style.padding = '4px 6px'; // Less padding
+label.style.padding = '5px 6px'; // Slightly reduced padding
 label.style.fontFamily = `'Noto Sans Devanagari', Arial, sans-serif`;
-label.style.fontSize = '9px'; // Slightly smaller font
+label.style.fontSize = '9.5px';
 label.style.display = 'flex';
 label.style.justifyContent = 'space-between';
 label.style.alignItems = 'center';
 label.style.boxSizing = 'border-box';
-label.style.marginBottom = '6px';
-label.style.borderRadius = '3px';
+label.style.marginBottom = '5mm'; // Space between labels
+label.style.borderRadius = '2px';
 label.style.backgroundColor = '#fff';
-label.style.boxShadow = '0 0 2px rgba(0,0,0,0.1)';
-label.style.lineHeight = '1.3';
+label.style.boxShadow = '0 0 1.5px rgba(0,0,0,0.1)';
+label.style.lineHeight = '1.2';
+label.style.breakInside = 'avoid';
+label.style.pageBreakInside = 'avoid'; // fallback for older engines
 
-// Text section
+// Left: Product Details
 const leftDiv = document.createElement('div');
 leftDiv.style.flex = '1';
-leftDiv.innerHTML = `
-  <div style="font-weight: bold; font-size: 11px; margin-bottom: 1px;">${brand}</div>
-  <div>${product.name}</div>
-  <div style="margin-top: 1px;">MRP: ₹ ${product.price}</div>
-`;
+leftDiv.style.display = 'flex';
+leftDiv.style.flexDirection = 'column';
+leftDiv.style.justifyContent = 'center';
+leftDiv.style.gap = '1px';
 
-// Barcode section
+const brandEl = document.createElement('div');
+brandEl.style.fontWeight = 'bold';
+brandEl.style.fontSize = '11px';
+brandEl.textContent = brand;
+
+const nameEl = document.createElement('div');
+nameEl.textContent = product.name;
+
+const priceEl = document.createElement('div');
+priceEl.textContent = `MRP: ₹ ${product.price}`;
+
+leftDiv.append(brandEl, nameEl, priceEl);
+
+// Right: Barcode
 const rightDiv = document.createElement('div');
 rightDiv.style.marginLeft = '6px';
 rightDiv.style.display = 'flex';
@@ -250,8 +264,8 @@ rightDiv.style.alignItems = 'center';
 
 const img = document.createElement('img');
 img.src = barcodeImage;
-img.style.height = '30px';       // Scaled down
-img.style.width = '100px';       // Compact but still scannable
+img.style.height = '34px';
+img.style.width = '115px';
 img.style.objectFit = 'contain';
 
 rightDiv.appendChild(img);
@@ -259,9 +273,11 @@ label.appendChild(leftDiv);
 label.appendChild(rightDiv);
 tempContainer.appendChild(label);
 
-// Container tweaks (unchanged if already set globally)
+// PDF container settings
 tempContainer.style.width = '180mm';
 tempContainer.style.margin = 'auto';
+tempContainer.style.padding = '10mm 5mm'; // Vertical & horizontal margin
+
 
 
   }
