@@ -218,7 +218,7 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
   for (let i = 0; i < count; i++) {
     const label = document.createElement('div');
-   label.style.width = '100%';
+label.style.width = '100%';
 label.style.border = '1px solid #ccc';
 label.style.padding = '8px 12px';
 label.style.fontFamily = `'Noto Sans Devanagari', Arial, sans-serif`;
@@ -232,34 +232,40 @@ label.style.borderRadius = '4px';
 label.style.backgroundColor = '#fff';
 label.style.boxShadow = '0 0 3px rgba(0,0,0,0.1)';
 label.style.lineHeight = '1.4';
+// Prevent page break between labels
+label.style.pageBreakInside = 'avoid';
+label.style.breakInside = 'avoid';
+label.style.webkitColumnBreakInside = 'avoid';
 
-    // ✅ Use brand variable here
-    const leftDiv = document.createElement('div');
-    leftDiv.style.flex = '1';
-   leftDiv.innerHTML = `
+const leftDiv = document.createElement('div');
+leftDiv.style.flex = '0 0 65%';
+leftDiv.innerHTML = `
   <div style="font-weight: bold; font-size: 13px; margin-bottom: 2px;">${brand}</div>
   <div>${product.name}</div>
   <div style="margin-top: 2px;">MRP: ₹ ${product.price}</div>
 `;
 
+const rightDiv = document.createElement('div');
+rightDiv.style.flex = '0 0 35%';
+rightDiv.style.marginLeft = '6px';
+rightDiv.style.display = 'flex';
+rightDiv.style.alignItems = 'center';
 
-    const rightDiv = document.createElement('div');
-    rightDiv.style.marginLeft = '10px';
-    const img = document.createElement('img');
-    img.src = barcodeImage;
-    img.style.height = '40px';
+const img = document.createElement('img');
+img.src = barcodeImage;
+img.style.height = '40px';
 img.style.width = '160px';
 img.style.objectFit = 'contain';
 
-rightDiv.style.display = 'flex';
-rightDiv.style.alignItems = 'center';
-    rightDiv.appendChild(img);
+rightDiv.appendChild(img);
 
-    label.appendChild(leftDiv);
-    label.appendChild(rightDiv);
-    tempContainer.appendChild(label);
-    tempContainer.style.width = '180mm';
+label.appendChild(leftDiv);
+label.appendChild(rightDiv);
+tempContainer.appendChild(label);
+
+tempContainer.style.width = '180mm';
 tempContainer.style.margin = 'auto';
+
   }
 
   const opt = {
