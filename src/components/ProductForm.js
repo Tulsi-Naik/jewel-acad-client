@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import html2pdf from 'html2pdf.js';
 
 import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
@@ -9,7 +10,8 @@ import logoMarathi from '../components/assets/logo-marathi.png';
 import { getUserFromToken } from '../utils/auth';
 import axios from '../utils/axiosInstance';
 
-const user = getUserFromToken();
+
+
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
@@ -35,8 +37,19 @@ const [stockNote, setStockNote] = useState('');
 const [selectedProduct, setSelectedProduct] = useState(null);
 const [showHistoryModal, setShowHistoryModal] = useState(false);
 const [stockHistory, setStockHistory] = useState([]);
+const labelRef = useRef(null);
+const [barcodeDataUrl, setBarcodeDataUrl] = useState('');
+const [branding, setBranding] = useState({ brandFull: '' }); // Replace later with real vendor info
+const user = getUserFromToken();
 
-
+useEffect(() => {
+  if (user?.vendor) {
+    setBranding({
+      brandFull: user.vendor.brandFull || 'Default Brand Name',
+      brandShort: user.vendor.brandShort || 'Default Short Name',
+    });
+  }
+}, []);
 
  const fetchProducts = async () => {
   setLoading(true);
@@ -186,55 +199,41 @@ const openLabelModal = (product) => {
 
 
 
-const generatePDFWithBarcodes = (product, count = 1) => {
+
+const generatePDFWithBarcodes = async (product, count = 1) => {
   const canvas = barcodeRefs.current[product._id];
   if (!canvas) {
-  toast.error("Barcode not ready yet. Please wait a moment.");
-  return;
-}
-if (product.quantity <= 0) {
-  toast.error("This product is out of stock. Please update quantity before printing labels.");
-  return;
-}
-
-  const barcodeImage = canvas.toDataURL("image/png");
-  const pdf = new jsPDF({ unit: 'mm', format: 'A4' });
-
-  const pageHeight = 297;
-  const margin = 10;
-  const rowHeight = 35;
-  const startX = margin;
-  let currentY = margin;
-
-  const cleanPrice = String(product.price).replace(/[^\d.]/g, "");
-
-  for (let i = 0; i < count; i++) {
-    if (currentY + rowHeight > pageHeight - margin) {
-      pdf.addPage();
-      currentY = margin;
-    }
-
-    pdf.setDrawColor(220);
-    pdf.rect(startX, currentY, 190, rowHeight);
-
-    const dividerX = startX + 100;
-    pdf.line(dividerX, currentY, dividerX, currentY + rowHeight);
-
-    // ✅ Use image directly
-pdf.addImage(logoMarathi, 'AUTO', startX + 4, currentY + 6, 50, 9);
-
-    pdf.setFont('helvetica','bold');
-pdf.setFontSize(10); // unified font size
-pdf.text(product.name, startX + 4, currentY + 21); // slightly lower
-pdf.text(`MRP: Rs ${cleanPrice}`, startX + 4, currentY + 27); // consistent spacing
-
-    pdf.addImage(barcodeImage, 'PNG', dividerX + 5, currentY + 6, 75, 20);
-
-    currentY += rowHeight + 5;
+    toast.error("Barcode not ready yet. Please wait a moment.");
+    return;
   }
 
-  pdf.save(`${product.name}_barcodes.pdf`);
+  const barcodeImage = canvas.toDataURL("image/png");
+  setBarcodeDataUrl(barcodeImage);
+  setLabelProduct(product);
+
+  setTimeout(() => {
+    const originalElement = labelRef.current;
+    if (!originalElement) return;
+
+    // Create temporary wrapper for multiple labels
+    const tempContainer = document.createElement('div');
+    for (let i = 0; i < count; i++) {
+      const clone = originalElement.cloneNode(true);
+      tempContainer.appendChild(clone);
+    }
+
+    const opt = {
+      margin:       0.5,
+      filename:     `${product.name}_barcode.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(tempContainer).save();
+  }, 300);
 };
+
 
   const handleBarcodeScan = async (barcode) => {
     try {
@@ -508,6 +507,33 @@ const openHistoryModal = async (productId) => {
     )}
   </Modal.Body>
 </Modal>
+
+<div style={{ display: 'none' }}>
+  <div id="barcode-label-template" ref={labelRef}>
+    <div style={{
+      width: '190mm',
+      border: '1px solid #ccc',
+      padding: '10px',
+      fontFamily: 'Arial, sans-serif',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }}>
+      {/* Left: Product Details */}
+      <div style={{ flex: 1 }}>
+        <h4 style={{ margin: 0, fontSize: '14px' }}>{branding?.brandFull || 'Business Name'}</h4>
+        <p style={{ margin: '4px 0' }}>{labelProduct?.name}</p>
+        <p style={{ margin: '4px 0' }}>MRP: ₹ {labelProduct?.price}</p>
+      </div>
+
+      {/* Right: Barcode */}
+      <div style={{ marginLeft: '20px' }}>
+        <img src={barcodeDataUrl} alt="barcode" style={{ height: '50px' }} />
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
