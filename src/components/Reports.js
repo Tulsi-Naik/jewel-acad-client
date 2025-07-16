@@ -47,7 +47,7 @@ const Reports = () => {
       {/* Date Pickers */}
       <div className="row justify-content-center mb-4" style={{ zIndex: 1050 }}>
         <div className="col-md-3 col-sm-6 mb-2">
-          <label className="form-label fw-semibold text-dark">From Date</label>
+<label className="form-label fw-semibold text-dark mb-2">From Date</label>
           <DatePicker
             selected={startDate}
             onChange={(date) => {
@@ -73,7 +73,7 @@ const Reports = () => {
         </div>
 
         <div className="col-md-3 col-sm-6 mb-2">
-          <label className="form-label fw-semibold text-dark">To Date</label>
+<label className="form-label fw-semibold text-dark mb-2">To Date</label>
           <DatePicker
             selected={endDate}
             onChange={(date) => setEndDate(date)}
