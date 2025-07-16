@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FaCalendarDay, FaCalendarAlt } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
+import '../App.css';
 
 const Reports = () => {
   const [startDate, setStartDate] = useState(new Date());
