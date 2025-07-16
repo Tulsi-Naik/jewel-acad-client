@@ -46,54 +46,65 @@ const Reports = () => {
 
       {/* Date Pickers */}
       <div className="row justify-content-center mb-4" style={{ zIndex: 1050 }}>
-        <div className="col-md-3 col-sm-6 mb-2">
-<label className="form-label fw-semibold text-dark mb-4">From Date</label>
-          <DatePicker
-            selected={startDate}
-            onChange={(date) => {
-              setStartDate(date);
-              if (endDate && date > endDate) {
-                setEndDate(date); // sync if start > end
-              }
-            }}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            maxDate={new Date()}
-            isClearable
-            dateFormat="dd-MM-yyyy"
-            placeholderText="Select start date"
-            className="form-control"
-            popperPlacement="bottom"
-            style={{   outline: 'none',
-    boxShadow: 'none',
-    borderColor: '#ced4da',
-    backgroundColor: 'white' }}
-          />
-        </div>
+  {/* From Date */}
+  <div className="col-md-3 col-sm-6 mb-2">
+    <div className="d-flex align-items-center">
+      <label className="form-label fw-semibold text-dark me-2 mb-0">From Date</label>
+      <DatePicker
+        selected={startDate}
+        onChange={(date) => {
+          setStartDate(date);
+          if (endDate && date > endDate) {
+            setEndDate(date); // sync if start > end
+          }
+        }}
+        selectsStart
+        startDate={startDate}
+        endDate={endDate}
+        maxDate={new Date()}
+        isClearable
+        dateFormat="dd-MM-yyyy"
+        placeholderText="Select start date"
+        className="form-control"
+        popperPlacement="bottom"
+        style={{
+          outline: 'none',
+          boxShadow: 'none',
+          borderColor: '#ced4da',
+          backgroundColor: 'white',
+        }}
+      />
+    </div>
+  </div>
 
-        <div className="col-md-3 col-sm-6 mb-2">
-<label className="form-label fw-semibold text-dark mb-4">To Date</label>
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            maxDate={new Date()}
-            isClearable
-            dateFormat="dd-MM-yyyy"
-            placeholderText="Select end date"
-            className="form-control"
-            popperPlacement="bottom"
-            style={{   outline: 'none',
-    boxShadow: 'none',
-    borderColor: '#ced4da',
-    backgroundColor: 'white' }}
-          />
-        </div>
-      </div>
+  {/* To Date */}
+  <div className="col-md-3 col-sm-6 mb-2">
+    <div className="d-flex align-items-center">
+      <label className="form-label fw-semibold text-dark me-2 mb-0">To Date</label>
+      <DatePicker
+        selected={endDate}
+        onChange={(date) => setEndDate(date)}
+        selectsEnd
+        startDate={startDate}
+        endDate={endDate}
+        minDate={startDate}
+        maxDate={new Date()}
+        isClearable
+        dateFormat="dd-MM-yyyy"
+        placeholderText="Select end date"
+        className="form-control"
+        popperPlacement="bottom"
+        style={{
+          outline: 'none',
+          boxShadow: 'none',
+          borderColor: '#ced4da',
+          backgroundColor: 'white',
+        }}
+      />
+    </div>
+  </div>
+</div>
+
 
       {/* Spinner or Report Cards */}
       {loading ? (
