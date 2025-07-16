@@ -65,7 +65,10 @@ const Reports = () => {
             placeholderText="Select start date"
             className="form-control"
             popperPlacement="bottom"
-            style={{ backgroundColor: 'white' }}
+            style={{   outline: 'none',
+    boxShadow: 'none',
+    borderColor: '#ced4da',
+    backgroundColor: 'white' }}
           />
         </div>
 
@@ -84,7 +87,10 @@ const Reports = () => {
             placeholderText="Select end date"
             className="form-control"
             popperPlacement="bottom"
-            style={{ backgroundColor: 'white' }}
+            style={{   outline: 'none',
+    boxShadow: 'none',
+    borderColor: '#ced4da',
+    backgroundColor: 'white' }}
           />
         </div>
       </div>
