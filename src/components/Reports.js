@@ -40,14 +40,21 @@ const Reports = () => {
     <div className="container my-5">
       <h2 className="text-center text-dark mb-4">📊 Jewellery Sales Dashboard</h2>
 
-      <div className="d-flex justify-content-center mb-4">
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          dateFormat="dd-MM-yyyy"
-          className="form-control w-auto"
-          maxDate={new Date()}
-        />
+      <div className="d-flex justify-content-center mb-4 position-relative" style={{ zIndex: 999 }}>
+        <div className="input-group w-auto">
+          <span className="input-group-text">
+            <FaCalendarDay />
+          </span>
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            dateFormat="dd-MM-yyyy"
+            className="form-control"
+            maxDate={new Date()}
+            popperPlacement="bottom"
+            popperModifiers={[{ name: 'offset', options: { offset: [0, 10] } }]}
+          />
+        </div>
       </div>
 
       {loading ? (
@@ -67,14 +74,18 @@ const Reports = () => {
                 {dailyReport.length > 0 ? (
                   <ul className="list-group list-group-flush">
                     {dailyReport.map((sale, idx) => (
-                      <li key={idx} className="list-group-item bg-dark d-flex justify-content-between text-light">
+                      <li
+                        key={idx}
+                        className="list-group-item bg-dark d-flex justify-content-between text-light"
+                        style={{ backgroundColor: 'inherit', cursor: 'default' }}
+                      >
                         <span>{format(parseISO(sale.date), 'dd-MM-yyyy')}</span>
                         <strong>₹ {sale.total}</strong>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-light">No sales for selected day.</p>
+                  <p className="text-light" style={{ color: '#ccc' }}>No sales for selected day.</p>
                 )}
               </div>
             </div>
@@ -91,14 +102,18 @@ const Reports = () => {
                 {monthlyReport.length > 0 ? (
                   <ul className="list-group list-group-flush">
                     {monthlyReport.map((sale, idx) => (
-                      <li key={idx} className="list-group-item bg-dark d-flex justify-content-between text-light">
+                      <li
+                        key={idx}
+                        className="list-group-item bg-dark d-flex justify-content-between text-light"
+                        style={{ backgroundColor: 'inherit', cursor: 'default' }}
+                      >
                         <span>{format(parseISO(sale.month + '-01'), 'MM-yyyy')}</span>
                         <strong>₹ {sale.total}</strong>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-light">No sales for selected month.</p>
+                  <p className="text-light" style={{ color: '#ccc' }}>No sales for selected month.</p>
                 )}
               </div>
             </div>
