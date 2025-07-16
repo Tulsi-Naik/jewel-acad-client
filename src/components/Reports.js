@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FaCalendarAlt, FaCalendarDay } from 'react-icons/fa';
+import { FaCalendarDay, FaCalendarAlt } from 'react-icons/fa';
 import { format, parseISO } from 'date-fns';
 
 const Reports = () => {
-  const [dateRange, setDateRange] = useState([new Date(), new Date()]);
-  const [startDate, endDate] = dateRange;
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [dailyReport, setDailyReport] = useState([]);
   const [monthlyReport, setMonthlyReport] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ const Reports = () => {
     try {
       const startStr = format(start, 'yyyy-MM-dd');
       const endStr = format(end, 'yyyy-MM-dd');
-      const monthStr = format(start, 'yyyy-MM'); // Monthly report uses start only
+      const monthStr = format(start, 'yyyy-MM');
 
       const daily = await axios.get(`/reports/daily?start=${startStr}&end=${endStr}`);
       const monthly = await axios.get(`/reports/monthly?month=${monthStr}`);
@@ -44,29 +44,48 @@ const Reports = () => {
     <div className="container my-5">
       <h2 className="text-center text-dark mb-4">📊 Jewellery Sales Dashboard</h2>
 
-      {/* Date Picker */}
-      <div className="d-flex justify-content-center mb-4 position-relative" style={{ zIndex: 1050 }}>
-        <div className="input-group w-auto">
-          <span className="input-group-text bg-white">
-            <FaCalendarAlt />
-          </span>
+      {/* Date Pickers */}
+      <div className="row justify-content-center mb-4" style={{ zIndex: 1050 }}>
+        <div className="col-md-3 col-sm-6 mb-2">
+          <label className="form-label fw-semibold text-dark">From Date</label>
           <DatePicker
-            selectsRange
+            selected={startDate}
+            onChange={(date) => {
+              setStartDate(date);
+              if (endDate && date > endDate) {
+                setEndDate(date); // sync if start > end
+              }
+            }}
+            selectsStart
             startDate={startDate}
             endDate={endDate}
-            onChange={(update) => setDateRange(update)}
-            isClearable
             maxDate={new Date()}
+            isClearable
             dateFormat="dd-MM-yyyy"
-            placeholderText="Select date range"
             className="form-control"
-            popperPlacement="bottom"
-            popperModifiers={[{ name: 'offset', options: { offset: [0, 10] } }]}
+            placeholderText="Select start date"
+          />
+        </div>
+
+        <div className="col-md-3 col-sm-6 mb-2">
+          <label className="form-label fw-semibold text-dark">To Date</label>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            maxDate={new Date()}
+            isClearable
+            dateFormat="dd-MM-yyyy"
+            className="form-control"
+            placeholderText="Select end date"
           />
         </div>
       </div>
 
-      {/* Loading spinner */}
+      {/* Spinner or Report Cards */}
       {loading ? (
         <div className="text-center text-dark">
           <div className="spinner-border text-secondary" role="status"></div>
@@ -87,7 +106,7 @@ const Reports = () => {
                       <li
                         key={idx}
                         className="list-group-item d-flex justify-content-between text-light"
-                        style={{ backgroundColor: 'inherit', cursor: 'default' }}
+                        style={{ backgroundColor: 'inherit' }}
                       >
                         <span>{format(parseISO(sale.date), 'dd-MM-yyyy')}</span>
                         <strong>₹ {sale.total}</strong>
@@ -115,7 +134,7 @@ const Reports = () => {
                       <li
                         key={idx}
                         className="list-group-item d-flex justify-content-between text-light"
-                        style={{ backgroundColor: 'inherit', cursor: 'default' }}
+                        style={{ backgroundColor: 'inherit' }}
                       >
                         <span>{format(parseISO(sale.month + '-01'), 'MM-yyyy')}</span>
                         <strong>₹ {sale.total}</strong>
