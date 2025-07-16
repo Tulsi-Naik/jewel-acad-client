@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { FaCalendarDay, FaCalendarAlt } from 'react-icons/fa';
+import { format, parseISO } from 'date-fns';
 
 const Reports = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [dailyReport, setDailyReport] = useState([]);
   const [monthlyReport, setMonthlyReport] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchReports = async () => {
+  const fetchReports = async (date) => {
     setLoading(true);
     setError('');
     try {
-    const daily = await axios.get('/reports/daily');
-    const monthly = await axios.get('/reports/monthly');
-          setDailyReport(daily.data);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const formattedMonth = format(date, 'yyyy-MM');
+
+      const daily = await axios.get(`/reports/daily?date=${formattedDate}`);
+      const monthly = await axios.get(`/reports/monthly?month=${formattedMonth}`);
+
+      setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
@@ -26,12 +33,22 @@ const Reports = () => {
   };
 
   useEffect(() => {
-    fetchReports();
-  }, []);
+    fetchReports(selectedDate);
+  }, [selectedDate]);
 
   return (
     <div className="container my-5">
-      <h2 className="text-center text-dark mb-5 ">📊 Jewllery  Sales Dashboard</h2>
+      <h2 className="text-center text-dark mb-4">📊 Jewellery Sales Dashboard</h2>
+
+      <div className="d-flex justify-content-center mb-4">
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          dateFormat="dd-MM-yyyy"
+          className="form-control w-auto"
+          maxDate={new Date()}
+        />
+      </div>
 
       {loading ? (
         <div className="text-center text-white">
@@ -51,13 +68,13 @@ const Reports = () => {
                   <ul className="list-group list-group-flush">
                     {dailyReport.map((sale, idx) => (
                       <li key={idx} className="list-group-item bg-dark d-flex justify-content-between text-light">
-                        <span>{sale.date}</span>
+                        <span>{format(parseISO(sale.date), 'dd-MM-yyyy')}</span>
                         <strong>₹ {sale.total}</strong>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-muted">No sales for today.</p>
+                  <p className="text-light">No sales for selected day.</p>
                 )}
               </div>
             </div>
@@ -75,13 +92,13 @@ const Reports = () => {
                   <ul className="list-group list-group-flush">
                     {monthlyReport.map((sale, idx) => (
                       <li key={idx} className="list-group-item bg-dark d-flex justify-content-between text-light">
-                        <span>{sale.month}</span>
+                        <span>{format(parseISO(sale.month + '-01'), 'MM-yyyy')}</span>
                         <strong>₹ {sale.total}</strong>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-muted">No sales this month.</p>
+                  <p className="text-light">No sales for selected month.</p>
                 )}
               </div>
             </div>
