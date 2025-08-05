@@ -11,7 +11,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://jewellery-backend-7st1.onrender.com/api/auth/login', {
+      const res = await axios.post('https://jewel-academic-server.onrender.com/api/auth/login', {
         username,
         password
       });
