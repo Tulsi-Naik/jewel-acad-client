@@ -11,10 +11,12 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://jewel-academic-server.onrender.com/api/auth/login', {
-        username,
-        password
-      });
+     const res = await axios.post(
+  'https://jewel-academic-server.onrender.com/api/auth/login',
+  { username, password },
+  { withCredentials: true }
+);
+
 
       const token = res.data.token;
       if (!token) {
