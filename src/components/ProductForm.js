@@ -209,7 +209,7 @@ const generatePDFWithBarcodes = async (product, count = 1) => {
 
   const barcodeImage = canvas.toDataURL("image/png");
 
-  // ✅ NEW: get brand from localStorage like in invoice
+  //  NEW: get brand from localStorage like in invoice
   const vendor = JSON.parse(localStorage.getItem('vendorInfo') || '{}');
   const brand = vendor.brandFull || 'Business Name';
 

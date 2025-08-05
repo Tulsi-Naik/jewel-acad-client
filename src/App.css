@@ -176,21 +176,4 @@ footer {
   color: #ffd700 !important;
   border-bottom: 2px solid #ffd700;
 }
-/* Solid white background for calendar popup */
-.react-datepicker__portal,
-.react-datepicker-popper,
-.react-datepicker {
-  background-color: white !important;
-  z-index: 9999 !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
 
-/* Fix calendar dropdown not being opaque */
-.react-datepicker__month-container {
-  background: white !important;
-}
-
-/* Optional: enhance hover styles */
-.react-datepicker__day:hover {
-  background-color: #e0f7fa !important;
-}

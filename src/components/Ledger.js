@@ -340,7 +340,7 @@ const Ledger = () => {
         ))
       )}
 
-      {/* ✅ Correctly placed PartialPayModal inside Ledger's return */}
+      {/*  Correctly placed PartialPayModal inside Ledger's return */}
       <PartialPayModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
