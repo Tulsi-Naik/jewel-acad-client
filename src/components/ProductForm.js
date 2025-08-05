@@ -5,7 +5,7 @@ import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
-import logoMarathi from '../components/assets/logo-marathi.png';
+// import logoMarathi from '../components/assets/logo-marathi.png';
 
 import { getUserFromToken } from '../utils/auth';
 import axios from '../utils/axiosInstance';
