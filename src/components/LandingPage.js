@@ -9,7 +9,7 @@ function LandingPage() {
     <div className="landing-container">
       {/* Hero Section */}
       <section className="landing-hero" style={{ 
-  backgroundImage: 'url(/Investment data-cuate.svg)', 
+  backgroundImage: 'url(/Investment-data-cuate.svg)', 
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
