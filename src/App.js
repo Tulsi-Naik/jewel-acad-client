@@ -11,7 +11,8 @@ import Help from './components/Help';
 import Login from './components/Login';
 import RequireAuth from './components/RequireAuth';
 import AdminDashboard from './components/AdminDashboard';
-
+import LandingPage from './components/LandingPage';
+import ApplyForm from './components/ApplyForm';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -40,13 +41,14 @@ function App() {
   const path = location.pathname;
 
   const showVendorNavbar =
-  path === '/' ||
+  (path === '/dashboard' ||
     path.startsWith('/products') ||
     path.startsWith('/sales') ||
     path.startsWith('/customers') ||
     path.startsWith('/reports') ||
     path.startsWith('/ledger') ||
-    path === '/help';
+    path === '/help');
+
 
   const showAdminNavbar = path === '/admin';
 
@@ -56,14 +58,17 @@ function App() {
       {showAdminNavbar && <AdminNavbar />}
 
       <Routes>
-<Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+  <Route path="/" element={<LandingPage />} />
+  <Route path="/apply" element={<ApplyForm />} />
+
+  <Route path="/login" element={<Login />} />
+  <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/products" element={<RequireAuth><ProductForm /></RequireAuth>} />
         <Route path="/sales" element={<RequireAuth><SalesForm /></RequireAuth>} />
         <Route path="/customers" element={<RequireAuth><CustomerForm /></RequireAuth>} />
         <Route path="/reports" element={<RequireAuth><Reports /></RequireAuth>} />
         <Route path="/ledger" element={<RequireAuth><Ledger /></RequireAuth>} />
         <Route path="/help" element={<Help />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
 
