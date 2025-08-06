@@ -11,7 +11,7 @@ function LandingPage() {
      <section
   className="landing-hero"
   style={{
-    backgroundImage: `url(${process.env.PUBLIC_URL}/Investment-data-cuate.svg)`,
+backgroundImage: "url('/Investment-data-cuate.svg')",
     backgroundSize: 'contain',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right bottom',
