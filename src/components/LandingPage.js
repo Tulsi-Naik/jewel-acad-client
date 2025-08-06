@@ -1,78 +1,112 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './LandingPage.css';
-
-function LandingPage() {
-  const navigate = useNavigate();
-
-  return (
-    <div className="landing-container">
-      {/* Hero Section */}
-      <section className="landing-hero">
-        <div className="hero-content">
-          <div className="hero-image">
-            <img src="/shopkeeper-counter.png" alt="Jewellery shopkeeper" />
-          </div>
-          <div className="hero-text">
-            <h1>Your Jewellery Business, Now Digital</h1>
-            <p>Track sales, customer payments, and inventory with ease.</p>
-            <div className="hero-buttons">
-              <button onClick={() => navigate('/apply')}>Create Your Account</button>
-              <button className="secondary" onClick={() => navigate('/login')}>Login</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="features">
-        <h2 className="section-title">Why Jewelers Love Us</h2>
-        <div className="features-grid">
-          <div className="feature-card">
-            <img src="/cartoon1.png" alt="Track Transactions" />
-            <h3>Customer Ledgers</h3>
-            <p>Track payments, returns, and balances seamlessly.</p>
-          </div>
-          <div className="feature-card">
-            <img src="/cartoon2.png" alt="Reports" />
-            <h3>Profit Reports</h3>
-            <p>Instantly see what’s selling and what’s not with insightful analytics.</p>
-          </div>
-          <div className="feature-card">
-            <img src="/cartoon3.png" alt="Secure" />
-            <h3>Cloud Backup</h3>
-            <p>Your records are always safe, secure, and available anywhere.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonial Section */}
-      <section className="testimonial">
-        <h2>What Shop Owners Say</h2>
-        <blockquote>
-          "Using this app, I no longer worry about keeping records manually. It’s all on my phone!"
-        </blockquote>
-        <p>- Ramesh Jewellers, Pune</p>
-      </section>
-
-      {/* Final CTA Section */}
-      <section className="cta">
-        <h2>Digitize Your Jewellery Ledger Today</h2>
-        <p>Safe. Simple. Made for Indian jewelers.</p>
-        <button onClick={() => navigate('/apply')}>Start Now</button>
-      </section>
-
-      {/* Footer Section */}
-      <footer className="landing-footer">
-        <div className="footer-content">
-          <p><i className="bi bi-globe me-2"></i><strong>Website:</strong> <a href="https://www.varadanalyst.com" target="_blank" rel="noopener noreferrer">www.varadanalyst.com</a></p>
-          <p><i className="bi bi-telephone me-2"></i><strong>Phone:</strong> <a href="tel:+918446448461">+91 8446448461</a></p>
-          <p><i className="bi bi-geo-alt me-2"></i><strong>Address:</strong> 505, Shivcity Center, Vijaynagar, Sangli 416416</p>
-          <p>&copy; {new Date().getFullYear()} JewelHub. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  );
+/* General Layout */
+.landing-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fdfdfd;
+  color: #333;
+  line-height: 1.6;
 }
 
-export default LandingPage;
+/* Features Section */
+.features {
+  padding: 4rem 2rem;
+  background-color: #fff8f0;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #8e44ad;
+}
+
+.features-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.feature-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  width: 280px;
+  transition: transform 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card img {
+  width: 100px;
+  margin-bottom: 1rem;
+}
+
+/* Testimonial Section */
+.testimonial {
+  padding: 3rem 2rem;
+  background-color: #f0f8ff;
+  text-align: center;
+}
+
+.testimonial blockquote {
+  font-size: 1.5rem;
+  font-style: italic;
+  margin: 1rem 0;
+  color: #2c3e50;
+}
+
+/* CTA Section */
+.cta {
+  background-color: #8e44ad;
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.cta h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.cta p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.cta button {
+  background-color: #fff;
+  color: #8e44ad;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.cta button:hover {
+  background-color: #f0e6f6;
+}
+
+/* Footer */
+.landing-footer {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+}
+
+.footer-content p {
+  margin: 0.5rem 0;
+}
+
+.footer-content a {
+  color: #ffd700;
+  text-decoration: none;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
