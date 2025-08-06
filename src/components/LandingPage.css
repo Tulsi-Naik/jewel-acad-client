@@ -8,7 +8,7 @@
 
 /* Hero Section */
 .landing-hero {
-  background-image: url('/Investment-data-cuate.svg');
+  /* Removed background-image */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: right bottom;
@@ -18,6 +18,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* If background color is needed */
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #fff;
+  z-index: 0;
 }
 
 .hero-overlay {
