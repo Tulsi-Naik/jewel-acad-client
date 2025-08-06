@@ -7,24 +7,27 @@ function LandingPage() {
 
   return (
     <div className="landing-container">
+      {/* Hero Section */}
       <div className="landing-hero">
         <div className="hero-content">
+          {/* Hero Image First (Left) */}
+          <div className="hero-image">
+            <img src="/shopkeeper-counter.png" alt="Shopkeeper at counter" />
+          </div>
+
+          {/* Text on Right */}
           <div className="hero-text">
             <h1>Welcome to Your Digital Ledger</h1>
             <p>Simple. Safe. Smart. Built for your business.</p>
-            <button onClick={() => navigate('/apply')}>Get Started</button>
-
-            <div className="login-buttons">
-              <button onClick={() => navigate('/admin/login')} className="login-button">Login as Admin</button>
-              <button onClick={() => navigate('/user/login')} className="login-button">Login as User</button>
+            <div className="hero-buttons">
+              <button onClick={() => navigate('/apply')}>Get Started</button>
+              <button className="secondary" onClick={() => navigate('/login')}>Login</button>
             </div>
-          </div>
-          <div className="hero-image">
-            <img src="/shopkeeper-counter.png" alt="Shopkeeper at counter" />
           </div>
         </div>
       </div>
 
+      {/* Features Section */}
       <div className="features">
         <div className="feature-card">
           <img src="/cartoon1.png" alt="Track Transactions" />
