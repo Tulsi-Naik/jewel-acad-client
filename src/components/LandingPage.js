@@ -13,6 +13,11 @@ function LandingPage() {
             <h1>Welcome to Your Digital Ledger</h1>
             <p>Simple. Safe. Smart. Built for your business.</p>
             <button onClick={() => navigate('/apply')}>Get Started</button>
+
+            <div className="login-buttons">
+              <button onClick={() => navigate('/admin/login')} className="login-button">Login as Admin</button>
+              <button onClick={() => navigate('/user/login')} className="login-button">Login as User</button>
+            </div>
           </div>
           <div className="hero-image">
             <img src="/shopkeeper-counter.png" alt="Shopkeeper at counter" />
