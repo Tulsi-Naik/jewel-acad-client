@@ -13,7 +13,7 @@ const Dashboard = () => {
       <div className="bakery-overlay">
         <div className="text-center mb-5">
           <h1 className="fw-bold display-5 animated-title">{brandFull}</h1>
-          <p className="text-muted fs-5">Welcome to the best 1 Gram Jewellery Shop in Town!</p>
+          <p className="text-muted fs-5">Track your sales, customers, and stock in one place</p>
         </div>
 
         <div className="row g-4 justify-content-center">
