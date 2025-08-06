@@ -6,6 +6,57 @@
   line-height: 1.6;
 }
 
+/* Hero Section */
+.landing-hero {
+  background-image: url('/Investment-data-cuate.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  padding: 6rem 2rem;
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 600px;
+  color: white;
+  text-align: center;
+  z-index: 2;
+}
+
+.hero-buttons {
+  margin-top: 1.5rem;
+}
+
+.hero-buttons button {
+  margin: 0 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.hero-buttons button:first-child {
+  background-color: #f1c40f;
+  color: #000;
+}
+
+.hero-buttons .secondary {
+  background-color: #fff;
+  color: #8e44ad;
+}
+
+.hero-buttons button:hover {
+  opacity: 0.9;
+}
+
 /* Features Section */
 .features {
   padding: 4rem 2rem;
@@ -29,7 +80,7 @@
 .feature-card {
   background: #ffffff;
   border-radius: 1rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   width: 280px;
   transition: transform 0.2s ease;
@@ -109,4 +160,22 @@
 
 .footer-content a:hover {
   text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .landing-hero {
+    background-size: cover;
+    background-position: center;
+    padding: 4rem 1rem;
+  }
+
+  .hero-overlay {
+    max-width: 90%;
+  }
+
+  .features-grid {
+    flex-direction: column;
+    align-items: center;
+  }
 }
