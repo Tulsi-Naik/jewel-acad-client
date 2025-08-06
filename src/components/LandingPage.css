@@ -1,8 +1,10 @@
 .landing-container {
   padding: 30px;
   text-align: center;
-  background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  background: linear-gradient(to bottom right, #6dd5ed, #2193b0); /* Blue gradient */
   min-height: 100vh;
+  color: #ffffff; /* White text for better contrast */
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .landing-hero {
@@ -15,64 +17,106 @@
   justify-content: center;
   align-items: center;
   gap: 40px;
-  text-align: left;
 }
 
 .hero-text {
   max-width: 500px;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .hero-text h1 {
-  font-size: 2.5rem;
-  color: #343a40;
+  font-size: 2.8rem;
+  color: #ffffff;
 }
 
 .hero-text p {
   font-size: 1.2rem;
   margin-bottom: 20px;
+  line-height: 1.6;
+  color: #e0e0e0;
 }
 
-.hero-buttons button {
-  padding: 10px 20px;
+.hero-text button {
+  padding: 10px 24px;
   font-size: 1rem;
-  background-color: #007bff;
+  background-color: #ff6f61;
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  margin: 10px 5px;
+  margin: 10px 8px;
+  transition: all 0.3s ease;
 }
 
-.hero-buttons .secondary {
-  background-color: #6c757d;
-}
-
-.hero-buttons button:hover {
-  opacity: 0.9;
+.hero-text button:hover {
+  background-color: #e8574f;
+  transform: scale(1.05);
 }
 
 .hero-image img {
-  max-width: 300px;
-  border-radius: 10px;
+  max-width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-buttons {
+  margin-top: 20px;
+}
+
+.login-button {
+  background-color: #28a745;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
 }
 
 .features {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
+  margin-top: 60px;
 }
 
 .feature-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   width: 280px;
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
 }
 
 .feature-card img {
   max-width: 100px;
   margin-bottom: 15px;
+}
+
+.feature-card h3 {
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  color: #555;
+  font-size: 0.95rem;
 }
