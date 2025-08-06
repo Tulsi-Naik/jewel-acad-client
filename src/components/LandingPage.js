@@ -8,32 +8,31 @@ function LandingPage() {
   return (
     <div className="landing-container">
       {/* Hero Section */}
-     <section
-  className="landing-hero"
-  style={{
-backgroundImage: "url('/Investment-data-cuate.svg')",
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right bottom',
-    backgroundColor: '#fff',
-    padding: '6rem 2rem',
-    position: 'relative',
-    minHeight: '60vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }}
->
-  <div className="hero-overlay">
-    <h1>Your Jewellery Business, Now Digital</h1>
-    <p>Track sales, customer payments, and inventory with ease.</p>
-    <div className="hero-buttons">
-      <button onClick={() => navigate('/apply')}>Create Your Account</button>
-      <button className="secondary" onClick={() => navigate('/login')}>Login</button>
-    </div>
-  </div>
-</section>
-
+      <section
+        className="landing-hero"
+        style={{
+          backgroundImage: "url('/investment-data-cuate.svg')",
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right bottom',
+          backgroundColor: '#fff',
+          padding: '6rem 2rem',
+          position: 'relative',
+          minHeight: '60vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="hero-overlay">
+          <h1>Your Jewellery Business, Now Digital</h1>
+          <p>Track sales, customer payments, and inventory with ease.</p>
+          <div className="hero-buttons">
+            <button onClick={() => navigate('/apply')}>Create Your Account</button>
+            <button className="secondary" onClick={() => navigate('/login')}>Login</button>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="features">
