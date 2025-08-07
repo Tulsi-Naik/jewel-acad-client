@@ -13,7 +13,7 @@ function LandingPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % 3); // 3 slides
-    }, 4000); // Change every 4s
+    }, 7000); // Change every 4s
     return () => clearInterval(interval);
   }, []);
 
