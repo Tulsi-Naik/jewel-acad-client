@@ -110,9 +110,16 @@
 }
 
 .feature-card img {
-  width: 100px;
+   width: 100px;
+  height: 100px; /* NEW */
+  object-fit: contain; /* Ensures no distortion */
   margin-bottom: 1rem;
 }
+.svg-fix {
+  padding: 5px;
+  background-color: white; /* Optional, just for visual balance */
+}
+
 
 /* Testimonial Section */
 .testimonial {
