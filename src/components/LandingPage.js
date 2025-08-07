@@ -11,14 +11,19 @@ function LandingPage() {
     <section
   className="landing-hero"
   style={{
-    backgroundImage: 'url(/hero.svg)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    padding: '4rem 2rem',
-    color: '#fff',
-    position: 'relative',
-  }}
+  backgroundImage: 'url(/hero.svg)',
+  backgroundSize: 'contain',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  padding: '4rem 2rem',
+  color: '#fff',
+  position: 'relative',
+  minHeight: '90vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}}
+
 >
   <div
     className="hero-overlay"

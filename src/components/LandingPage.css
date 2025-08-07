@@ -8,14 +8,16 @@
 
 /* Hero Section */
 .landing-hero {
-  padding: 4rem 2rem;
-  position: relative;
-  color: #fff;
+  min-height: 90vh;              /* ⬆️ More vertical space */
+  background-size: contain;      /* ✅ Entire image is visible */
+  background-repeat: no-repeat;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
+  position: relative;
 }
+
 
 /* Optional overlay background */
 .hero-overlay {
