@@ -8,27 +8,31 @@
 
 /* Hero Section */
 .landing-hero {
-  min-height: 90vh;              /* ⬆️ More vertical space */
-  background-size: contain;      /* ✅ Entire image is visible */
+  background-image: url('/hero.svg');
+  background-size: cover;              /* Fill width, allow slight crop */
+  background-position: top;            /* Keep head/upper part visible */
   background-repeat: no-repeat;
-  background-position: center;
+  min-height: 100vh;                   /* Full height */
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  padding: 0 2rem;                     /* Remove vertical padding */
 }
+
 
 
 /* Optional overlay background */
 .hero-overlay {
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 2rem;
+  padding: 1.5rem;                     /* less vertical padding */
   border-radius: 1rem;
   max-width: 600px;
   margin: 0 auto;
   text-align: center;
   z-index: 1;
 }
+
 
 .hero-buttons {
   margin-top: 1.5rem;
@@ -165,16 +169,20 @@
 /* Responsive */
 @media (max-width: 768px) {
   .landing-hero {
-    padding: 4rem 1rem;
-    text-align: center;
+    min-height: 80vh;
+    background-position: top;
   }
 
-  .hero-overlay {
-    max-width: 90%;
+  .hero-overlay h1 {
+    font-size: 1.5rem;
   }
 
-  .features-grid {
-    flex-direction: column;
-    align-items: center;
+  .hero-overlay p {
+    font-size: 1rem;
+  }
+
+  .hero-buttons button {
+    padding: 0.5rem 1rem;
   }
 }
+
