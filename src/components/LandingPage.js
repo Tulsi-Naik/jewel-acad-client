@@ -8,26 +8,38 @@ function LandingPage() {
   return (
     <div className="landing-container">
       {/* Hero Section */}
-      <section className="landing-hero" style={{ 
-  backgroundImage: "url('/hero.svg')", 
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  padding: '4rem 2rem',
-  color: '#fff',
-  position: 'relative',
-  minHeight: '60vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-}}>
-
-        <div className="hero-overlay">
+      <section
+        className="landing-hero"
+        style={{
+          backgroundImage: 'url(/hero.svg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          padding: '4rem 2rem',
+          color: '#fff',
+          position: 'relative',
+        }}
+      >
+        <div
+          className="hero-overlay"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            padding: '2rem',
+            borderRadius: '1rem',
+            maxWidth: '600px',
+            margin: '0 auto',
+            textAlign: 'center',
+          }}
+        >
           <h1>Your Jewellery Business, Now Digital</h1>
           <p>Track sales, customer payments, and inventory with ease.</p>
-          <div className="hero-buttons">
-            <button onClick={() => navigate('/apply')}>Create Your Account</button>
-            <button className="secondary" onClick={() => navigate('/login')}>Login</button>
+          <div className="hero-buttons" style={{ marginTop: '1.5rem' }}>
+            <button onClick={() => navigate('/apply')} style={{ marginRight: '1rem' }}>
+              Create Your Account
+            </button>
+            <button className="secondary" onClick={() => navigate('/login')}>
+              Login
+            </button>
           </div>
         </div>
       </section>
@@ -82,7 +94,8 @@ function LandingPage() {
           </p>
           <p>
             <i className="bi bi-telephone me-2"></i>
-            <strong>Phone:</strong> <a href="tel:+918446448461">+91 8446448461</a>
+            <strong>Phone:</strong>{' '}
+            <a href="tel:+918446448461">+91 8446448461</a>
           </p>
           <p>
             <i className="bi bi-geo-alt me-2"></i>
