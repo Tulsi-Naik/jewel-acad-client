@@ -8,30 +8,45 @@
 
 /* Hero Section */
 .landing-hero {
-  
-  background-size: cover;              /* Fill width, allow slight crop */
-  background-position: top;            /* Keep head/upper part visible */
-  background-repeat: no-repeat;
-  min-height: 100vh;                   /* Full height */
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 0 2rem;                     /* Remove vertical padding */
+  justify-content: space-between;
+  padding: 4rem 2rem;
+  min-height: 90vh;
+  background-color: #fdfdfd;
+  gap: 3rem;
+  flex-wrap: wrap;
 }
 
-
-
-/* Optional overlay background */
-.hero-overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 1.5rem;                     /* less vertical padding */
-  border-radius: 1rem;
+.hero-left {
+  flex: 1;
+  min-width: 280px;
   max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
-  z-index: 1;
 }
+
+.hero-left h1 {
+  font-size: 2.5rem;
+  color: #8e44ad;
+  margin-bottom: 1rem;
+}
+
+.hero-left p {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.hero-right {
+  flex: 1;
+  min-width: 280px;
+  text-align: center;
+}
+
+.hero-right img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
 
 
 .hero-buttons {
@@ -169,8 +184,9 @@
 /* Responsive */
 @media (max-width: 768px) {
   .landing-hero {
-    min-height: 80vh;
-    background-position: top;
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
   }
 
   .hero-overlay h1 {
@@ -181,6 +197,16 @@
     font-size: 1rem;
   }
 
+  hero-left h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-left p {
+    font-size: 1rem;
+  }
+   .hero-right img {
+    max-width: 100%;
+   }
   .hero-buttons button {
     padding: 0.5rem 1rem;
   }
