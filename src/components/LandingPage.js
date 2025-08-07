@@ -56,8 +56,9 @@ function LandingPage() {
 
 
       {/* Testimonial Section */}
-  <section className="testimonial">
-  <h2>What Shop Owners Say</h2>
+  {/* Testimonial Section */}
+<section className="testimonial">
+  <h2 className="testimonial-title"> What Shop Owners Say</h2>
   <Slider
     dots={true}
     infinite={true}
@@ -65,29 +66,30 @@ function LandingPage() {
     slidesToShow={1}
     slidesToScroll={1}
     autoplay={true}
-    autoplaySpeed={4000}
+    autoplaySpeed={5000}
     arrows={false}
   >
     <div className="testimonial-slide">
       <blockquote>
-        "Using this app, I no longer worry about keeping records manually. It’s all on my phone!"
+        “Using this app, I no longer worry about keeping records manually. It’s all on my phone!”
       </blockquote>
-      <p>- Ramesh Jewellers, Pune</p>
+      <p className="testimonial-author">— Ramesh Jewellers, Pune</p>
     </div>
     <div className="testimonial-slide">
       <blockquote>
-        "Our bookkeeping has never been easier. The ledger system is just perfect."
+        “Our bookkeeping has never been easier. The ledger system is just perfect.”
       </blockquote>
-      <p>- Alankrut Jewels, Nashik</p>
+      <p className="testimonial-author">— Alankrut Jewels, Nashik</p>
     </div>
     <div className="testimonial-slide">
       <blockquote>
-        "From customer tracking to inventory — this app saved us hours of manual work."
+        “From customer tracking to inventory — this app saved us hours of manual work.”
       </blockquote>
-      <p>- Ratnadeep Jewellers, Mumbai</p>
+      <p className="testimonial-author">— Ratnadeep Jewellers, Mumbai</p>
     </div>
   </Slider>
 </section>
+
 
 
 
