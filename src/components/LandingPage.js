@@ -8,41 +8,42 @@ function LandingPage() {
   return (
     <div className="landing-container">
       {/* Hero Section */}
-      <section
-        className="landing-hero"
-        style={{
-          backgroundImage: 'url(/hero.svg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          padding: '4rem 2rem',
-          color: '#fff',
-          position: 'relative',
-        }}
-      >
-        <div
-          className="hero-overlay"
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            padding: '2rem',
-            borderRadius: '1rem',
-            maxWidth: '600px',
-            margin: '0 auto',
-            textAlign: 'center',
-          }}
-        >
-          <h1>Your Jewellery Business, Now Digital</h1>
-          <p>Track sales, customer payments, and inventory with ease.</p>
-          <div className="hero-buttons" style={{ marginTop: '1.5rem' }}>
-            <button onClick={() => navigate('/apply')} style={{ marginRight: '1rem' }}>
-              Create Your Account
-            </button>
-            <button className="secondary" onClick={() => navigate('/login')}>
-              Login
-            </button>
-          </div>
-        </div>
-      </section>
+    <section
+  className="landing-hero"
+  style={{
+    backgroundImage: 'url(/hero.svg)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    padding: '4rem 2rem',
+    color: '#fff',
+    position: 'relative',
+  }}
+>
+  <div
+    className="hero-overlay"
+    style={{
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      padding: '2rem',
+      borderRadius: '1rem',
+      maxWidth: '600px',
+      margin: '0 auto',
+      textAlign: 'center',
+    }}
+  >
+    <h1>Your Jewellery Business, Now Digital</h1>
+    <p>Track sales, customer payments, and inventory with ease.</p>
+    <div className="hero-buttons" style={{ marginTop: '1.5rem' }}>
+      <button onClick={() => navigate('/apply')} style={{ marginRight: '1rem' }}>
+        Create Your Account
+      </button>
+      <button className="secondary" onClick={() => navigate('/login')}>
+        Login
+      </button>
+    </div>
+  </div>
+</section>
+
 
       {/* Features Section */}
       <section className="features">

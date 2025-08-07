@@ -8,35 +8,24 @@
 
 /* Hero Section */
 .landing-hero {
-  /* Removed background-image */
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  padding: 6rem 2rem;
+  padding: 4rem 2rem;
   position: relative;
-  min-height: 60vh;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 60vh;
 }
 
-/* If background color is needed */
-.landing-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: #fff;
-  z-index: 0;
-}
-
+/* Optional overlay background */
 .hero-overlay {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 2rem;
   border-radius: 1rem;
   max-width: 600px;
-  color: white;
+  margin: 0 auto;
   text-align: center;
-  z-index: 2;
+  z-index: 1;
 }
 
 .hero-buttons {
@@ -174,9 +163,8 @@
 /* Responsive */
 @media (max-width: 768px) {
   .landing-hero {
-    background-size: cover;
-    background-position: center;
     padding: 4rem 1rem;
+    text-align: center;
   }
 
   .hero-overlay {
