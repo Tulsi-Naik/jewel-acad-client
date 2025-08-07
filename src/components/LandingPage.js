@@ -61,8 +61,7 @@ const whatsappLink = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
           <div className="support-text">
             <h2>Support You Can Count On</h2>
             <p>
-              Confused about something? Don’t worry — we’ve got your back. Tap below to reach our support team directly on WhatsApp with a message ready to send.
-            </p>
+ Questions? Confused? Don’t worry — we’ve got your back. Whether it’s a feature you need help with or guidance for your jewellery business, our friendly support team is just a call or message away.             </p>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="support-btn">
               📞 WhatsApp Support
             </a>

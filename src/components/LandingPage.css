@@ -13,10 +13,13 @@
   justify-content: space-between;
   padding: 4rem 2rem;
   min-height: 90vh;
-  background-color: #fdfdfd;
   gap: 3rem;
   flex-wrap: wrap;
+  background: linear-gradient(to bottom right, #fdf6fd, #fefefe);
+  position: relative;
+  overflow: hidden;
 }
+
 
 .hero-left {
   flex: 1;
@@ -28,12 +31,13 @@
   font-size: 2.7rem;
   color: #8e44ad;
   margin-bottom: 1rem;
-   font-weight: bold;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
 }
 
 .hero-left p {
   font-size: 1.2rem;
-  color: #333;
+  color: #444;
 }
 
 .hero-right {
@@ -66,13 +70,15 @@
 .hero-buttons button:first-child {
   background-color: #f1c40f;
   color: #000;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hero-buttons .secondary {
   background-color: #fff;
   color: #8e44ad;
+  border: 2px solid #8e44ad;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
 }
-
 .hero-buttons button:hover {
   opacity: 0.9;
 }
