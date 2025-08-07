@@ -25,26 +25,28 @@ function LandingPage() {
 
 
       {/* Features Section */}
-      <section className="features">
-        <h2 className="section-title">Why Jewelers Love Us</h2>
-        <div className="features-grid">
-          <div className="feature-card">
-            <img src="/cartoon1.png" alt="Track Transactions" />
-            <h3>Customer Ledgers</h3>
-            <p>Track payments, returns, and balances seamlessly.</p>
-          </div>
-          <div className="feature-card">
-            <img src="/cartoon2.png" alt="Reports" />
-            <h3>Profit Reports</h3>
-            <p>Instantly see what’s selling and what’s not with insightful analytics.</p>
-          </div>
-          <div className="feature-card">
-            <img src="/cartoon3.png" alt="Secure" />
-            <h3>Cloud Backup</h3>
-            <p>Your records are always safe, secure, and available anywhere.</p>
-          </div>
-        </div>
-      </section>
+   
+<section className="features">
+  <h2 className="section-title">Why Jewelers Love Us</h2>
+  <div className="features-grid">
+    <div className="feature-card">
+      <img src="/report.svg" alt="Inventory Management" />
+      <h3>Inventory</h3>
+      <p>Manage stock levels and product details with ease.</p>
+    </div>
+    <div className="feature-card">
+      <img src="/report.svg" alt="Insightful Reports" />
+      <h3>Reports</h3>
+      <p>Visualize customer history and payment stats instantly.</p>
+    </div>
+    <div className="feature-card">
+      <img src="/report.svg" alt="Invoices and PDFs" />
+      <h3>Invoices</h3>
+      <p>Generate beautiful PDFs and share invoices with just one click.</p>
+    </div>
+  </div>
+</section>
+
 
       {/* Testimonial Section */}
       <section className="testimonial">
