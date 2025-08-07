@@ -53,6 +53,19 @@ function LandingPage() {
   </div>
 </section>
 
+<section className="support-section">
+  <div className="support-content">
+    <div className="support-text">
+      <h2>Support You Can Count Onu</h2>
+      <p>
+        Stuck somewhere? Need help managing your jewellery business? Our team is just a call or message away. Whether it's a feature you're unsure about or a suggestion you want to share, we're ready to support you!
+      </p>
+    </div>
+    <div className="support-image">
+      <img src="/support.svg" alt="Customer Support" />
+    </div>
+  </div>
+</section>
 
 
       {/* Testimonial Section */}

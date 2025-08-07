@@ -336,3 +336,44 @@
   }
 }
 
+.support-section {
+  padding: 4rem 2rem;
+  background-color: #f7f7ff;
+}
+
+.support-content {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.support-text {
+  flex: 1;
+  min-width: 280px;
+}
+
+.support-text h2 {
+  font-size: 2rem;
+  color: #6a1b9a;
+  margin-bottom: 1rem;
+}
+
+.support-text p {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+.support-image {
+  flex: 1;
+  min-width: 280px;
+}
+
+.support-image img {
+  width: 100%;
+  max-width: 400px;
+}
