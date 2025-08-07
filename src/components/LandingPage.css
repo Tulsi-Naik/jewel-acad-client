@@ -271,24 +271,39 @@
 
 /* Footer */
 .landing-footer {
-  background-color: #2c3e50;
+  background: linear-gradient(90deg, #4b2c60, #6f42c1); /* purple gradient */
   color: #fff;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  border-top: 5px solid #ffd700; /* yellow accent border */
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: auto;
 }
 
 .footer-content p {
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
 }
 
 .footer-content a {
   color: #ffd700;
+  font-weight: 500;
   text-decoration: none;
 }
 
 .footer-content a:hover {
+  color: #ffea7c;
   text-decoration: underline;
 }
+
+.footer-content strong {
+  color: #ffaad4; /* light pink highlight for labels */
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {
