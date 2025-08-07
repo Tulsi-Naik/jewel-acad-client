@@ -29,11 +29,12 @@ function LandingPage() {
 <section className="features">
   <h2 className="section-title">Why Jewelers Love Us</h2>
   <div className="features-grid">
-    <div className="feature-card">
-      <img src="/cartoon1.png" alt="Track Transactions" />
-      <h3>Customer Ledgers</h3>
-      <p>Track payments, returns, and balances seamlessly.</p>
-    </div>
+   <div className="feature-card">
+  <img src="/product.svg" alt="Inventory Management" />
+  <h3>Inventory Management</h3>
+  <p>Monitor stock levels, item details, and product movement with ease.</p>
+</div>
+
 
     <div className="feature-card">
       <img src="/report.svg" alt="Reports" />
