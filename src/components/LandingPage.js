@@ -42,7 +42,7 @@ function LandingPage() {
     </div>
 
     <div className="feature-card">
-<img src="/customer.svg" alt="Customer Data" className="svg-fix" />
+<img src="/customer2.svg" alt="Customer Data" className="svg-fix" />
       <h3>Customer Management</h3>
       <p>Save contact details, preferences, and view history in one place.</p>
     </div>
