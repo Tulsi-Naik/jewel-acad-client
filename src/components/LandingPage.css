@@ -110,14 +110,17 @@
 }
 
 .feature-card img {
-   width: 100px;
-  height: 100px; /* NEW */
-  object-fit: contain; /* Ensures no distortion */
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
   margin-bottom: 1rem;
 }
+
 .svg-fix {
   padding: 5px;
-  background-color: white; /* Optional, just for visual balance */
+  background-color: white;
+  width: 140px;
+  height: 140px; /* Optional, just for visual balance */
 }
 
 
