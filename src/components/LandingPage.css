@@ -277,22 +277,23 @@
 
 /* Footer */
 .landing-footer {
-  background: linear-gradient(90deg, #4b2c60, #6f42c1); /* purple gradient */
+  background-color: #000; /* solid black */
   color: #fff;
-  padding: 2.5rem 2rem;
-  text-align: center;
+  padding: 3rem 1rem;
   font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
-  border-top: 5px solid #ffd700; /* yellow accent border */
+  text-align: center;
+  border-top: 4px solid #ffd700; /* yellow accent */
 }
 
 .footer-content {
-  max-width: 800px;
-  margin: auto;
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.8;
 }
 
 .footer-content p {
-  margin: 0.75rem 0;
+  margin: 1rem 0;
 }
 
 .footer-content a {
@@ -302,13 +303,20 @@
 }
 
 .footer-content a:hover {
-  color: #ffea7c;
+  color: #fff176;
   text-decoration: underline;
 }
 
 .footer-content strong {
-  color: #ffaad4; /* light pink highlight for labels */
+  color: #ffaad4; /* soft pink highlight for labels */
 }
+
+.footer-copy {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
 
 
 /* Responsive */

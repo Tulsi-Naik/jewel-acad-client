@@ -119,9 +119,8 @@ const whatsappLink = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
         <p>Safe. Simple. Made for Indian jewelers.</p>
         <button onClick={() => navigate('/apply')}>Start Now</button>
       </section>
-
-      {/* Footer Section */}
-     <footer className="landing-footer">
+{/* Footer Section */}
+<footer className="landing-footer">
   <div className="footer-content">
     <p>
       <i className="bi bi-globe me-2"></i>
@@ -137,11 +136,15 @@ const whatsappLink = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
     </p>
     <p>
       <i className="bi bi-geo-alt me-2"></i>
-      <strong>Address:</strong> 505, Shivcity Center, Vijaynagar, Sangli 416416
+      <strong>Address:</strong>{' '}
+      505, Shivcity Center, Vijaynagar, Sangli 416416
     </p>
-    <p>&copy; {new Date().getFullYear()} <strong>JewelBook</strong>. All rights reserved.</p>
+    <p className="footer-copy">
+      &copy; {new Date().getFullYear()} <strong>JewelBook</strong>. All rights reserved.
+    </p>
   </div>
 </footer>
+
 
     </div>
   );
