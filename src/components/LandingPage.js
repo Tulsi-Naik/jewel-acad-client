@@ -53,13 +53,32 @@ function LandingPage() {
 
 
       {/* Testimonial Section */}
-      <section className="testimonial">
-        <h2>What Shop Owners Say</h2>
-        <blockquote>
-          "Using this app, I no longer worry about keeping records manually. It’s all on my phone!"
-        </blockquote>
-        <p>- Ramesh Jewellers, Pune</p>
-      </section>
+     <section className="testimonial">
+  <h2 className="testimonial-title">What Shop Owners Say</h2>
+  <div className="testimonial-wrapper">
+    <div className="testimonial-bubble">
+      <blockquote>
+        “Using this app, I no longer worry about keeping records manually. It’s all on my phone!”
+      </blockquote>
+      <p className="testimonial-author">— Ramesh Jewellers, Pune</p>
+    </div>
+
+    <div className="testimonial-bubble">
+      <blockquote>
+        “Inventory tracking has never been this easy. I check it daily before I sleep.”
+      </blockquote>
+      <p className="testimonial-author">— Nisha Gold, Mumbai</p>
+    </div>
+
+    <div className="testimonial-bubble">
+      <blockquote>
+        “Our staff finds it simple and fast. Everything we need is just a tap away.”
+      </blockquote>
+      <p className="testimonial-author">— Omkar Ornaments, Nashik</p>
+    </div>
+  </div>
+</section>
+
 
       {/* Final CTA Section */}
       <section className="cta">
