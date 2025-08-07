@@ -16,7 +16,8 @@ import ApplyForm from './components/ApplyForm';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import AdminLayout from './components/AdminLayout';
+import ApplicationList from './components/ApplicationList';
 // ✅ AdminNavbar defined inline
 const AdminNavbar = () => {
   const navigate = useNavigate();
@@ -69,7 +70,9 @@ function App() {
         <Route path="/reports" element={<RequireAuth><Reports /></RequireAuth>} />
         <Route path="/ledger" element={<RequireAuth><Ledger /></RequireAuth>} />
         <Route path="/help" element={<Help />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+<Route path="/admin" element={<AdminLayout />}>
+  <Route path="dashboard" element={<AdminDashboard />} />
+  <Route path="applications" element={<ApplicationList />} />
       </Routes>
 
       <ToastContainer position="top-center" autoClose={2000} />
