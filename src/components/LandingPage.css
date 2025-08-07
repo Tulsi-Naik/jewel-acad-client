@@ -335,10 +335,10 @@
     padding: 0.5rem 1rem;
   }
 }
-
 .support-section {
   padding: 4rem 2rem;
-  background-color: #f7f7ff;
+  background: linear-gradient(135deg, #fdf0ff, #f7f7ff);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .support-content {
@@ -348,7 +348,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 3rem;
 }
 
 .support-text {
@@ -357,23 +357,61 @@
 }
 
 .support-text h2 {
-  font-size: 2rem;
-  color: #6a1b9a;
+  font-size: 2.4rem;
+  color: #8e44ad;
   margin-bottom: 1rem;
+  font-weight: bold;
 }
 
 .support-text p {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #444;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 2rem;
 }
 
 .support-image {
   flex: 1;
   min-width: 280px;
+  text-align: center;
 }
 
 .support-image img {
   width: 100%;
   max-width: 400px;
+  border-radius: 1rem;
 }
+
+.support-btn {
+  background-color: #f1c40f;
+  color: #8e44ad;
+  padding: 0.8rem 1.8rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.support-btn:hover {
+  background-color: #fff;
+  color: #8e44ad;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .support-section {
+    text-align: center;
+  }
+
+  .support-text h2 {
+    font-size: 2rem;
+  }
+
+  .support-text p {
+    font-size: 1rem;
+  }
+}
+
