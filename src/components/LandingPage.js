@@ -1,9 +1,34 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
-
+import { useEffect, useState } from "react";
 function LandingPage() {
   const navigate = useNavigate();
+   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 3); // 3 slides
+    }, 4000); // Change every 4s
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const track = document.getElementById("testimonial-track");
+    const dots = document.querySelectorAll(".dot");
+
+    if (track) {
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle("active", idx === currentSlide);
+    });
+  }, [currentSlide]);
 
   return (
     <div className="landing-container">
@@ -55,29 +80,35 @@ function LandingPage() {
       {/* Testimonial Section */}
      <section className="testimonial">
   <h2 className="testimonial-title">What Shop Owners Say</h2>
-  <div className="testimonial-wrapper">
-    <div className="testimonial-bubble">
-      <blockquote>
-        “Using this app, I no longer worry about keeping records manually. It’s all on my phone!”
-      </blockquote>
-      <p className="testimonial-author">— Ramesh Jewellers, Pune</p>
+  <div className="testimonial-slider">
+    <div className="testimonial-track" id="testimonial-track">
+      <div className="testimonial-slide">
+        <blockquote>
+          “Using this app, I no longer worry about keeping records manually. It’s all on my phone!”
+        </blockquote>
+        <p className="testimonial-author">— Ramesh Jewellers, Pune</p>
+      </div>
+      <div className="testimonial-slide">
+        <blockquote>
+          “Inventory tracking has never been this easy. I check it daily before I sleep.”
+        </blockquote>
+        <p className="testimonial-author">— Nisha Gold, Mumbai</p>
+      </div>
+      <div className="testimonial-slide">
+        <blockquote>
+          “Our staff finds it simple and fast. Everything we need is just a tap away.”
+        </blockquote>
+        <p className="testimonial-author">— Omkar Ornaments, Nashik</p>
+      </div>
     </div>
-
-    <div className="testimonial-bubble">
-      <blockquote>
-        “Inventory tracking has never been this easy. I check it daily before I sleep.”
-      </blockquote>
-      <p className="testimonial-author">— Nisha Gold, Mumbai</p>
-    </div>
-
-    <div className="testimonial-bubble">
-      <blockquote>
-        “Our staff finds it simple and fast. Everything we need is just a tap away.”
-      </blockquote>
-      <p className="testimonial-author">— Omkar Ornaments, Nashik</p>
+    <div className="testimonial-dots" id="testimonial-dots">
+      <span className="dot active" onClick={() => goToSlide(0)}></span>
+      <span className="dot" onClick={() => goToSlide(1)}></span>
+      <span className="dot" onClick={() => goToSlide(2)}></span>
     </div>
   </div>
 </section>
+
 
 
       {/* Final CTA Section */}
