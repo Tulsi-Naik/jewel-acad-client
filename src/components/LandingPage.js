@@ -6,8 +6,11 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 function LandingPage() {
   const navigate = useNavigate();
-   
-
+    const phoneNumber = '919066251008'; // Replace with your support number (with country code)
+  const defaultMessage = encodeURIComponent(
+    'Hi, I need help with my JewelBook account. Please assist.'
+  );
+const whatsappLink = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
   return (
     <div className="landing-container">
       {/* Hero Section */}
@@ -54,23 +57,21 @@ function LandingPage() {
 </section>
 
 <section className="support-section">
-  <div className="support-content">
-    <div className="support-text">
-      <h2>Support You Can Count On</h2>
-      <p>
-        Questions? Confused? Don’t worry — we’ve got your back. Whether it’s a feature you need help with or guidance for your jewellery business, our friendly support team is just a call or message away.  
-        <br /><br />
-        Because when you shine, we shine.
-      </p>
-      <button onClick={() => navigate('/contact')} className="support-btn">
-        Contact Support
-      </button>
-    </div>
-    <div className="support-image">
-      <img src="/support.svg" alt="Customer Support" />
-    </div>
-  </div>
-</section>
+        <div className="support-content">
+          <div className="support-text">
+            <h2>Support You Can Count On</h2>
+            <p>
+              Confused about something? Don’t worry — we’ve got your back. Tap below to reach our support team directly on WhatsApp with a message ready to send.
+            </p>
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="support-btn">
+              📞 WhatsApp Support
+            </a>
+          </div>
+          <div className="support-image">
+            <img src="/support.svg" alt="Support Illustration" />
+          </div>
+        </div>
+      </section>
 
 
 

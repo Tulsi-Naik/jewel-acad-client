@@ -383,22 +383,20 @@
 }
 
 .support-btn {
-  background-color: #f1c40f;
-  color: #8e44ad;
-  padding: 0.8rem 1.8rem;
+  display: inline-block;
+  background-color: #25d366; /* WhatsApp green */
+  color: white;
+  padding: 0.8rem 1.6rem;
   font-weight: bold;
   border: none;
   border-radius: 0.5rem;
   font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 
 .support-btn:hover {
-  background-color: #fff;
-  color: #8e44ad;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  background-color: #128c7e;
 }
 
 @media (max-width: 768px) {
