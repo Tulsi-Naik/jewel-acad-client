@@ -24,28 +24,31 @@ function LandingPage() {
 
 
 
-      {/* Features Section */}
    
+{/* Features Section */}
 <section className="features">
   <h2 className="section-title">Why Jewelers Love Us</h2>
   <div className="features-grid">
     <div className="feature-card">
-      <img src="/report.svg" alt="Inventory Management" />
-      <h3>Inventory</h3>
-      <p>Manage stock levels and product details with ease.</p>
+      <img src="/cartoon1.png" alt="Track Transactions" />
+      <h3>Customer Ledgers</h3>
+      <p>Track payments, returns, and balances seamlessly.</p>
     </div>
+
     <div className="feature-card">
-      <img src="/report.svg" alt="Insightful Reports" />
-      <h3>Reports</h3>
-      <p>Visualize customer history and payment stats instantly.</p>
+      <img src="/report.svg" alt="Reports" />
+      <h3>Profit Reports</h3>
+      <p>Instantly see what’s selling and what’s not with insightful analytics.</p>
     </div>
+
     <div className="feature-card">
-      <img src="/report.svg" alt="Invoices and PDFs" />
-      <h3>Invoices</h3>
-      <p>Generate beautiful PDFs and share invoices with just one click.</p>
+      <img src="/customer.svg" alt="Customer Data" />
+      <h3>Customer Management</h3>
+      <p>Save contact details, preferences, and view history in one place.</p>
     </div>
   </div>
 </section>
+
 
 
       {/* Testimonial Section */}
