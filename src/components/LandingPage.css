@@ -8,7 +8,7 @@
 
 /* Hero Section */
 .landing-hero {
-  background-image: url('/hero.svg');
+  
   background-size: cover;              /* Fill width, allow slight crop */
   background-position: top;            /* Keep head/upper part visible */
   background-repeat: no-repeat;
