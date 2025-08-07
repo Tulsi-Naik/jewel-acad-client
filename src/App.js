@@ -73,6 +73,7 @@ function App() {
 <Route path="/admin" element={<AdminLayout />}>
   <Route path="dashboard" element={<AdminDashboard />} />
   <Route path="applications" element={<ApplicationList />} />
+  </Route>
       </Routes>
 
       <ToastContainer position="top-center" autoClose={2000} />
