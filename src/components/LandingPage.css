@@ -76,52 +76,64 @@
   opacity: 0.9;
 }
 
-/* Features Section */
-.features {
-  padding: 4rem 2rem;
-  background-color: #fff8f0;
-  text-align: center;
-}
 
-.section-title {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  color: #8e44ad;
-}
-
-.features-grid {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
+/* Feature Card Styles */
 .feature-card {
   background: #ffffff;
   border-radius: 1rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   width: 280px;
-  transition: transform 0.2s ease;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
 }
 
+/* Hover effect: lift + shadow + border glow */
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(142, 68, 173, 0.2);
+  border-image: linear-gradient(45deg, #8e44ad, #f39c12) 1;
 }
 
+/* Heading color changes on hover */
+.feature-card:hover h3 {
+  color: #8e44ad;
+}
+
+/* Feature image styling */
 .feature-card img {
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: 140px;
   object-fit: contain;
   margin-bottom: 1rem;
 }
 
-.svg-fix {
-  padding: 5px;
-  background-color: white;
-  width: 140px;
-  height: 140px; /* Optional, just for visual balance */
+/* Feature card headings */
+.feature-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #333;
 }
+
+/* Feature card text */
+.feature-card p {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* Background gradient per card */
+.feature-card:nth-child(1) {
+  background: linear-gradient(to bottom right, #fff0f5, #ffffff);
+}
+.feature-card:nth-child(2) {
+  background: linear-gradient(to bottom right, #f0f8ff, #ffffff);
+}
+.feature-card:nth-child(3) {
+  background: linear-gradient(to bottom right, #f5fffa, #ffffff);
+}
+
 
 
 /* Testimonial Section */
