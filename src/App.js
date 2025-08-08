@@ -70,10 +70,18 @@ function App() {
         <Route path="/ledger" element={<RequireAuth><Ledger /></RequireAuth>} />
         <Route path="/help" element={<Help />} />
 <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-<Route path="/admin/*" element={<AdminLayout />}>
+<Route
+  path="/admin/*"
+  element={
+    <RequireAuth>
+      <AdminLayout />
+    </RequireAuth>
+  }
+>
   <Route path="dashboard" element={<AdminDashboard />} />
   <Route path="applications" element={<ApplicationList />} />
 </Route>
+
 
       </Routes>
 
