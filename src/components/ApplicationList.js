@@ -6,6 +6,8 @@ import './ApplicationList.css';
 const ApplicationList = () => {
   const [applications, setApplications] = useState([]);
 const [filter, setFilter] = useState('all');
+const [editingId, setEditingId] = useState(null);
+const [editingComment, setEditingComment] = useState('');
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -46,6 +48,32 @@ const [filter, setFilter] = useState('all');
       toast.error('Failed to delete');
     }
   };
+const startEditing = (app) => {
+  setEditingId(app._id);
+  setEditingComment(app.adminComment || '');
+};
+
+const cancelEditing = () => {
+  setEditingId(null);
+  setEditingComment('');
+};
+
+const saveComment = async () => {
+  try {
+    await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/applications/${editingId}/comment`, {
+      adminComment: editingComment,
+    });
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === editingId ? { ...app, adminComment: editingComment } : app
+      )
+    );
+    toast.success('Comment saved');
+    cancelEditing();
+  } catch (err) {
+    toast.error('Failed to save comment');
+  }
+};
 
   return (
     <div className="application-list-container">
@@ -91,24 +119,38 @@ const [filter, setFilter] = useState('all');
                     {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                   </span>
                 </p>
-                <p><strong>Admin Comment:</strong> {app.adminComment || <em>None</em>}</p>
-<textarea
-  rows="2"
-  placeholder="Add a comment..."
-  defaultValue={app.adminComment}
-  onBlur={async (e) => {
-    const newComment = e.target.value;
-    try {
-      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/applications/${app._id}/comment`, { adminComment: newComment });
-      setApplications(prev =>
-        prev.map(a => a._id === app._id ? { ...a, adminComment: newComment } : a)
-      );
-      toast.success('Comment updated');
-    } catch (err) {
-      toast.error('Failed to update comment');
-    }
-  }}
-/>
+                <p><strong>Admin Comment:</strong>{' '}
+  {editingId === app._id ? (
+    <div>
+      <textarea
+        rows={2}
+        value={editingComment}
+        onChange={(e) => setEditingComment(e.target.value)}
+      />
+      <div style={{ marginTop: '5px' }}>
+        <button onClick={saveComment}>Save</button>
+        <button onClick={cancelEditing} style={{ marginLeft: '8px' }}>Cancel</button>
+      </div>
+    </div>
+  ) : (
+    <>
+      {app.adminComment || <em>None</em>}{' '}
+      <button
+        onClick={() => startEditing(app)}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          marginLeft: '6px',
+        }}
+        title="Edit comment"
+      >
+        📝
+      </button>
+    </>
+  )}
+</p>
+
 
               </div>
 
