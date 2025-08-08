@@ -13,10 +13,12 @@
 }
 
 /* Card container */
+/* Container for all cards */
 .application-cards {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center; /* ✅ center cards */
+  gap: 20px;
 }
 
 /* Individual card */
@@ -25,12 +27,13 @@
   border: 1px solid #ccc;
   border-left: 5px solid #007acc;
   border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+  max-width: 600px; /* ✅ prevent full-width stretching */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
 }
+
 
 .application-card:hover {
   transform: scale(1.01);
