@@ -2,12 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import './ApplicationList.css'; // We'll add this below
+import './ApplicationList.css';
 
 const ApplicationList = () => {
   const [applications, setApplications] = useState([]);
 
-  // Fetch applications from backend
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -31,6 +30,16 @@ const ApplicationList = () => {
     }
   };
 
+  const handleApprove = async (id) => {
+    try {
+      const res = await axios.patch(`/api/applications/${id}`, { status: 'approved' });
+      setApplications(applications.map(app => app._id === id ? { ...app, status: 'approved' } : app));
+      toast.success('Application approved');
+    } catch (err) {
+      toast.error('Failed to approve');
+    }
+  };
+
   return (
     <div className="application-list-container">
       <h2>Vendor Applications</h2>
@@ -45,22 +54,28 @@ const ApplicationList = () => {
               <th>Phone</th>
               <th>Business</th>
               <th>Message</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {applications.map((app) => (
-              <tr key={app._id}>
+              <tr key={app._id} className={app.status === 'approved' ? 'approved-row' : ''}>
                 <td>{app.name}</td>
                 <td>{app.email}</td>
                 <td>{app.phone}</td>
                 <td>{app.businessName}</td>
                 <td>{app.message}</td>
                 <td>
-                  <button className="delete-btn" onClick={() => handleDelete(app._id)}>
-                    Delete
-                  </button>
-                  {/* Future: Add approve/reject */}
+                  <span className={`status-badge ${app.status}`}>
+                    {app.status === 'approved' ? 'Approved' : 'Pending'}
+                  </span>
+                </td>
+                <td>
+                  <button className="delete-btn" onClick={() => handleDelete(app._id)}>Delete</button>
+                  {app.status !== 'approved' && (
+                    <button className="approve-btn" onClick={() => handleApprove(app._id)}>Approve</button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -2,17 +2,21 @@
   padding: 20px;
   background: #f0f6f6;
   color: #1a1a1a;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .application-list-container h2 {
   color: #004d4d;
   margin-bottom: 20px;
+  font-size: 1.8rem;
 }
 
 .application-table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
+  min-width: 800px; /* Prevent columns from cramping on small screens */
 }
 
 .application-table th,
@@ -20,6 +24,7 @@
   padding: 12px;
   border: 1px solid #ddd;
   text-align: left;
+  vertical-align: top;
 }
 
 .application-table th {
@@ -27,15 +32,79 @@
   color: white;
 }
 
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.approved {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-badge.pending {
+  background-color: #ff9800;
+  color: white;
+}
+
+.approved-row {
+  background-color: #eafaf1;
+}
+
+.delete-btn,
+.approve-btn {
+  padding: 6px 12px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
 .delete-btn {
   background-color: #d9534f;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 4px;
 }
 
 .delete-btn:hover {
   background-color: #c9302c;
+}
+
+.approve-btn {
+  background-color: #5cb85c;
+}
+
+.approve-btn:hover {
+  background-color: #449d44;
+}
+
+/* ✅ Mobile responsiveness */
+@media screen and (max-width: 768px) {
+  .application-list-container {
+    padding: 10px;
+  }
+
+  .application-table {
+    font-size: 0.9rem;
+    min-width: 100%;
+  }
+
+  .application-table th,
+  .application-table td {
+    padding: 8px;
+  }
+
+  .delete-btn,
+  .approve-btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
 }
