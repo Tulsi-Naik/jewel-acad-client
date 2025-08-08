@@ -1,10 +1,10 @@
-// src/components/AdminLayout.jsx
 import React, { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -12,19 +12,16 @@ const AdminLayout = () => {
     navigate('/login');
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth < 768) setSidebarOpen(false);
   };
 
-  const closeSidebarOnMobile = () => {
-    if (window.innerWidth < 768) {
-      setSidebarOpen(false);
-    }
-  };
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div className={`admin-layout ${sidebarOpen ? 'sidebar-open' : ''}`}>
-      {/* Hamburger button for mobile */}
+      {/* Hamburger */}
       <button className="hamburger-btn" onClick={toggleSidebar}>
         ☰
       </button>
@@ -34,12 +31,20 @@ const AdminLayout = () => {
         <h4 className="p-3">Admin Panel</h4>
         <ul className="nav flex-column p-2">
           <li className="nav-item">
-            <Link className="nav-link text-white" to="/admin/dashboard" onClick={closeSidebarOnMobile}>
+            <Link
+              className={`nav-link text-white ${isActive('/admin/dashboard') ? 'active-link' : ''}`}
+              to="/admin/dashboard"
+              onClick={closeSidebarOnMobile}
+            >
               Dashboard
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link text-white" to="/admin/applications" onClick={closeSidebarOnMobile}>
+            <Link
+              className={`nav-link text-white ${isActive('/admin/applications') ? 'active-link' : ''}`}
+              to="/admin/applications"
+              onClick={closeSidebarOnMobile}
+            >
               Applications
             </Link>
           </li>

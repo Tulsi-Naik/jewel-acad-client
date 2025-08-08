@@ -1,29 +1,11 @@
-/* src/components/AdminLayout.css */
-
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
+/* Highlight current sidebar link */
+.nav-link.active-link {
+  background-color: #495057;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
-/* Sidebar styles */
-.admin-sidebar {
-  width: 220px;
-  min-height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  transition: transform 0.3s ease;
-  z-index: 1000;
-}
-
-/* Main content */
-.admin-main {
-  margin-left: 220px;
-  width: 100%;
-  padding-top: 60px; /* for mobile spacing */
-}
-
-/* Hamburger button */
+/* Hamburger icon improved */
 .hamburger-btn {
   display: none;
   position: fixed;
@@ -33,13 +15,14 @@
   background: #343a40;
   color: white;
   border: none;
-  font-size: 24px;
-  padding: 8px 12px;
-  border-radius: 4px;
+  font-size: 26px;
+  padding: 6px 10px;
+  border-radius: 6px;
   cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.4);
 }
 
-/* Responsive for mobile */
+/* Responsive behavior */
 @media (max-width: 767px) {
   .admin-sidebar {
     transform: translateX(-100%);
