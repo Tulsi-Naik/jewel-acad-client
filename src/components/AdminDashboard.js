@@ -125,7 +125,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-primary mb-4">Admin Dashboard – Vendor Management</h2>
+      <h2 className="text-primary mb-4">Vendor Management</h2>
 
       <div className="mb-3 d-flex gap-4">
         <div className="bg-light border rounded p-3">

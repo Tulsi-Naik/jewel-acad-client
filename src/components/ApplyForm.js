@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './ApplyForm.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from '../utils/axiosInstance';
 
 function ApplyForm() {
   const [formData, setFormData] = useState({
@@ -20,16 +21,18 @@ function ApplyForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      // You’ll replace this with an actual backend API call later
-      console.log('Submitted data:', formData);
+  try {
+  const response = await axios.post('/applications', formData);
 
-      toast.success('🎉 Application submitted! We’ll contact you soon.');
-      setFormData({ name: '', email: '', businessName: '', phone: '', message: '' });
-    } catch (error) {
-      toast.error('Something went wrong. Please try again.');
-    }
-  };
+  if (response.status === 201 || response.status === 200) {
+    toast.success('Application submitted! We’ll contact you soon.');
+    setFormData({ name: '', email: '', businessName: '', phone: '', message: '' });
+  }
+} catch (error) {
+  toast.error('Something went wrong. Please try again.');
+}
+
+};
 
   return (
     <section className="apply-section">
