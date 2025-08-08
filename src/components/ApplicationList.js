@@ -5,6 +5,7 @@ import './ApplicationList.css';
 
 const ApplicationList = () => {
   const [applications, setApplications] = useState([]);
+const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -49,12 +50,26 @@ const ApplicationList = () => {
   return (
     <div className="application-list-container">
       <h2>Vendor Applications</h2>
+<div className="filter-tabs">
+  {['all', 'pending', 'approved', 'rejected'].map((status) => (
+    <button
+      key={status}
+      className={`filter-tab ${filter === status ? 'active' : ''}`}
+      onClick={() => setFilter(status)}
+    >
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </button>
+  ))}
+</div>
 
       {applications.length === 0 ? (
         <p>No applications received yet.</p>
       ) : (
+        
         <div className="application-cards">
-          {applications.map((app) => (
+{applications
+  .filter((app) => filter === 'all' || app.status === filter)
+  .map((app) => (
             <div key={app._id} className={`application-card ${app.status}`}>
               <div className="app-info">
                 <p><strong>Name:</strong> {app.name}</p>
