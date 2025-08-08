@@ -49,44 +49,35 @@ const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/applicati
   return (
     <div className="application-list-container">
       <h2>Vendor Applications</h2>
-      {applications.length === 0 ? (
-        <p>No applications received yet.</p>
-      ) : (
-        <table className="application-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Business</th>
-              <th>Message</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((app) => (
-              <tr key={app._id} className={app.status === 'approved' ? 'approved-row' : ''}>
-                <td>{app.name}</td>
-                <td>{app.email}</td>
-                <td>{app.phone}</td>
-                <td>{app.businessName}</td>
-                <td>{app.message}</td>
-                <td>
-                  <span className={`status-badge ${app.status}`}>
-                    {app.status === 'approved' ? 'Approved' : 'Pending'}
-                  </span>
-                </td>
-                <td>
-                  <button className="delete-btn" onClick={() => handleDelete(app._id)}>Delete</button>
-                  {app.status !== 'approved' && (
-                    <button className="approve-btn" onClick={() => handleApprove(app._id)}>Approve</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+ {applications.length === 0 ? (
+  <p>No applications received yet.</p>
+) : (
+  <div className="application-cards">
+    {applications.map((app) => (
+      <div key={app._id} className={`application-card ${app.status}`}>
+        <div className="app-info">
+          <p><strong>Name:</strong> {app.name}</p>
+          <p><strong>Email:</strong> {app.email}</p>
+          <p><strong>Phone:</strong> {app.phone}</p>
+          <p><strong>Business:</strong> {app.businessName}</p>
+          <p><strong>Message:</strong> {app.message}</p>
+          <p><strong>Status:</strong> 
+            <span className={`status-badge ${app.status}`}>
+              {app.status === 'approved' ? 'Approved' : 'Pending'}
+            </span>
+          </p>
+        </div>
+        <div className="app-actions">
+          <button className="delete-btn" onClick={() => handleDelete(app._id)}>Delete</button>
+          {app.status !== 'approved' && (
+            <button className="approve-btn" onClick={() => handleApprove(app._id)}>Approve</button>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+
+
       )}
     </div>
   );

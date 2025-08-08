@@ -3,41 +3,58 @@
   background: #f0f6f6;
   color: #1a1a1a;
   max-width: 100%;
-  overflow-x: auto;
 }
 
+/* Header */
 .application-list-container h2 {
   color: #004d4d;
   margin-bottom: 20px;
   font-size: 1.8rem;
 }
 
-.application-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  min-width: 800px; /* Prevent columns from cramping on small screens */
+/* Card container */
+.application-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.application-table th,
-.application-table td {
-  padding: 12px;
-  border: 1px solid #ddd;
-  text-align: left;
-  vertical-align: top;
+/* Individual card */
+.application-card {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-left: 5px solid #007acc;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
 }
 
-.application-table th {
-  background-color: #007acc;
-  color: white;
+.application-card:hover {
+  transform: scale(1.01);
 }
 
+.application-card.approved {
+  border-left-color: #4caf50;
+  background-color: #eafaf1;
+}
+
+/* Info section inside card */
+.app-info p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+/* Status badge */
 .status-badge {
   padding: 5px 10px;
   border-radius: 12px;
   font-size: 0.85rem;
   font-weight: 500;
   display: inline-block;
+  margin-left: 6px;
 }
 
 .status-badge.approved {
@@ -50,15 +67,18 @@
   color: white;
 }
 
-.approved-row {
-  background-color: #eafaf1;
+/* Actions (buttons) */
+.app-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .delete-btn,
 .approve-btn {
   display: inline-block;
   padding: 8px 14px;
-  margin: 4px 4px 0 0;
   border: none;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -87,33 +107,25 @@
   transform: scale(1.05);
 }
 
-/* On mobile screens */
+/* Mobile responsiveness */
 @media screen and (max-width: 768px) {
+  .application-card {
+    padding: 12px;
+  }
+
+  .app-info p {
+    font-size: 0.9rem;
+  }
+
   .delete-btn,
   .approve-btn {
     width: 100%;
-    margin-bottom: 6px;
     font-size: 0.85rem;
     padding: 10px;
-    border-radius: 8px;
+    border-radius: 6px;
   }
 
-  .application-table td {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .application-table tr {
-    display: block;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    padding: 10px;
-  }
-
-  .application-table th {
-    display: none;
+  .app-actions {
+    flex-direction: column;
   }
 }
