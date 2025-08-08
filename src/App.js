@@ -56,7 +56,6 @@ function App() {
   return (
     <>
       {showVendorNavbar && <VendorNavbar />}
-      {showAdminNavbar && <AdminNavbar />}
 
       <Routes>
   <Route path="/" element={<LandingPage />} />
@@ -70,10 +69,12 @@ function App() {
         <Route path="/reports" element={<RequireAuth><Reports /></RequireAuth>} />
         <Route path="/ledger" element={<RequireAuth><Ledger /></RequireAuth>} />
         <Route path="/help" element={<Help />} />
-<Route path="/admin" element={<AdminLayout />}>
+<Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+<Route path="/admin/*" element={<AdminLayout />}>
   <Route path="dashboard" element={<AdminDashboard />} />
   <Route path="applications" element={<ApplicationList />} />
-  </Route>
+</Route>
+
       </Routes>
 
       <ToastContainer position="top-center" autoClose={2000} />
