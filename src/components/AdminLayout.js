@@ -1,44 +1,58 @@
 // src/components/AdminLayout.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
-    <div className="admin-layout">
-      {/* Top Navbar */}
-      <nav className="admin-navbar bg-dark text-white d-flex justify-content-between align-items-center px-4">
-        <h4 className="my-2">Admin Dashboard</h4>
-        <button className="btn btn-outline-light" onClick={handleLogout}>
+    <div className={`admin-layout ${sidebarOpen ? 'sidebar-open' : ''}`}>
+      {/* Hamburger button for mobile */}
+      <button className="hamburger-btn" onClick={toggleSidebar}>
+        ☰
+      </button>
+
+      {/* Sidebar */}
+      <aside className={`admin-sidebar bg-dark text-white ${sidebarOpen ? 'show' : ''}`}>
+        <h4 className="p-3">Admin Panel</h4>
+        <ul className="nav flex-column p-2">
+          <li className="nav-item">
+            <Link className="nav-link text-white" to="/admin/dashboard" onClick={closeSidebarOnMobile}>
+              Dashboard
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link text-white" to="/admin/applications" onClick={closeSidebarOnMobile}>
+              Applications
+            </Link>
+          </li>
+        </ul>
+        <button className="btn btn-outline-light m-3" onClick={handleLogout}>
           Logout
         </button>
-      </nav>
+      </aside>
 
-      {/* Sidebar + Main */}
-      <div className="admin-content">
-        <aside className="admin-sidebar bg-dark text-white">
-          <h5 className="p-3">Admin Panel</h5>
-          <ul className="nav flex-column px-2">
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/admin/applications">Applications</Link>
-            </li>
-          </ul>
-        </aside>
-
-        <main className="admin-main p-4">
-          <Outlet />
-        </main>
-      </div>
+      {/* Main Content */}
+      <main className="admin-main p-4">
+        <Outlet />
+      </main>
     </div>
   );
 };
