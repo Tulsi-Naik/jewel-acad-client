@@ -91,6 +91,25 @@ const [filter, setFilter] = useState('all');
                     {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                   </span>
                 </p>
+                <p><strong>Admin Comment:</strong> {app.adminComment || <em>None</em>}</p>
+<textarea
+  rows="2"
+  placeholder="Add a comment..."
+  defaultValue={app.adminComment}
+  onBlur={async (e) => {
+    const newComment = e.target.value;
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/applications/${app._id}/comment`, { adminComment: newComment });
+      setApplications(prev =>
+        prev.map(a => a._id === app._id ? { ...a, adminComment: newComment } : a)
+      );
+      toast.success('Comment updated');
+    } catch (err) {
+      toast.error('Failed to update comment');
+    }
+  }}
+/>
+
               </div>
 
               <div className="app-actions">
