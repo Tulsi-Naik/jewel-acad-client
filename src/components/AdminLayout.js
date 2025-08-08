@@ -2,10 +2,13 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import './AdminLayout.css';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+const location = useLocation();
 
   const handleLogout = () => {
     // implement your logout logic here
