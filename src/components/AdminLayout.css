@@ -1,15 +1,38 @@
 .admin-layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
+/* Top navbar */
+.admin-navbar {
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Content below navbar */
+.admin-content {
+  display: flex;
+  margin-top: 60px; /* match navbar height */
+}
+
+/* Sidebar */
 .admin-sidebar {
   width: 220px;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px); /* fill below navbar */
   position: fixed;
+  top: 60px;
+  left: 0;
+  padding-top: 20px;
 }
 
+/* Main content area */
 .admin-main {
   margin-left: 220px;
+  padding: 20px;
   width: 100%;
 }
