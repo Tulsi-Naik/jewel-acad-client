@@ -7,17 +7,23 @@ import './ApplicationList.css';
 const ApplicationList = () => {
   const [applications, setApplications] = useState([]);
 
-  useEffect(() => {
-    const fetchApplications = async () => {
-      try {
-        const res = await axios.get('/api/applications');
+ useEffect(() => {
+  const fetchApplications = async () => {
+    try {
+      const res = await axios.get('/api/applications');
+      console.log("Fetched data:", res.data); // ✅ Check this!
+      if (Array.isArray(res.data)) {
         setApplications(res.data);
-      } catch (err) {
-        toast.error('Failed to load applications');
+      } else {
+        toast.error('Invalid data format received from server');
       }
-    };
-    fetchApplications();
-  }, []);
+    } catch (err) {
+      toast.error('Failed to load applications');
+    }
+  };
+  fetchApplications();
+}, []);
+
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this application?')) return;
