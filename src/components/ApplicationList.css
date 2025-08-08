@@ -56,13 +56,17 @@
 
 .delete-btn,
 .approve-btn {
-  padding: 6px 12px;
-  margin-right: 5px;
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 4px 4px 0 0;
   border: none;
-  border-radius: 4px;
-  color: white;
+  border-radius: 6px;
   font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .delete-btn {
@@ -71,6 +75,7 @@
 
 .delete-btn:hover {
   background-color: #c9302c;
+  transform: scale(1.05);
 }
 
 .approve-btn {
@@ -79,32 +84,36 @@
 
 .approve-btn:hover {
   background-color: #449d44;
+  transform: scale(1.05);
 }
 
-/* ✅ Mobile responsiveness */
+/* On mobile screens */
 @media screen and (max-width: 768px) {
-  .application-list-container {
+  .delete-btn,
+  .approve-btn {
+    width: 100%;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .application-table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .application-table tr {
+    display: block;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
     padding: 10px;
   }
 
-  .application-table {
-    font-size: 0.9rem;
-    min-width: 100%;
-  }
-
-  .application-table th,
-  .application-table td {
-    padding: 8px;
-  }
-
-  .delete-btn,
-  .approve-btn {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-
-  .status-badge {
-    font-size: 0.75rem;
-    padding: 4px 8px;
+  .application-table th {
+    display: none;
   }
 }
