@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import VendorNavbar from './components/Navbar';
 import ProductForm from './components/ProductForm';
 import SalesForm from './components/SalesForm';
