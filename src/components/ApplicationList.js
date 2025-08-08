@@ -51,16 +51,25 @@ const [filter, setFilter] = useState('all');
     <div className="application-list-container">
       <h2>Vendor Applications</h2>
 <div className="filter-tabs">
-  {['all', 'pending', 'approved', 'rejected'].map((status) => (
-    <button
-      key={status}
-      className={`filter-tab ${filter === status ? 'active' : ''}`}
-      onClick={() => setFilter(status)}
-    >
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </button>
-  ))}
+  {['all', 'pending', 'approved', 'rejected'].map((status) => {
+    const label = status.charAt(0).toUpperCase() + status.slice(1);
+    const pendingCount = applications.filter(app => app.status === 'pending').length;
+
+    return (
+      <button
+        key={status}
+        className={`filter-tab ${filter === status ? 'active' : ''}`}
+        onClick={() => setFilter(status)}
+      >
+        {label}
+        {status === 'pending' && pendingCount > 0 && (
+          <span className="pending-badge">({pendingCount})</span>
+        )}
+      </button>
+    );
+  })}
 </div>
+
 
       {applications.length === 0 ? (
         <p>No applications received yet.</p>
