@@ -122,15 +122,17 @@ const saveComment = async () => {
                 <p><strong>Admin Comment:</strong>{' '}
   {editingId === app._id ? (
     <div>
-      <textarea
-        rows={2}
-        value={editingComment}
-        onChange={(e) => setEditingComment(e.target.value)}
-      />
-      <div style={{ marginTop: '5px' }}>
-        <button onClick={saveComment}>Save</button>
-        <button onClick={cancelEditing} style={{ marginLeft: '8px' }}>Cancel</button>
-      </div>
+     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+  <textarea
+    rows={1}
+    style={{ flex: 1, fontSize: '0.85rem', padding: '4px 6px' }}
+    value={editingComment}
+    onChange={(e) => setEditingComment(e.target.value)}
+  />
+  <button className="inline-btn" onClick={saveComment}>Save</button>
+  <button className="inline-btn cancel" onClick={cancelEditing}>Cancel</button>
+</div>
+
     </div>
   ) : (
     <>

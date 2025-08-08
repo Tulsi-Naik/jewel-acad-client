@@ -193,3 +193,25 @@
   border-radius: 12px;
 }
 
+.inline-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.inline-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.inline-btn.cancel {
+  background-color: #fafafa;
+  color: #444;
+}
+
+.inline-btn.cancel:hover {
+  background-color: #eaeaea;
+}
