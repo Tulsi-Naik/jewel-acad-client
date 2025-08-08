@@ -25,14 +25,23 @@ const AdminLayout = () => {
       </header>
 
       {/* Sidebar */}
-      <aside className="admin-sidebar">
-        <nav>
-          <ul>
-            <li><Link to="/admin/dashboard" onClick={() => setSidebarOpen(false)}>Dashboard</Link></li>
-            <li><Link to="/admin/applications" onClick={() => setSidebarOpen(false)}>Applications</Link></li>
-          </ul>
-        </nav>
-      </aside>
+<div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+  <Link
+    to="/admin/dashboard"
+    className={location.pathname === '/admin/dashboard' ? 'active' : ''}
+    onClick={() => setSidebarOpen(false)} // close sidebar on click
+  >
+    Dashboard
+  </Link>
+  <Link
+    to="/admin/applications"
+    className={location.pathname === '/admin/applications' ? 'active' : ''}
+    onClick={() => setSidebarOpen(false)} // close sidebar on click
+  >
+    Applications
+  </Link>
+</div>
+
 
       {/* Main Content */}
       <main className="admin-content">
