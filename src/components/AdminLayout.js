@@ -1,61 +1,41 @@
+// src/components/AdminLayout.jsx
 import React, { useState } from 'react';
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    // implement your logout logic here
+    localStorage.removeItem('adminToken'); // example
+    navigate('/');
   };
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const closeSidebarOnMobile = () => {
-    if (window.innerWidth < 768) setSidebarOpen(false);
-  };
-
-  const isActive = (path) => location.pathname === path;
 
   return (
     <div className={`admin-layout ${sidebarOpen ? 'sidebar-open' : ''}`}>
-      {/* Hamburger */}
-      <button className="hamburger-btn" onClick={toggleSidebar}>
-        ☰
-      </button>
+      {/* Top Navbar */}
+      <header className="admin-navbar">
+        <button className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          ☰
+        </button>
+        <h1 className="admin-title">Admin Panel</h1>
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
+      </header>
 
       {/* Sidebar */}
-      <aside className={`admin-sidebar bg-dark text-white ${sidebarOpen ? 'show' : ''}`}>
-        <h4 className="p-3">Admin Panel</h4>
-        <ul className="nav flex-column p-2">
-          <li className="nav-item">
-            <Link
-              className={`nav-link text-white ${isActive('/admin/dashboard') ? 'active-link' : ''}`}
-              to="/admin/dashboard"
-              onClick={closeSidebarOnMobile}
-            >
-              Dashboard
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              className={`nav-link text-white ${isActive('/admin/applications') ? 'active-link' : ''}`}
-              to="/admin/applications"
-              onClick={closeSidebarOnMobile}
-            >
-              Applications
-            </Link>
-          </li>
-        </ul>
-        <button className="btn btn-outline-light m-3" onClick={handleLogout}>
-          Logout
-        </button>
+      <aside className="admin-sidebar">
+        <nav>
+          <ul>
+            <li><Link to="/admin/dashboard" onClick={() => setSidebarOpen(false)}>Dashboard</Link></li>
+            <li><Link to="/admin/applications" onClick={() => setSidebarOpen(false)}>Applications</Link></li>
+          </ul>
+        </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="admin-main p-4">
+      <main className="admin-content">
         <Outlet />
       </main>
     </div>
