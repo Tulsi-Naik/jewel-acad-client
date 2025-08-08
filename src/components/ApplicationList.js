@@ -10,7 +10,7 @@ const ApplicationList = () => {
  useEffect(() => {
   const fetchApplications = async () => {
     try {
-      const res = await axios.get('/api/applications');
+const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/applications`);
       console.log("Fetched data:", res.data); // ✅ Check this!
       if (Array.isArray(res.data)) {
         setApplications(res.data);
@@ -28,7 +28,7 @@ const ApplicationList = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this application?')) return;
     try {
-      await axios.delete(`/api/applications/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/applications/${id}`);
       setApplications(applications.filter((app) => app._id !== id));
       toast.success('Application deleted');
     } catch (err) {
@@ -38,7 +38,7 @@ const ApplicationList = () => {
 
   const handleApprove = async (id) => {
     try {
-      const res = await axios.patch(`/api/applications/${id}`, { status: 'approved' });
+      const res = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/applications/${id}`, { status: 'approved' });
       setApplications(applications.map(app => app._id === id ? { ...app, status: 'approved' } : app));
       toast.success('Application approved');
     } catch (err) {
