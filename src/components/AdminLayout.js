@@ -1,17 +1,15 @@
 // src/components/AdminLayout.jsx
 import React, { useState } from 'react';
-import './AdminLayout.css';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-
+import './AdminLayout.css';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
-const location = useLocation();
+  const location = useLocation();
 
   const handleLogout = () => {
-    // implement your logout logic here
-    localStorage.removeItem('adminToken'); // example
+    localStorage.removeItem('adminToken');
     navigate('/');
   };
 
@@ -27,23 +25,30 @@ const location = useLocation();
       </header>
 
       {/* Sidebar */}
-<div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-  <Link
-    to="/admin/dashboard"
-    className={location.pathname === '/admin/dashboard' ? 'active' : ''}
-    onClick={() => setSidebarOpen(false)} // close sidebar on click
-  >
-    Dashboard
-  </Link>
-  <Link
-    to="/admin/applications"
-    className={location.pathname === '/admin/applications' ? 'active' : ''}
-    onClick={() => setSidebarOpen(false)} // close sidebar on click
-  >
-    Applications
-  </Link>
-</div>
-
+      <aside className="admin-sidebar">
+        <nav>
+          <ul>
+            <li>
+              <Link
+                to="/admin/dashboard"
+                className={location.pathname === '/admin/dashboard' ? 'active' : ''}
+                onClick={() => setSidebarOpen(false)}
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/admin/applications"
+                className={location.pathname === '/admin/applications' ? 'active' : ''}
+                onClick={() => setSidebarOpen(false)}
+              >
+                Applications
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
       {/* Main Content */}
       <main className="admin-content">
