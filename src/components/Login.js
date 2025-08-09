@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -11,40 +11,53 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-     const res = await axios.post(
-  'https://jewel-academic-server.onrender.com/api/auth/login',
-  { username, password },
-  { withCredentials: true }
-);
+      console.log('📤 Sending login request with:', { username });
 
+      const res = await axios.post(
+        'https://jewel-academic-server.onrender.com/api/auth/login',
+        { username, password },
+        { withCredentials: true }
+      );
+
+      console.log('📥 Login API raw response:', res.data);
 
       const token = res.data.token;
       if (!token) {
         toast.error('No token received from server');
+        console.warn('⚠️ No token in server response!');
         return;
       }
 
+      // store token
       localStorage.setItem('token', token);
+      console.log('🔑 Token saved to localStorage');
 
+      // decode & save vendor info if vendor
       const decoded = jwtDecode(token);
+      console.log('📝 Decoded JWT payload:', decoded);
+
       const role = decoded.role;
 
       if (role === 'vendor') {
-        localStorage.setItem('vendorInfo', JSON.stringify({
+        const vendorInfo = {
           brandFull: decoded.brandFull,
           brandShort: decoded.brandShort,
           address: decoded.address,
           contact: decoded.contact
-        }));
+        };
+        localStorage.setItem('vendorInfo', JSON.stringify(vendorInfo));
+        console.log('🏷️ Vendor info saved:', vendorInfo);
       }
 
       toast.success(`Welcome back, ${decoded.username}!`);
 
+      // IMPORTANT: redirect vendor to /dashboard (not to '/')
       setTimeout(() => {
-        window.location.href = role === 'admin' ? '/admin' : '/';
-      }, 1000);
+        // admin -> admin area, vendor -> dashboard
+        window.location.href = role === 'admin' ? '/admin' : '/dashboard';
+      }, 800);
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('Login error:', err.response?.data || err.message);
       toast.error('Login failed. Please check your credentials.');
     }
   };
