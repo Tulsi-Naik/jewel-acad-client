@@ -21,6 +21,7 @@ const Ledger = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalLedgerId, setModalLedgerId] = useState(null);
   const [modalAmount, setModalAmount] = useState('');
+const [statusFilter, setStatusFilter] = useState('');
 
   const fetchProducts = async () => {
     try {
@@ -75,15 +76,14 @@ const Ledger = () => {
   }, [fetchLedger]);
 
   const filterByCustomer = () => {
-  const status = document.getElementById('paymentStatusSelect').value; // we'll add id to status select
   const filtered = ledgerData.filter(entry => {
     const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
     const matchesCustomerName = customerName
       ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
       : true;
     const matchesStatus =
-      status === 'paid' ? entry.paid :
-      status === 'unpaid' ? !entry.paid :
+      statusFilter === 'paid' ? entry.paid :
+      statusFilter === 'unpaid' ? !entry.paid :
       true; // "All"
 
     return matchesCustomerId && matchesCustomerName && matchesStatus;
@@ -95,6 +95,7 @@ const Ledger = () => {
     ? toast.info(`Filtered ${filtered.length} record(s)`)
     : toast.warning('No Matching Records Found');
 };
+
 
 
   const handleClearFilters = () => {
@@ -250,18 +251,19 @@ const Ledger = () => {
             ))}
           </select>
         </div>
-
-      <div className="col-md-3">
+<div className="col-md-3">
   <label>Payment Status</label>
   <select
-    id="paymentStatusSelect"
     className="form-control"
+    value={statusFilter}
+    onChange={(e) => setStatusFilter(e.target.value)}
   >
     <option value="">All</option>
     <option value="paid">Paid</option>
     <option value="unpaid">Unpaid</option>
   </select>
 </div>
+
 
 
         <div className="col-md-3 align-self-end">
