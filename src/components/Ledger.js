@@ -1,4 +1,4 @@
-//src/components/Ledger.js
+// src/components/Ledger.js
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from '../utils/axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
@@ -21,7 +21,7 @@ const Ledger = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalLedgerId, setModalLedgerId] = useState(null);
   const [modalAmount, setModalAmount] = useState('');
-const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   const fetchProducts = async () => {
     try {
@@ -76,35 +76,39 @@ const [statusFilter, setStatusFilter] = useState('');
   }, [fetchLedger]);
 
   const filterByCustomer = () => {
-  const filtered = ledgerData.filter(entry => {
-    const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
-    const matchesCustomerName = customerName
-      ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
-      : true;
-    const matchesStatus =
-      statusFilter === 'paid' ? entry.paid :
-      statusFilter === 'unpaid' ? !entry.paid :
-      true; // "All"
+    const filtered = ledgerData.filter(entry => {
+      const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
+      const matchesCustomerName = customerName
+        ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
+        : true;
 
-    return matchesCustomerId && matchesCustomerName && matchesStatus;
-  });
+      const paidAmount = entry.paidAmount || 0;
+      const total = entry.total || 0;
+      const remainingBalance = total - paidAmount;
 
-  setFilteredData(filtered);
+      const matchesStatus =
+        statusFilter === 'paid' ? remainingBalance === 0 :
+        statusFilter === 'unpaid' ? paidAmount === 0 :
+        statusFilter === 'partial' ? paidAmount > 0 && remainingBalance > 0 :
+        true;
 
-  filtered.length > 0
-    ? toast.info(`Filtered ${filtered.length} record(s)`)
-    : toast.warning('No Matching Records Found');
-};
+      return matchesCustomerId && matchesCustomerName && matchesStatus;
+    });
 
-const handleClearFilters = () => {
-  setCustomerId('');        // Reset dropdown
-  setCustomerName('');      // Reset text input
-  setStatusFilter('');      // Reset status filter state
-  setFilteredData(ledgerData); // Show all ledger entries
-  toast.info('Filters Cleared');
-};
+    setFilteredData(filtered);
 
+    filtered.length > 0
+      ? toast.info(`Filtered ${filtered.length} record(s)`)
+      : toast.warning('No Matching Records Found');
+  };
 
+  const handleClearFilters = () => {
+    setCustomerId('');
+    setCustomerName('');
+    setStatusFilter('');
+    setFilteredData(ledgerData);
+    toast.info('Filters Cleared');
+  };
 
   const handleAddLedger = async () => {
     if (!newCustomerId || !newTotal || newProductIds.length === 0) {
@@ -145,6 +149,11 @@ const handleClearFilters = () => {
     const entry = filteredData.find(e => e._id === ledgerId);
     if (!entry) return toast.error("Ledger entry not found");
 
+    const paidAmount = entry.paidAmount || 0;
+    const total = entry.total || 0;
+    const remainingBalance = total - paidAmount;
+    const status = remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid';
+
     const pdfContent = document.createElement('div');
     pdfContent.innerHTML = `
       <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
@@ -161,12 +170,13 @@ const handleClearFilters = () => {
             const qty = p.quantity || 0;
             const price = p.product?.price || 0;
             const lineTotal = qty * price;
-return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.toFixed(2)}</li>`;
-
+            return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.toFixed(2)}</li>`;
           }).join('') || '<li>None</li>'}
         </ul>
-<p><strong>Paid:</strong> ₹${(entry.paidAmount || 0).toFixed(2)}</p>
-<p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
+        <p><strong>Paid:</strong> ₹${paidAmount.toFixed(2)}</p>
+        <p><strong>Total Pending:</strong> ₹${remainingBalance.toFixed(2)}</p>
+        <p><strong>Status:</strong> ${status}</p>
+        ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
         <div style="margin-top: 30px; text-align: right;">
           <p>Authorized Signature __________________</p>
         </div>
@@ -228,6 +238,7 @@ return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.t
 
   return (
     <div className="container mt-4">
+      <ToastContainer />
       <h2>Customer Ledger</h2>
       <div className="row mb-3">
         <div className="col-md-3">
@@ -254,20 +265,20 @@ return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.t
             ))}
           </select>
         </div>
-<div className="col-md-3">
-  <label>Payment Status</label>
-  <select
-    className="form-control"
-    value={statusFilter}
-    onChange={(e) => setStatusFilter(e.target.value)}
-  >
-    <option value="">All</option>
-    <option value="paid">Paid</option>
-    <option value="unpaid">Unpaid</option>
-  </select>
-</div>
 
-
+        <div className="col-md-3">
+          <label>Payment Status</label>
+          <select
+            className="form-control"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+            <option value="partial">Partially Paid</option>
+          </select>
+        </div>
 
         <div className="col-md-3 align-self-end">
           <button className="btn btn-primary mt-2" onClick={filterByCustomer}>Filter</button>
@@ -279,120 +290,115 @@ return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.t
         <p>Loading...</p>
       ) : noData ? (
         <p className="text-center text-muted mt-4">No ledger entries yet. Add one to get started!</p>
-    ) : (
-  filteredData.map((entry, index) => {
-    const paidAmount = entry.paidAmount || 0;
-    const remainingBalance = entry.total - paidAmount;
+      ) : (
+        filteredData.map((entry, index) => {
+          const paidAmount = entry.paidAmount || 0;
+          const total = entry.total || 0;
+          const remainingBalance = total - paidAmount;
 
-    return (
-      <div key={index} className="card mb-3 shadow">
-        <div
-          className={`card-header text-white d-flex justify-content-between align-items-center ${
-            remainingBalance === 0 ? 'bg-success' : paidAmount > 0 ? 'bg-warning' : 'bg-dark'
-          }`}
-        >
-          <div>
-            <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
-          </div>
-         <div className="d-flex gap-2">
-  {remainingBalance > 0 && (
-    <button
-      className="btn btn-sm btn-info"
-      onClick={() => handlePartialPay(entry._id)}
-    >
-      Partial Pay
-    </button>
-  )}
+          return (
+            <div key={index} className="card mb-3 shadow">
+              <div
+                className={`card-header text-white d-flex justify-content-between align-items-center ${
+                  remainingBalance === 0 ? 'bg-success' : paidAmount > 0 ? 'bg-warning' : 'bg-dark'
+                }`}
+              >
+                <div>
+                  <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
+                </div>
+                <div className="d-flex gap-2">
+                  {remainingBalance > 0 && (
+                    <button
+                      className="btn btn-sm btn-info"
+                      onClick={() => handlePartialPay(entry._id)}
+                    >
+                      Partial Pay
+                    </button>
+                  )}
 
-  {!entry.paid && remainingBalance > 0 && (
-    <button
-      className="btn btn-sm btn-success"
-      onClick={() => markAsPaid(entry._id)}
-    >
-      Mark as Paid
-    </button>
-  )}
+                  {remainingBalance > 0 && (
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={() => markAsPaid(entry._id)}
+                    >
+                      Mark as Paid
+                    </button>
+                  )}
 
-  {/* Always last */}
-  <button
-    className="btn btn-sm btn-warning"
-    onClick={() => handleGeneratePDF(entry._id)}
-  >
-    Download PDF
-  </button>
-</div>
+                  <button
+                    className="btn btn-sm btn-warning"
+                    onClick={() => handleGeneratePDF(entry._id)}
+                  >
+                    Download PDF
+                  </button>
+                </div>
+              </div>
 
-        </div>
-        <div className="card-body">
-          <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
-          <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
+              <div className="card-body">
+                <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
+                <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
 
-          {entry.paid && entry.paidAt && (
-            <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
-          )}
+                {paidAmount > 0 && entry.paidAt && (
+                  <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
+                )}
 
-          <p><strong>Products:</strong></p>
-          <ul className="mb-2">
-            {entry.products?.map((p, idx) => {
-              const name = p.product?.name || 'Unnamed';
-              const qty = p.quantity || 0;
-              const price = p.product?.price || 0;
-              const lineTotal = qty * price;
+                <p><strong>Products:</strong></p>
+                <ul className="mb-2">
+                  {entry.products?.map((p, idx) => {
+                    const name = p.product?.name || 'Unnamed';
+                    const qty = p.quantity || 0;
+                    const price = p.product?.price || 0;
+                    const lineTotal = qty * price;
 
-              return (
-              <li key={idx}>
-  {name} — Qty: {qty} × ₹{price.toFixed(2)} = ₹{lineTotal.toFixed(2)}
-</li>
+                    return (
+                      <li key={idx}>
+                        {name} — Qty: {qty} × ₹{price.toFixed(2)} = ₹{lineTotal.toFixed(2)}
+                      </li>
+                    );
+                  })}
+                </ul>
 
-              );
-            })}
-          </ul>
+                {paidAmount > 0 && <p><strong>Paid:</strong> ₹{paidAmount.toFixed(2)}</p>}
 
-          {paidAmount > 0 && <p><strong>Paid:</strong> ₹{paidAmount.toFixed(2)}</p>}
+                <p><strong>Total Remaining:</strong> ₹{remainingBalance.toFixed(2)}</p>
 
-          <p><strong>Total Remaining:</strong> ₹{remainingBalance.toFixed(2)}</p>
+                <p>
+                  <strong>Status:</strong>{' '}
+                  <span
+                    style={{
+                      color: remainingBalance === 0 ? 'green' : paidAmount > 0 ? 'orange' : 'red',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid'}
+                  </span>
+                </p>
+              </div>
+            </div>
+          );
+        })
+      )}
 
-          <p>
-            <strong>Status:</strong>{' '}
-            <span
-              style={{
-                color: remainingBalance === 0 ? 'green' : paidAmount > 0 ? 'orange' : 'red',
-                fontWeight: 'bold'
-              }}
-            >
-              {remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partial Paid' : 'Unpaid'}
-            </span>
-          </p>
-        </div>
-      </div>
-    );
-  })
-)}
-
-
-      {/*  Correctly placed PartialPayModal inside Ledger's return */}
       <PartialPayModal
-  isOpen={showModal}
-  onClose={() => setShowModal(false)}
-  onSubmit={handleModalSubmit}
-  customerName={
-    modalLedgerId
-      ? filteredData.find(e => e._id === modalLedgerId)?.customer?.name || ''
-      : ''
-  }
-  remainingBalance={
-    modalLedgerId
-      ? (filteredData.find(e => e._id === modalLedgerId)?.total - 
-         (filteredData.find(e => e._id === modalLedgerId)?.paidAmount || 0))
-      : 0
-  }
-/>
-
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleModalSubmit}
+        customerName={
+          modalLedgerId
+            ? filteredData.find(e => e._id === modalLedgerId)?.customer?.name || ''
+            : ''
+        }
+        remainingBalance={
+          modalLedgerId
+            ? (filteredData.find(e => e._id === modalLedgerId)?.total - 
+               (filteredData.find(e => e._id === modalLedgerId)?.paidAmount || 0))
+            : 0
+        }
+      />
     </div>
   );
 };
 
-// 🔹 Modal Component
 const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName, remainingBalance }) => {
   const [amount, setAmount] = useState('');
 
@@ -442,6 +448,5 @@ const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName, remainingBal
     </div>
   );
 };
-
 
 export default Ledger;
