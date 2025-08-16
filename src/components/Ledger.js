@@ -360,30 +360,44 @@ const handleClearFilters = () => {
 
       {/*  Correctly placed PartialPayModal inside Ledger's return */}
       <PartialPayModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onSubmit={handleModalSubmit}
-        customerName={
-          modalLedgerId
-            ? filteredData.find(e => e._id === modalLedgerId)?.customer?.name || ''
-            : ''
-        }
-      />
+  isOpen={showModal}
+  onClose={() => setShowModal(false)}
+  onSubmit={handleModalSubmit}
+  customerName={
+    modalLedgerId
+      ? filteredData.find(e => e._id === modalLedgerId)?.customer?.name || ''
+      : ''
+  }
+  remainingBalance={
+    modalLedgerId
+      ? (filteredData.find(e => e._id === modalLedgerId)?.total - 
+         (filteredData.find(e => e._id === modalLedgerId)?.paidAmount || 0))
+      : 0
+  }
+/>
+
     </div>
   );
 };
 
 // 🔹 Modal Component
-const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName }) => {
+const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName, remainingBalance }) => {
   const [amount, setAmount] = useState('');
 
   const handleSubmit = () => {
-    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+    const amt = parseFloat(amount);
+
+    if (!amt || isNaN(amt) || amt <= 0) {
       toast.warning('Enter a valid amount');
       return;
     }
 
-    onSubmit(parseFloat(amount));
+    if (amt > remainingBalance) {
+      toast.warning(`Amount cannot exceed remaining balance: ₹${remainingBalance.toFixed(2)}`);
+      return;
+    }
+
+    onSubmit(amt);
     setAmount('');
   };
 
@@ -398,6 +412,7 @@ const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName }) => {
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body">
+            <p>Remaining Balance: ₹{remainingBalance.toFixed(2)}</p>
             <input
               type="number"
               className="form-control"
@@ -415,5 +430,6 @@ const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName }) => {
     </div>
   );
 };
+
 
 export default Ledger;
