@@ -277,86 +277,102 @@ const handleClearFilters = () => {
         <p>Loading...</p>
       ) : noData ? (
         <p className="text-center text-muted mt-4">No ledger entries yet. Add one to get started!</p>
-      ) : (
-        filteredData.map((entry, index) => (
-          <div key={index} className="card mb-3 shadow">
-            <div className={`card-header text-white d-flex justify-content-between align-items-center ${entry.paid ? 'bg-success' : 'bg-dark'}`}>
-              <div>
-                <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
-              </div>
-              <div className="d-flex gap-2">
-  {entry.paid ? (
-    // Paid → Only PDF
-    <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
-      Download PDF
-    </button>
-  ) : entry.paidAmount > 0 ? (
-    // Partial Paid → Partial Pay + PDF
-    <>
-      <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
-        Partial Pay
-      </button>
-      <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
-        Download PDF
-      </button>
-    </>
-  ) : (
-    // Unpaid → Mark as Paid + Partial Pay + PDF
-    <>
-      <button className="btn btn-sm btn-success" onClick={() => markAsPaid(entry._id)}>
-        Mark as Paid
-      </button>
-      <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
-        Partial Pay
-      </button>
-      <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
-        Download PDF
-      </button>
-    </>
-  )}
-</div>
+    ) : (
+  filteredData.map((entry, index) => {
+    const paidAmount = entry.paidAmount || 0;
+    const remainingBalance = entry.total - paidAmount;
 
-            </div>
-            <div className="card-body">
-              <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
-              <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
-
-              {entry.paid && entry.paidAt && (
-                <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
-              )}
-
-              <p><strong>Products:</strong></p>
-              <ul className="mb-2">
-                {entry.products?.map((p, idx) => {
-                  const name = p.product?.name || 'Unnamed';
-                  const qty = p.quantity || 0;
-                  const price = p.product?.price || 0;
-                  const lineTotal = qty * price;
-
-                  return (
-                    <li key={idx}>
-                      {name} — Qty: {qty} — ₹{lineTotal.toFixed(2)}
-                    </li>
-                  );
-                })}
-              </ul>
-
-              {entry.paidAmount > 0 && (
-                <p><strong>Paid:</strong> ₹{entry.paidAmount.toFixed(2)}</p>
-              )}
-
-              <p><strong>Total Remaining:</strong> ₹{entry.total.toFixed(2)}</p>
-
-              <p>
-                <strong>Status:</strong>{' '}
-                <span style={{ color: entry.paid ? 'green' : 'red', fontWeight: 'bold' }}>
-                  {entry.paid ? 'Paid' : 'Unpaid'}
-                </span>
-              </p>
-            </div>
+    return (
+      <div key={index} className="card mb-3 shadow">
+        <div
+          className={`card-header text-white d-flex justify-content-between align-items-center ${
+            remainingBalance === 0 ? 'bg-success' : paidAmount > 0 ? 'bg-warning' : 'bg-dark'
+          }`}
+        >
+          <div>
+            <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
           </div>
-        ))
-      )}
+          <div className="d-flex gap-2">
+            {remainingBalance === 0 ? (
+              <button
+                className="btn btn-sm btn-warning"
+                onClick={() => handleGeneratePDF(entry._id)}
+              >
+                Download PDF
+              </button>
+            ) : (
+              <>
+                {remainingBalance > 0 && (
+                  <button
+                    className="btn btn-sm btn-info"
+                    onClick={() => handlePartialPay(entry._id)}
+                  >
+                    Partial Pay
+                  </button>
+                )}
+                <button
+                  className="btn btn-sm btn-warning"
+                  onClick={() => handleGeneratePDF(entry._id)}
+                >
+                  Download PDF
+                </button>
+                {!entry.paid && (
+                  <button
+                    className="btn btn-sm btn-success"
+                    onClick={() => markAsPaid(entry._id)}
+                  >
+                    Mark as Paid
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+        <div className="card-body">
+          <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
+          <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
+
+          {entry.paid && entry.paidAt && (
+            <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
+          )}
+
+          <p><strong>Products:</strong></p>
+          <ul className="mb-2">
+            {entry.products?.map((p, idx) => {
+              const name = p.product?.name || 'Unnamed';
+              const qty = p.quantity || 0;
+              const price = p.product?.price || 0;
+              const lineTotal = qty * price;
+
+              return (
+                <li key={idx}>
+                  {name} — Qty: {qty} — ₹{lineTotal.toFixed(2)}
+                </li>
+              );
+            })}
+          </ul>
+
+          {paidAmount > 0 && <p><strong>Paid:</strong> ₹{paidAmount.toFixed(2)}</p>}
+
+          <p><strong>Total Remaining:</strong> ₹{remainingBalance.toFixed(2)}</p>
+
+          <p>
+            <strong>Status:</strong>{' '}
+            <span
+              style={{
+                color: remainingBalance === 0 ? 'green' : paidAmount > 0 ? 'orange' : 'red',
+                fontWeight: 'bold'
+              }}
+            >
+              {remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partial Paid' : 'Unpaid'}
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  })
+)}
+
 
       {/*  Correctly placed PartialPayModal inside Ledger's return */}
       <PartialPayModal
