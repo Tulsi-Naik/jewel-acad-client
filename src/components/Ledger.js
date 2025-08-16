@@ -1,3 +1,4 @@
+//src/components/Ledger.js
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from '../utils/axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
@@ -74,20 +75,27 @@ const Ledger = () => {
   }, [fetchLedger]);
 
   const filterByCustomer = () => {
-    const filtered = ledgerData.filter(entry => {
-      const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
-      const matchesCustomerName = customerName
-        ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
-        : true;
-      return matchesCustomerId && matchesCustomerName;
-    });
+  const status = document.getElementById('paymentStatusSelect').value; // we'll add id to status select
+  const filtered = ledgerData.filter(entry => {
+    const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
+    const matchesCustomerName = customerName
+      ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
+      : true;
+    const matchesStatus =
+      status === 'paid' ? entry.paid :
+      status === 'unpaid' ? !entry.paid :
+      true; // "All"
 
-    setFilteredData(filtered);
+    return matchesCustomerId && matchesCustomerName && matchesStatus;
+  });
 
-    filtered.length > 0
-      ? toast.info(`Filtered ${filtered.length} record(s)`)
-      : toast.warning('No Matching Records Found');
-  };
+  setFilteredData(filtered);
+
+  filtered.length > 0
+    ? toast.info(`Filtered ${filtered.length} record(s)`)
+    : toast.warning('No Matching Records Found');
+};
+
 
   const handleClearFilters = () => {
     setCustomerId('');
@@ -243,28 +251,18 @@ const Ledger = () => {
           </select>
         </div>
 
-        <div className="col-md-3">
-          <label>Payment Status</label>
-          <select
-            className="form-control"
-            onChange={(e) => {
-              const status = e.target.value;
-              let filtered = ledgerData;
+      <div className="col-md-3">
+  <label>Payment Status</label>
+  <select
+    id="paymentStatusSelect"
+    className="form-control"
+  >
+    <option value="">All</option>
+    <option value="paid">Paid</option>
+    <option value="unpaid">Unpaid</option>
+  </select>
+</div>
 
-              if (status === 'paid') {
-                filtered = ledgerData.filter(l => l.paid);
-              } else if (status === 'unpaid') {
-                filtered = ledgerData.filter(l => !l.paid);
-              }
-
-              setFilteredData(filtered);
-            }}
-          >
-            <option value="">All</option>
-            <option value="paid">Paid</option>
-            <option value="unpaid">Unpaid</option>
-          </select>
-        </div>
 
         <div className="col-md-3 align-self-end">
           <button className="btn btn-primary mt-2" onClick={filterByCustomer}>Filter</button>
