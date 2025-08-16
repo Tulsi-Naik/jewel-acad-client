@@ -285,20 +285,37 @@ const handleClearFilters = () => {
                 <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
               </div>
               <div className="d-flex gap-2">
-                {!entry.paid && (
-                  <>
-                    <button className="btn btn-sm btn-success" onClick={() => markAsPaid(entry._id)}>
-                      Mark as Paid
-                    </button>
-                    <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
-                      Partial Pay
-                    </button>
-                  </>
-                )}
-                <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
-                  Download PDF
-                </button>
-              </div>
+  {entry.paid ? (
+    // Paid → Only PDF
+    <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
+      Download PDF
+    </button>
+  ) : entry.paidAmount > 0 ? (
+    // Partial Paid → Partial Pay + PDF
+    <>
+      <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
+        Partial Pay
+      </button>
+      <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
+        Download PDF
+      </button>
+    </>
+  ) : (
+    // Unpaid → Mark as Paid + Partial Pay + PDF
+    <>
+      <button className="btn btn-sm btn-success" onClick={() => markAsPaid(entry._id)}>
+        Mark as Paid
+      </button>
+      <button className="btn btn-sm btn-info" onClick={() => handlePartialPay(entry._id)}>
+        Partial Pay
+      </button>
+      <button className="btn btn-sm btn-warning" onClick={() => handleGeneratePDF(entry._id)}>
+        Download PDF
+      </button>
+    </>
+  )}
+</div>
+
             </div>
             <div className="card-body">
               <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
