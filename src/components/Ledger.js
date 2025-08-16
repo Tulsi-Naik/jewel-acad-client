@@ -100,9 +100,10 @@ const handleClearFilters = () => {
   setCustomerId('');        // Reset dropdown
   setCustomerName('');      // Reset text input
   document.getElementById('paymentStatusSelect').value = ''; // Reset status select
-  setFilteredData(ledgerData); // Show all ledger entries
+  setFilteredData(ledgerData); // <-- Show all ledger entries immediately
   toast.info('Filters Cleared');
 };
+
 
 
   const handleAddLedger = async () => {
