@@ -50,14 +50,14 @@ const Ledger = () => {
 
   // Group ledger by customer
   const groupByCustomer = () => {
-    const grouped = {};
-    ledgerData.forEach(entry => {
-      const id = entry.customer?._id || 'unknown';
-      if (!grouped[id]) grouped[id] = [];
-      grouped[id].push(entry);
-    });
-    return grouped;
-  };
+  return ledgerData.reduce((acc, entry) => {
+    const id = entry.customer?._id || 'unknown';
+    if (!acc[id]) acc[id] = [];
+    acc[id].push(entry);
+    return acc;
+  }, {});
+};
+
 
   const handleToggleExpand = (customerId) => {
     setExpandedCustomers(prev => ({
@@ -200,23 +200,21 @@ const Ledger = () => {
 
       {loading ? <p>Loading...</p> : (
         Object.keys(grouped).map((custId) => {
-          const entries = grouped[custId];
-          const latest = entries[0];
-          const totalPaid = entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
-          const totalRemaining = entries.reduce((sum, e) => sum + ((e.total || 0) - (e.paidAmount || 0)), 0);
+  const entries = grouped[custId];
+  const latest = entries[0];
+  const totalPaid = entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
+  const totalRemaining = entries.reduce((sum, e) => sum + ((e.total || 0) - (e.paidAmount || 0)), 0);
 
-          return (
-            <div key={custId} className="card mb-3 shadow">
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <div>
-                  <strong>{latest.customer?.name}</strong> | Total Paid: ₹{totalPaid.toFixed(2)} | Remaining: ₹{totalRemaining.toFixed(2)}
-                </div>
-                <div>
-                  <button className="btn btn-sm btn-info me-2" onClick={() => handleToggleExpand(custId)}>
-                    {expandedCustomers[custId] ? 'Collapse' : 'History'}
-                  </button>
-                </div>
-              </div>
+  return (
+    <div key={custId} className="card mb-3 shadow">
+      <div className="card-header d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{latest.customer?.name}</strong> | Total Paid: ₹{totalPaid.toFixed(2)} | Remaining: ₹{totalRemaining.toFixed(2)}
+        </div>
+        <button className="btn btn-sm btn-info" onClick={() => handleToggleExpand(custId)}>
+          {expandedCustomers[custId] ? 'Collapse' : 'History'}
+        </button>
+      </div>
 
               {expandedCustomers[custId] && (
                 <div className="card-body">

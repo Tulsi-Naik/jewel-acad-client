@@ -125,30 +125,59 @@ const res = await axios.get('/products');
 
 const handleAddLedger = async () => {
   try {
-    // Prepare products payload with full details
+    // Ensure we have a valid customer ID
+    let ledgerCustomerId = customerId;
+    if (!ledgerCustomerId && newCustomerName.trim()) {
+      const newCustomer = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
+        {
+          name: newCustomerName.trim(),
+          address: newCustomerAddress.trim(),
+          contact: newCustomerContact.trim()
+        }
+      );
+      ledgerCustomerId = newCustomer.data._id;
+      setCustomerId(ledgerCustomerId); // optional, update state
+    }
+
+    if (!ledgerCustomerId) {
+      toast.error('Customer is required for ledger');
+      return;
+    }
+
+    if (!savedSaleId) {
+      toast.error('Sale ID not found');
+      return;
+    }
+
+    // Prepare products payload
     const ledgerProducts = saleItems.map(item => {
-      const p = products.find(pr => pr._id === (item.product._id || item.product));
-      const itemTotal = (p.price - (item.discountAmount || (p.price * (item.discount || 0) / 100))) * item.quantity;
+      const productId = typeof item.product === 'string' ? item.product : item.product._id;
+      const p = products.find(pr => pr._id === productId);
+      const price = p?.price || 0;
+      const discount = item.discount || 0;
+      const discountAmount = item.discountAmount || (price * discount) / 100;
+      const total = (price - discountAmount) * item.quantity;
 
       return {
-        product: p._id,
+        product: productId,
         quantity: item.quantity,
-        price: p.price,
-        discount: item.discount || 0,
-        discountAmount: item.discountAmount || 0,
-        total: itemTotal
+        price,
+        discount,
+        discountAmount,
+        total
       };
     });
 
     const payload = {
       sale: savedSaleId,
-      customer: customerId,
-      total: totalAmount,
+      customer: ledgerCustomerId,
+      total: ledgerProducts.reduce((sum, p) => sum + p.total, 0),
       products: ledgerProducts,
       markAsPaid: false
     };
 
-    console.log("🧾 Sending to ledger (Add Ledger):", payload);
+    console.log('🧾 Sending to ledger (Add Ledger):', payload);
 
     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
 
@@ -156,6 +185,7 @@ const handleAddLedger = async () => {
     resetForm();
   } catch (err) {
     console.error('Error adding ledger:', err);
+    toast.error('Failed to add ledger. Check console for details.');
   } finally {
     setShowModal(false);
   }
@@ -163,29 +193,59 @@ const handleAddLedger = async () => {
 
 const handleMarkAsPaid = async () => {
   try {
+    // Ensure we have a valid customer ID
+    let ledgerCustomerId = customerId;
+    if (!ledgerCustomerId && newCustomerName.trim()) {
+      const newCustomer = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
+        {
+          name: newCustomerName.trim(),
+          address: newCustomerAddress.trim(),
+          contact: newCustomerContact.trim()
+        }
+      );
+      ledgerCustomerId = newCustomer.data._id;
+      setCustomerId(ledgerCustomerId);
+    }
+
+    if (!ledgerCustomerId) {
+      toast.error('Customer is required for ledger');
+      return;
+    }
+
+    if (!savedSaleId) {
+      toast.error('Sale ID not found');
+      return;
+    }
+
+    // Prepare products payload
     const ledgerProducts = saleItems.map(item => {
-      const p = products.find(pr => pr._id === (item.product._id || item.product));
-      const itemTotal = (p.price - (item.discountAmount || (p.price * (item.discount || 0) / 100))) * item.quantity;
+      const productId = typeof item.product === 'string' ? item.product : item.product._id;
+      const p = products.find(pr => pr._id === productId);
+      const price = p?.price || 0;
+      const discount = item.discount || 0;
+      const discountAmount = item.discountAmount || (price * discount) / 100;
+      const total = (price - discountAmount) * item.quantity;
 
       return {
-        product: p._id,
+        product: productId,
         quantity: item.quantity,
-        price: p.price,
-        discount: item.discount || 0,
-        discountAmount: item.discountAmount || 0,
-        total: itemTotal
+        price,
+        discount,
+        discountAmount,
+        total
       };
     });
 
     const payload = {
       sale: savedSaleId,
-      customer: customerId,
-      total: totalAmount,
+      customer: ledgerCustomerId,
+      total: ledgerProducts.reduce((sum, p) => sum + p.total, 0),
       products: ledgerProducts,
       markAsPaid: true
     };
 
-    console.log("🧾 Sending to ledger (Mark as Paid):", payload);
+    console.log('🧾 Sending to ledger (Mark as Paid):', payload);
 
     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
 
@@ -193,10 +253,12 @@ const handleMarkAsPaid = async () => {
     resetForm();
   } catch (err) {
     console.error('Error marking ledger as paid:', err);
+    toast.error('Failed to mark ledger as paid. Check console for details.');
   } finally {
     setShowModal(false);
   }
 };
+
 
 
 
