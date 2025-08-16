@@ -99,8 +99,8 @@ const [statusFilter, setStatusFilter] = useState('');
 const handleClearFilters = () => {
   setCustomerId('');        // Reset dropdown
   setCustomerName('');      // Reset text input
-  document.getElementById('paymentStatusSelect').value = ''; // Reset status select
-  setFilteredData(ledgerData); // <-- Show all ledger entries immediately
+  setStatusFilter('');      // Reset status filter state
+  setFilteredData(ledgerData); // Show all ledger entries
   toast.info('Filters Cleared');
 };
 
