@@ -96,14 +96,14 @@ const [statusFilter, setStatusFilter] = useState('');
     : toast.warning('No Matching Records Found');
 };
 
+const handleClearFilters = () => {
+  setCustomerId('');        // Reset dropdown
+  setCustomerName('');      // Reset text input
+  document.getElementById('paymentStatusSelect').value = ''; // Reset status select
+  setFilteredData(ledgerData); // Show all ledger entries
+  toast.info('Filters Cleared');
+};
 
-
-  const handleClearFilters = () => {
-    setCustomerId('');
-    setCustomerName('');
-    setFilteredData(ledgerData);
-    toast.info('Filters Cleared');
-  };
 
   const handleAddLedger = async () => {
     if (!newCustomerId || !newTotal || newProductIds.length === 0) {
