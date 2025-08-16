@@ -292,41 +292,34 @@ const handleClearFilters = () => {
           <div>
             <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
           </div>
-          <div className="d-flex gap-2">
-            {remainingBalance === 0 ? (
-              <button
-                className="btn btn-sm btn-warning"
-                onClick={() => handleGeneratePDF(entry._id)}
-              >
-                Download PDF
-              </button>
-            ) : (
-              <>
-                {remainingBalance > 0 && (
-                  <button
-                    className="btn btn-sm btn-info"
-                    onClick={() => handlePartialPay(entry._id)}
-                  >
-                    Partial Pay
-                  </button>
-                )}
-                <button
-                  className="btn btn-sm btn-warning"
-                  onClick={() => handleGeneratePDF(entry._id)}
-                >
-                  Download PDF
-                </button>
-                {!entry.paid && (
-                  <button
-                    className="btn btn-sm btn-success"
-                    onClick={() => markAsPaid(entry._id)}
-                  >
-                    Mark as Paid
-                  </button>
-                )}
-              </>
-            )}
-          </div>
+         <div className="d-flex gap-2">
+  {remainingBalance > 0 && (
+    <button
+      className="btn btn-sm btn-info"
+      onClick={() => handlePartialPay(entry._id)}
+    >
+      Partial Pay
+    </button>
+  )}
+
+  {!entry.paid && remainingBalance > 0 && (
+    <button
+      className="btn btn-sm btn-success"
+      onClick={() => markAsPaid(entry._id)}
+    >
+      Mark as Paid
+    </button>
+  )}
+
+  {/* Always last */}
+  <button
+    className="btn btn-sm btn-warning"
+    onClick={() => handleGeneratePDF(entry._id)}
+  >
+    Download PDF
+  </button>
+</div>
+
         </div>
         <div className="card-body">
           <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
