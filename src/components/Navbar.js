@@ -17,7 +17,7 @@ const VendorNavbar = () => {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top px-4 py-3">
-      <NavLink className="navbar-brand fw-bold glowing-brand" to="/">
+      <NavLink className="navbar-brand fw-bold glowing-brand" to="/dashboard">
         {brandShort}
       </NavLink>
       <button
