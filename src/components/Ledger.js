@@ -162,10 +162,11 @@ const handleClearFilters = () => {
             const price = p.product?.price || 0;
             const lineTotal = qty * price;
 return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.toFixed(2)}</li>`;
-;
+
           }).join('') || '<li>None</li>'}
         </ul>
-        <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
+<p><strong>Paid:</strong> ₹${(entry.paidAmount || 0).toFixed(2)}</p>
+<p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
         <div style="margin-top: 30px; text-align: right;">
           <p>Authorized Signature __________________</p>
         </div>
