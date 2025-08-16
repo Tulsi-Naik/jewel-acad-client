@@ -1,5 +1,5 @@
 // src/components/Ledger.js
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from '../utils/axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,101 +7,84 @@ import html2pdf from 'html2pdf.js';
 
 const Ledger = () => {
   const [ledgerData, setLedgerData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [customers, setCustomers] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [customerId, setCustomerId] = useState('');
   const [customerName, setCustomerName] = useState('');
-  const [newCustomerId, setNewCustomerId] = useState('');
-  const [newProductIds, setNewProductIds] = useState([]);
-  const [newTotal, setNewTotal] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
-  const componentRefs = useRef({});
-  const [noData, setNoData] = useState(false);
+
+  const [expandedCustomers, setExpandedCustomers] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [modalLedgerId, setModalLedgerId] = useState(null);
-  const [modalAmount, setModalAmount] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
 
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get('/products');
-      setProducts(res.data);
-    } catch (err) {
-      console.error('Error', err);
-    }
-  };
-
+  // Fetch ledger
   const fetchLedger = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get('/ledger');
-      console.log('📦 Ledger response:', res.data);
-
-      if (!res.data || !Array.isArray(res.data)) {
-        console.error('⚠️ Unexpected response:', res);
-        toast.error('Unexpected response from server');
-        return;
-      }
-
-      const allLedgers = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setLedgerData(allLedgers);
-      setFilteredData(allLedgers);
-      setNoData(allLedgers.length === 0);
+      const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setLedgerData(sorted);
+      setFilteredData(sorted);
     } catch (err) {
-      if (err.response) {
-        console.error('❌ Ledger fetch failed:', err.response.data);
-      } else {
-        console.error('❌ Error fetching ledger:', err.message || err);
-      }
       toast.error('Failed to load ledger data');
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // Fetch customers
   const fetchCustomers = async () => {
     try {
       const res = await axios.get('/customers');
       setCustomers(res.data);
     } catch (err) {
-      console.error('Error', err);
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    fetchCustomers();
-    fetchProducts();
     fetchLedger();
+    fetchCustomers();
   }, [fetchLedger]);
 
-  const filterByCustomer = () => {
-    const filtered = ledgerData.filter(entry => {
-      const matchesCustomerId = customerId ? entry.customer?._id === customerId : true;
-      const matchesCustomerName = customerName
-        ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
-        : true;
-
-        const paidAmount = entry.paidAmount || 0;
-        const total = entry.total || 0;
-        const remainingBalance = total - paidAmount;
-        const status = remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid';
-
-
-      const matchesStatus =
-        statusFilter === 'paid' ? remainingBalance === 0 :
-        statusFilter === 'unpaid' ? paidAmount === 0 :
-        statusFilter === 'partial' ? paidAmount > 0 && remainingBalance > 0 :
-        true;
-
-      return matchesCustomerId && matchesCustomerName && matchesStatus;
+  // Group ledger by customer
+  const groupByCustomer = () => {
+    const grouped = {};
+    ledgerData.forEach(entry => {
+      const id = entry.customer?._id || 'unknown';
+      if (!grouped[id]) grouped[id] = [];
+      grouped[id].push(entry);
     });
+    return grouped;
+  };
+
+  const handleToggleExpand = (customerId) => {
+    setExpandedCustomers(prev => ({
+      ...prev,
+      [customerId]: !prev[customerId]
+    }));
+  };
+
+  const filterLedger = () => {
+    let filtered = [...ledgerData];
+
+    if (customerId) filtered = filtered.filter(e => e.customer?._id === customerId);
+    if (customerName) filtered = filtered.filter(e => e.customer?.name?.toLowerCase().includes(customerName.toLowerCase()));
+    if (statusFilter) {
+      filtered = filtered.filter(e => {
+        const paid = e.paidAmount || 0;
+        const total = e.total || 0;
+        const remaining = total - paid;
+        if (statusFilter === 'paid') return remaining === 0;
+        if (statusFilter === 'unpaid') return paid === 0;
+        if (statusFilter === 'partial') return paid > 0 && remaining > 0;
+        return true;
+      });
+    }
 
     setFilteredData(filtered);
-
-    filtered.length > 0
-      ? toast.info(`Filtered ${filtered.length} record(s)`)
-      : toast.warning('No Matching Records Found');
+    toast.info(`Filtered ${filtered.length} record(s)`);
   };
 
   const handleClearFilters = () => {
@@ -112,103 +95,15 @@ const Ledger = () => {
     toast.info('Filters Cleared');
   };
 
-  const handleAddLedger = async () => {
-    if (!newCustomerId || !newTotal || newProductIds.length === 0) {
-      return toast.warning('Customer, Products, and Total amount are required');
-    }
-
-    try {
-      const existingLedger = ledgerData.find(
-        ledger => ledger.customer?._id === newCustomerId && !ledger.paid
-      );
-
-      if (existingLedger) {
-        const updatedTotal = existingLedger.total + parseFloat(newTotal);
-        const updatedProductIds = [...new Set([...existingLedger.products.map(p => p._id), ...newProductIds])];
-
-        await axios.put(`/ledger/${existingLedger._id}`, {
-          total: updatedTotal,
-          products: updatedProductIds,
-        });
-      } else {
-        await axios.post('/ledger', {
-          customer: newCustomerId,
-          products: newProductIds,
-          total: parseFloat(newTotal),
-        });
-      }
-
-      setNewCustomerId('');
-      setNewProductIds([]);
-      setNewTotal('');
-      fetchLedger();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleGeneratePDF = (ledgerId) => {
-    const entry = filteredData.find(e => e._id === ledgerId);
-    if (!entry) return toast.error("Ledger entry not found");
-
-    const paidAmount = entry.paidAmount || 0;
-    const total = entry.total || 0;
-    const remainingBalance = total - paidAmount;
-    const status = remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid';
-
-    const pdfContent = document.createElement('div');
-    pdfContent.innerHTML = `
-      <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
-        <h2 style="text-align: center; color: #2c3e50;">Customer Ledger</h2>
-        <hr />
-        <p><strong>Customer Name:</strong> ${entry.customer?.name || 'N/A'}</p>
-        <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
-        <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
-        <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
-        <p><strong>Products:</strong></p>
-        <ul>
-          ${entry.products?.map(p => {
-            const name = p.product?.name || p.name || 'Unnamed';
-            const qty = p.quantity || 0;
-            const price = p.product?.price || 0;
-            const lineTotal = qty * price;
-            return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.toFixed(2)}</li>`;
-          }).join('') || '<li>None</li>'}
-        </ul>
-        <p><strong>Paid:</strong> ₹${paidAmount.toFixed(2)}</p>
-        <p><strong>Total Pending:</strong> ₹${remainingBalance.toFixed(2)}</p>
-        <p><strong>Status:</strong> ${status}</p>
-        ${entry.paidAt ? `<p><strong>Paid At:</strong> ${new Date(entry.paidAt).toLocaleString()}</p>` : ''}
-        <div style="margin-top: 30px; text-align: right;">
-          <p>Authorized Signature __________________</p>
-        </div>
-      </div>
-    `;
-
-    const opt = {
-      margin: 0.3,
-      filename: `ledger_${ledgerId}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().from(pdfContent).set(opt).save();
-  };
-
   const markAsPaid = async (id) => {
     try {
       const res = await axios.patch(`/ledger/${id}/pay`);
-
       if (res.data.success) {
         toast.success('Marked as paid');
         fetchLedger();
-      } else {
-        toast.error('Failed to mark as paid');
       }
     } catch (err) {
-      console.error('Error marking as paid:', err);
-      toast.error('Something went wrong');
+      toast.error('Error marking as paid');
     }
   };
 
@@ -219,169 +114,142 @@ const Ledger = () => {
 
   const handleModalSubmit = async (amount) => {
     try {
-      const res = await axios.patch(`/ledger/${modalLedgerId}/partial-pay`, {
-        amount
-      });
-
-      if (res.data.success) {
-        toast.success('Partial payment updated');
-        fetchLedger();
-      } else {
-        toast.error('Failed to update payment');
-      }
-    } catch (err) {
-      console.error('Partial payment error:', err);
-      toast.error('Something went wrong');
+      await axios.patch(`/ledger/${modalLedgerId}/partial-pay`, { amount });
+      toast.success('Partial payment updated');
+      fetchLedger();
+    } catch {
+      toast.error('Failed to update payment');
     } finally {
       setShowModal(false);
       setModalLedgerId(null);
     }
   };
 
+  const handleGeneratePDF = (ledgerId) => {
+    const entry = ledgerData.find(e => e._id === ledgerId);
+    if (!entry) return toast.error("Ledger entry not found");
+
+    const paidAmount = entry.paidAmount || 0;
+    const total = entry.total || 0;
+    const remaining = total - paidAmount;
+    const status = remaining === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid';
+
+    const pdfContent = document.createElement('div');
+    pdfContent.innerHTML = `
+      <div style="padding: 20px; font-family: Arial; border: 2px solid #000; width: 100%;">
+        <h2 style="text-align: center;">Customer Ledger</h2>
+        <hr />
+        <p><strong>Customer Name:</strong> ${entry.customer?.name || 'N/A'}</p>
+        <p><strong>Contact:</strong> ${entry.customer?.contact || 'N/A'}</p>
+        <p><strong>Address:</strong> ${entry.customer?.address || 'N/A'}</p>
+        <p><strong>Date:</strong> ${new Date(entry.createdAt).toLocaleString()}</p>
+        <p><strong>Products:</strong></p>
+        <ul>
+          ${entry.products?.map(p => {
+            const name = p.product?.name || 'Unnamed';
+            const qty = p.quantity || 0;
+            const price = p.product?.price || 0;
+            return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)}</li>`;
+          }).join('') || '<li>None</li>'}
+        </ul>
+        <p><strong>Paid:</strong> ₹${paidAmount.toFixed(2)}</p>
+        <p><strong>Total Pending:</strong> ₹${remaining.toFixed(2)}</p>
+        <p><strong>Status:</strong> ${status}</p>
+      </div>
+    `;
+    html2pdf().from(pdfContent).set({ filename: `ledger_${ledgerId}.pdf` }).save();
+  };
+
+  const grouped = groupByCustomer();
+
   return (
     <div className="container mt-4">
       <ToastContainer />
       <h2>Customer Ledger</h2>
+
+      {/* Filters */}
       <div className="row mb-3">
         <div className="col-md-3">
-          <label>Customer Name</label>
           <input
             type="text"
             className="form-control"
+            placeholder="Customer Name"
             value={customerName}
             onChange={e => setCustomerName(e.target.value)}
-            placeholder="Enter Customer Name"
           />
         </div>
-
         <div className="col-md-3">
-          <label>Select Customer</label>
-          <select
-            className="form-control"
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-          >
+          <select className="form-control" value={customerId} onChange={e => setCustomerId(e.target.value)}>
             <option value="">All Customers</option>
-            {customers.map(c => (
-              <option key={c._id} value={c._id}>{c.name} ({c.contact})</option>
-            ))}
+            {customers.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
           </select>
         </div>
-
         <div className="col-md-3">
-          <label>Payment Status</label>
-          <select
-            className="form-control"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
+          <select className="form-control" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
             <option value="">All</option>
             <option value="paid">Paid</option>
             <option value="unpaid">Unpaid</option>
-            <option value="partial">Partially Paid</option>
+            <option value="partial">Partial</option>
           </select>
         </div>
-
-        <div className="col-md-3 align-self-end">
-          <button className="btn btn-primary mt-2" onClick={filterByCustomer}>Filter</button>
-          <button className="btn btn-secondary mt-2 ms-2" onClick={handleClearFilters}>Clear Filters</button>
+        <div className="col-md-3">
+          <button className="btn btn-primary me-2" onClick={filterLedger}>Filter</button>
+          <button className="btn btn-secondary" onClick={handleClearFilters}>Clear</button>
         </div>
       </div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : noData ? (
-        <p className="text-center text-muted mt-4">No ledger entries yet. Add one to get started!</p>
-      ) : (
-        filteredData.map((entry, index) => {
-          const paidAmount = entry.paidAmount || 0;
-          const total = entry.total || 0;
-          const remainingBalance = total - paidAmount;
+      {loading ? <p>Loading...</p> : (
+        Object.keys(grouped).map((custId) => {
+          const entries = grouped[custId];
+          const latest = entries[0];
+          const totalPaid = entries.reduce((sum, e) => sum + (e.paidAmount || 0), 0);
+          const totalRemaining = entries.reduce((sum, e) => sum + ((e.total || 0) - (e.paidAmount || 0)), 0);
 
           return (
-            <div key={index} className="card mb-3 shadow">
-              <div
-                className={`card-header text-white d-flex justify-content-between align-items-center ${
-                  remainingBalance === 0 ? 'bg-success' : paidAmount > 0 ? 'bg-warning' : 'bg-dark'
-                }`}
-              >
+            <div key={custId} className="card mb-3 shadow">
+              <div className="card-header d-flex justify-content-between align-items-center">
                 <div>
-                  <strong>{entry.customer?.name || 'Unknown'}</strong> | {entry.customer?.contact || 'N/A'}
+                  <strong>{latest.customer?.name}</strong> | Total Paid: ₹{totalPaid.toFixed(2)} | Remaining: ₹{totalRemaining.toFixed(2)}
                 </div>
-                <div className="d-flex gap-2">
-                  {remainingBalance > 0 && (
-                    <button
-                      className="btn btn-sm btn-info"
-                      onClick={() => handlePartialPay(entry._id)}
-                    >
-                      Partial Pay
-                    </button>
-                  )}
-
-                  {remainingBalance > 0 && (
-                    <button
-                      className="btn btn-sm btn-success"
-                      onClick={() => markAsPaid(entry._id)}
-                    >
-                      Mark as Paid
-                    </button>
-                  )}
-
-                  <button
-                    className="btn btn-sm btn-warning"
-                    onClick={() => handleGeneratePDF(entry._id)}
-                  >
-                    Download PDF
+                <div>
+                  <button className="btn btn-sm btn-info me-2" onClick={() => handleToggleExpand(custId)}>
+                    {expandedCustomers[custId] ? 'Collapse' : 'History'}
                   </button>
                 </div>
               </div>
 
-              <div className="card-body">
-                <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
-                <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
-
-                {paidAmount > 0 && (
-  <>
-    <p><strong>Paid:</strong> ₹{paidAmount.toFixed(2)}</p>
-    {entry.paidAt && <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>}
-  </>
-)}
-
-
-                <p><strong>Products:</strong></p>
-                <ul className="mb-2">
-                  {entry.products?.map((p, idx) => {
-                    const name = p.product?.name || 'Unnamed';
-                    const qty = p.quantity || 0;
-                    const price = p.product?.price || 0;
-                    const lineTotal = qty * price;
-
+              {expandedCustomers[custId] && (
+                <div className="card-body">
+                  {entries.map((entry, idx) => {
+                    const paid = entry.paidAmount || 0;
+                    const total = entry.total || 0;
+                    const remaining = total - paid;
                     return (
-                      <li key={idx}>
-                        {name} — Qty: {qty} × ₹{price.toFixed(2)} = ₹{lineTotal.toFixed(2)}
-                      </li>
-                    );
+                      <div key={idx} className="mb-3 border p-2">
+                        <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
+                        <p><strong>Products:</strong></p>
+                        <ul>
+                          {entry.products?.map((p, i) => {
+                            const name = p.product?.name || 'Unnamed';
+                            const qty = p.quantity || 0;
+                            const price = p.product?.price || 0;
+                            return <li key={i}>{name} — Qty: {qty} × ₹{price.toFixed(2)}</li>;
+                          })}
+                        </ul>
+                        <p><strong>Paid:</strong> ₹{paid.toFixed(2)}</p>
+                        <p><strong>Remaining:</strong> ₹{remaining.toFixed(2)}</p>
+                        <div className="d-flex gap-2">
+                          {remaining > 0 && <button className="btn btn-sm btn-success" onClick={() => markAsPaid(entry._id)}>Mark as Paid</button>}
+                          {remaining > 0 && <button className="btn btn-sm btn-warning" onClick={() => handlePartialPay(entry._id)}>Partial Pay</button>}
+                          <button className="btn btn-sm btn-secondary" onClick={() => handleGeneratePDF(entry._id)}>PDF</button>
+                        </div>
+                      </div>
+                    )
                   })}
-                </ul>
-
-                {paidAmount > 0 && <p><strong>Paid:</strong> ₹{paidAmount.toFixed(2)}</p>}
-
-                <p><strong>Total Remaining:</strong> ₹{remainingBalance.toFixed(2)}</p>
-
-                <p>
-                  <strong>Status:</strong>{' '}
-                  <span
-                    style={{
-                      color: remainingBalance === 0 ? 'green' : paidAmount > 0 ? 'orange' : 'red',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid'}
-                  </span>
-                </p>
-              </div>
+                </div>
+              )}
             </div>
-          );
+          )
         })
       )}
 
@@ -389,46 +257,36 @@ const Ledger = () => {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onSubmit={handleModalSubmit}
-        customerName={
-          modalLedgerId
-            ? filteredData.find(e => e._id === modalLedgerId)?.customer?.name || ''
-            : ''
-        }
         remainingBalance={
           modalLedgerId
-            ? (filteredData.find(e => e._id === modalLedgerId)?.total - 
-               (filteredData.find(e => e._id === modalLedgerId)?.paidAmount || 0))
+            ? ledgerData.find(e => e._id === modalLedgerId)?.total -
+              (ledgerData.find(e => e._id === modalLedgerId)?.paidAmount || 0)
             : 0
+        }
+        customerName={
+          modalLedgerId
+            ? ledgerData.find(e => e._id === modalLedgerId)?.customer?.name || ''
+            : ''
         }
       />
     </div>
   );
 };
 
-const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName, remainingBalance }) => {
+const PartialPayModal = ({ isOpen, onClose, onSubmit, remainingBalance, customerName }) => {
   const [amount, setAmount] = useState('');
 
   const handleSubmit = () => {
     const amt = parseFloat(amount);
-
-    if (!amt || isNaN(amt) || amt <= 0) {
-      toast.warning('Enter a valid amount');
-      return;
-    }
-
-    if (amt > remainingBalance) {
-      toast.warning(`Amount cannot exceed remaining balance: ₹${remainingBalance.toFixed(2)}`);
-      return;
-    }
-
+    if (!amt || amt <= 0 || isNaN(amt)) return toast.warning('Enter valid amount');
+    if (amt > remainingBalance) return toast.warning(`Cannot exceed ₹${remainingBalance.toFixed(2)}`);
     onSubmit(amt);
     setAmount('');
   };
 
   if (!isOpen) return null;
-
   return (
-    <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
@@ -437,13 +295,7 @@ const PartialPayModal = ({ isOpen, onClose, onSubmit, customerName, remainingBal
           </div>
           <div className="modal-body">
             <p>Remaining Balance: ₹{remainingBalance.toFixed(2)}</p>
-            <input
-              type="number"
-              className="form-control"
-              placeholder="Enter amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
+            <input type="number" className="form-control" placeholder="Amount" value={amount} onChange={e => setAmount(e.target.value)} />
           </div>
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose}>Cancel</button>

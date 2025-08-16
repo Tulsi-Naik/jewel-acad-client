@@ -123,42 +123,69 @@ const res = await axios.get('/products');
     }
   };
 
-  const handleAddLedger = async () => {
-    try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, {
-        sale: savedSaleId,
-        customer: customerId,
-        total: totalAmount,
-      products: saleItems.map(item => ({
-  product: item.product._id || item.product, // ✅ handles both object and ID
-  quantity: item.quantity
-}))
-
-      });
-      toast.success('Ledger entry added successfully'); //
-      resetForm();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setShowModal(false);
-    }
-  };
-
-const handleMarkAsPaid = async () => {
+const handleAddLedger = async () => {
   try {
+    // Prepare products payload with full details
+    const ledgerProducts = saleItems.map(item => {
+      const p = products.find(pr => pr._id === (item.product._id || item.product));
+      const itemTotal = (p.price - (item.discountAmount || (p.price * (item.discount || 0) / 100))) * item.quantity;
+
+      return {
+        product: p._id,
+        quantity: item.quantity,
+        price: p.price,
+        discount: item.discount || 0,
+        discountAmount: item.discountAmount || 0,
+        total: itemTotal
+      };
+    });
+
     const payload = {
       sale: savedSaleId,
       customer: customerId,
       total: totalAmount,
-      markAsPaid: true,
-      products: saleItems.map(item => ({
-  product: item.product._id || item.product, // ✅ handles both object and ID
-  quantity: item.quantity
-}))
-
+      products: ledgerProducts,
+      markAsPaid: false
     };
 
-    console.log("🧾 Sending to ledger:", payload);
+    console.log("🧾 Sending to ledger (Add Ledger):", payload);
+
+    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
+
+    toast.success('Ledger entry added successfully');
+    resetForm();
+  } catch (err) {
+    console.error('Error adding ledger:', err);
+  } finally {
+    setShowModal(false);
+  }
+};
+
+const handleMarkAsPaid = async () => {
+  try {
+    const ledgerProducts = saleItems.map(item => {
+      const p = products.find(pr => pr._id === (item.product._id || item.product));
+      const itemTotal = (p.price - (item.discountAmount || (p.price * (item.discount || 0) / 100))) * item.quantity;
+
+      return {
+        product: p._id,
+        quantity: item.quantity,
+        price: p.price,
+        discount: item.discount || 0,
+        discountAmount: item.discountAmount || 0,
+        total: itemTotal
+      };
+    });
+
+    const payload = {
+      sale: savedSaleId,
+      customer: customerId,
+      total: totalAmount,
+      products: ledgerProducts,
+      markAsPaid: true
+    };
+
+    console.log("🧾 Sending to ledger (Mark as Paid):", payload);
 
     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
 
@@ -170,6 +197,7 @@ const handleMarkAsPaid = async () => {
     setShowModal(false);
   }
 };
+
 
 
 
