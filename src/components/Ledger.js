@@ -82,9 +82,11 @@ const Ledger = () => {
         ? entry.customer?.name?.toLowerCase().includes(customerName.toLowerCase())
         : true;
 
-      const paidAmount = entry.paidAmount || 0;
-      const total = entry.total || 0;
-      const remainingBalance = total - paidAmount;
+        const paidAmount = entry.paidAmount || 0;
+        const total = entry.total || 0;
+        const remainingBalance = total - paidAmount;
+        const status = remainingBalance === 0 ? 'Paid' : paidAmount > 0 ? 'Partially Paid' : 'Unpaid';
+
 
       const matchesStatus =
         statusFilter === 'paid' ? remainingBalance === 0 :
@@ -338,9 +340,13 @@ const Ledger = () => {
                 <p><strong>Address:</strong> {entry.customer?.address || 'N/A'}</p>
                 <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
 
-                {paidAmount > 0 && entry.paidAt && (
-                  <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>
-                )}
+                {paidAmount > 0 && (
+  <>
+    <p><strong>Paid:</strong> ₹{paidAmount.toFixed(2)}</p>
+    {entry.paidAt && <p><strong>Paid At:</strong> {new Date(entry.paidAt).toLocaleString()}</p>}
+  </>
+)}
+
 
                 <p><strong>Products:</strong></p>
                 <ul className="mb-2">
