@@ -161,7 +161,8 @@ const handleClearFilters = () => {
             const qty = p.quantity || 0;
             const price = p.product?.price || 0;
             const lineTotal = qty * price;
-            return `<li>${name} x${qty} — ₹${lineTotal.toFixed(2)}</li>`;
+return `<li>${name} — Qty: ${qty} × ₹${price.toFixed(2)} = ₹${lineTotal.toFixed(2)}</li>`;
+;
           }).join('') || '<li>None</li>'}
         </ul>
         <p><strong>Total Pending:</strong> ₹${entry.total?.toFixed(2) || '0.00'}</p>
@@ -338,9 +339,10 @@ const handleClearFilters = () => {
               const lineTotal = qty * price;
 
               return (
-                <li key={idx}>
-                  {name} — Qty: {qty} — ₹{lineTotal.toFixed(2)}
-                </li>
+              <li key={idx}>
+  {name} — Qty: {qty} × ₹{price.toFixed(2)} = ₹{lineTotal.toFixed(2)}
+</li>
+
               );
             })}
           </ul>
