@@ -193,7 +193,7 @@ const Reports = () => {
               style={{ backgroundColor: 'inherit' }}
             >
               <span>{item.productName} ({item.quantity})</span>
-<strong>₹ {item.totalRevenue}</strong>
+              <strong>₹ {item.revenue}</strong>
             </li>
           ))}
         </ul>
