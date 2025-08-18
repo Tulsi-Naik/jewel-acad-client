@@ -1,3 +1,4 @@
+//src/components/Reports.js
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 import DatePicker from 'react-datepicker';
@@ -12,6 +13,7 @@ const Reports = () => {
   const [monthlyReport, setMonthlyReport] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [topProducts, setTopProducts] = useState([]);
 
   const fetchReports = async (start, end) => {
     setLoading(true);
@@ -23,9 +25,12 @@ const Reports = () => {
 
       const daily = await axios.get(`/reports/daily?start=${startStr}&end=${endStr}`);
       const monthly = await axios.get(`/reports/monthly?month=${monthStr}`);
+      const top = await axios.get('/reports/top-products');
+
 
       setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
+      setTopProducts(top.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
       setError('Failed to load reports.');
@@ -168,11 +173,40 @@ const Reports = () => {
               </div>
             </div>
           </div>
+          {/* Top Products */}
+<div className="col-md-6">
+  <div className="card bg-dark text-light shadow-sm border-0 mt-4">
+    <div className="card-header d-flex align-items-center bg-warning text-dark">
+      <h5 className="mb-0">Top Products</h5>
+    </div>
+    <div className="card-body">
+      {topProducts.length > 0 ? (
+        <ul className="list-group list-group-flush">
+          {topProducts.map((item, idx) => (
+            <li
+              key={idx}
+              className="list-group-item d-flex justify-content-between text-light"
+              style={{ backgroundColor: 'inherit' }}
+            >
+              <span>{item.productName} ({item.quantity})</span>
+              <strong>₹ {item.revenue}</strong>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ color: '#ccc' }}>No product data available.</p>
+      )}
+    </div>
+  </div>
+</div>
+
         </div>
+        
       )}
 
       {error && <div className="alert alert-danger mt-4">{error}</div>}
     </div>
+    
   );
 };
 
