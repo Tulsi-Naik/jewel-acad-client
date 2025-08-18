@@ -27,6 +27,10 @@ const Reports = () => {
       const monthly = await axios.get(`/reports/monthly?month=${monthStr}`);
       const top = await axios.get('/reports/top-products');
 
+       //  Debug logs
+    console.log("Daily report API response:", daily.data);
+    console.log("Monthly report API response:", monthly.data);
+    console.log("Top products API response:", top.data);
 
       setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
