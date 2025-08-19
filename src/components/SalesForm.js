@@ -114,6 +114,7 @@ const res = await axios.get('/products');
     return {
       product: item.product,
       quantity: item.quantity,
+      price,
       priceAtSale: price,       // keeps sale reports working
       discount,
       discountAmount,
