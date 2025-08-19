@@ -207,9 +207,8 @@ const [slowProducts, setSlowProducts] = useState([]);
       )}
     </div>
   </div>
-</div>
-// Inside Reports.js, same row as TopProducts
-<div className="col-md-6">
+  {/*slow product*/ }
+<div className="col-md-6"> 
   <div className="card bg-dark text-light shadow-sm border-0 mt-4">
     <div className="card-header d-flex align-items-center bg-danger text-white">
       <h5 className="mb-0">Slow / No Movement Products</h5>
@@ -233,6 +232,8 @@ const [slowProducts, setSlowProducts] = useState([]);
     </div>
   </div>
 </div>
+</div>
+
 
 
         </div>
