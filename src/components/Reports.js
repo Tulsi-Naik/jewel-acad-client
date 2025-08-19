@@ -16,6 +16,7 @@ const Reports = () => {
   const [topProducts, setTopProducts] = useState([]);
   const [slowProducts, setSlowProducts] = useState([]);
   const [customerReport, setCustomerReport] = useState([]);
+  const [stockReport, setStockReport] = useState([]);
 
   const fetchReports = async (start, end) => {
     setLoading(true);
@@ -28,7 +29,7 @@ const Reports = () => {
       const daily = await axios.get(`/reports/daily?start=${startStr}&end=${endStr}`);
       const monthly = await axios.get(`/reports/monthly?month=${monthStr}`);
       const customers = await axios.get('/reports/customers');
-
+      const stock = await axios.get('/reports/stock');
       const top = await axios.get('/reports/top-products');
       const slow = await axios.get('/reports/slow-products', {
     params: { start: startStr, end: endStr }
@@ -39,12 +40,14 @@ const Reports = () => {
     console.log("Top products API response:", top.data);
     console.log("Slow products API response:", slow.data);
     console.log("Customer report API response:", customers.data);
+    console.log("Stock report API response:", stock.data);
 
       setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
       setTopProducts(top.data);
       setSlowProducts(slow.data);
       setCustomerReport(customers.data);
+      setStockReport(stock.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
       setError('Failed to load reports.');
@@ -278,6 +281,41 @@ const Reports = () => {
     </div>
   </div>
 </div>
+{/* Current Stock Report */}
+<div className="col-md-12 mt-4">
+  <div className="card bg-dark text-light shadow-sm border-0">
+    <div className="card-header d-flex align-items-center bg-secondary text-white">
+      <h5 className="mb-0">Current Stock Report</h5>
+    </div>
+    <div className="card-body" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      {stockReport.length > 0 ? (
+        <table className="table table-dark table-striped table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Total Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stockReport.map((p, idx) => (
+              <tr key={idx} style={{ backgroundColor: p.quantity === 0 ? '#f8d7da' : 'inherit' }}>
+                <td>{p.name}</td>
+                <td>{p.quantity}</td>
+                <td>₹ {p.price}</td>
+                <td>₹ {p.totalValue}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ color: '#ccc' }}>No stock data available.</p>
+      )}
+    </div>
+  </div>
+</div>
+
 
 
 
