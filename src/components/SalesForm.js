@@ -103,16 +103,25 @@ const res = await axios.get('/products');
         setCustomerId(finalCustomerId);
       }
       const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, {
-        customer: finalCustomerId,
-   items: saleItems.map(item => ({
-  product: item.product,
-  quantity: item.quantity,
-  discount: item.discount,
-  discountAmount: item.discountAmount
-}))
+  customer: finalCustomerId,
+  items: saleItems.map(item => {
+    const product = products.find(p => p._id === item.product);
+    const price = product?.price || 0;
+    const discount = item.discount || 0;
+    const discountAmount = item.discountAmount || (price * discount) / 100;
+    const total = (price - discountAmount) * item.quantity;
 
+    return {
+      product: item.product,
+      quantity: item.quantity,
+      priceAtSale: price,       // keeps sale reports working
+      discount,
+      discountAmount,
+      total                     // ensures ledger validation passes
+    };
+  })
+});
 
-      });
       await fetchProducts(); // 🔄 Refresh product list to reflect updated stock
 
 
