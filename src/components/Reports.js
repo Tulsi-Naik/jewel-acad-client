@@ -17,6 +17,7 @@ const Reports = () => {
   const [slowProducts, setSlowProducts] = useState([]);
   const [customerReport, setCustomerReport] = useState([]);
   const [stockReport, setStockReport] = useState([]);
+const [outstandingLedger, setOutstandingLedger] = useState([]);
 
   const fetchReports = async (start, end) => {
     setLoading(true);
@@ -31,6 +32,7 @@ const Reports = () => {
       const customers = await axios.get('/reports/customers');
       const stock = await axios.get('/reports/stock');
       const top = await axios.get('/reports/top-products');
+      const ledger = await axios.get('/reports/ledger/outstanding'); // 
       const slow = await axios.get('/reports/slow-products', {
     params: { start: startStr, end: endStr }
   });
@@ -41,6 +43,7 @@ const Reports = () => {
     console.log("Slow products API response:", slow.data);
     console.log("Customer report API response:", customers.data);
     console.log("Stock report API response:", stock.data);
+    console.log("Outstanding Ledger API response:", ledger.data);
 
       setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
@@ -48,6 +51,7 @@ const Reports = () => {
       setSlowProducts(slow.data);
       setCustomerReport(customers.data);
       setStockReport(stock.data);
+      setOutstandingLedger(ledger.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
       setError('Failed to load reports.');
@@ -315,6 +319,49 @@ const Reports = () => {
     </div>
   </div>
 </div>
+{/* Outstanding Ledger Report */}
+<div className="col-md-12 mt-4">
+  <div className="card bg-dark text-light shadow-sm border-0">
+    <div className="card-header d-flex align-items-center bg-secondary text-white">
+      <h5 className="mb-0">Outstanding Ledger Report</h5>
+    </div>
+    <div className="card-body" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      {outstandingLedger.length > 0 ? (
+        <table className="table table-dark table-striped table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Invoice ID</th>
+              <th>Customer</th>
+              <th>Contact</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Remaining</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {outstandingLedger.map((l, idx) => (
+              <tr key={idx}>
+                <td>{l.invoiceId}</td>
+                <td>{l.customerName}</td>
+                <td>{l.contact}</td>
+                <td>₹ {l.totalAmount}</td>
+                <td>₹ {l.paidAmount}</td>
+                <td>₹ {l.remainingAmount}</td>
+                <td>{l.status}</td>
+                <td>{l.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ color: '#ccc' }}>No outstanding ledgers found.</p>
+      )}
+    </div>
+  </div>
+</div>
+
 
 
 
