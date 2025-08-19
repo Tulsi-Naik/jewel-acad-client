@@ -222,12 +222,12 @@ const groupByCustomer = (data) => {
 
               {expandedCustomers[custId] && (
                 <div className="card-body">
-                  {entries.map((entry, idx) => {
+                  {entries.map((entry) => {
                     const paid = entry.paidAmount || 0;
                     const total = entry.total || 0;
                     const remaining = total - paid;
                     return (
-                      <div key={idx} className="mb-3 border p-2">
+                      <div key={entry._id} className="mb-3 border p-2">
                         <p><strong>Date:</strong> {new Date(entry.createdAt).toLocaleString()}</p>
                         <p><strong>Products:</strong></p>
                         <ul>
