@@ -182,57 +182,61 @@ const [slowProducts, setSlowProducts] = useState([]);
               </div>
             </div>
           </div>
-          {/* Top Products */}
-<div className="col-md-6">
-  <div className="card bg-dark text-light shadow-sm border-0 mt-4">
-    <div className="card-header d-flex align-items-center bg-warning text-dark">
-      <h5 className="mb-0">Top Products</h5>
-    </div>
-    <div className="card-body">
-      {topProducts.length > 0 ? (
-        <ul className="list-group list-group-flush">
-          {topProducts.map((item, idx) => (
-            <li
-              key={idx}
-              className="list-group-item d-flex justify-content-between text-light"
-              style={{ backgroundColor: 'inherit' }}
-            >
-              <span>{item.productName} ({item.quantity})</span>
-              <strong>₹ {item.revenue}</strong>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p style={{ color: '#ccc' }}>No product data available.</p>
-      )}
+        <div className="row g-4 mt-4">
+  {/* Top Products */}
+  <div className="col-md-6">
+    <div className="card bg-dark text-light shadow-sm border-0">
+      <div className="card-header d-flex align-items-center bg-warning text-dark">
+        <h5 className="mb-0">Top Products</h5>
+      </div>
+      <div className="card-body">
+        {topProducts.length > 0 ? (
+          <ul className="list-group list-group-flush">
+            {topProducts.map((item, idx) => (
+              <li
+                key={idx}
+                className="list-group-item d-flex justify-content-between text-light"
+                style={{ backgroundColor: 'inherit' }}
+              >
+                <span>{item.productName} ({item.quantity})</span>
+                <strong>₹ {item.revenue}</strong>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ color: '#ccc' }}>No product data available.</p>
+        )}
+      </div>
     </div>
   </div>
-  {/*slow product*/ }
-<div className="col-md-6"> 
-  <div className="card bg-dark text-light shadow-sm border-0 mt-4">
-    <div className="card-header d-flex align-items-center bg-danger text-white">
-      <h5 className="mb-0">Slow / No Movement Products</h5>
-    </div>
-    <div className="card-body">
-      {slowProducts.length > 0 ? (
-        <ul className="list-group list-group-flush">
-          {slowProducts.map((item, idx) => (
-            <li
-              key={idx}
-              className="list-group-item d-flex justify-content-between text-light"
-              style={{ backgroundColor: 'inherit' }}
-            >
-              <span>{item.productName}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p style={{ color: '#ccc' }}>No slow product data.</p>
-      )}
+
+  {/* Slow Products */}
+  <div className="col-md-6">
+    <div className="card bg-dark text-light shadow-sm border-0">
+      <div className="card-header d-flex align-items-center bg-danger text-white">
+        <h5 className="mb-0">Slow / No Movement Products</h5>
+      </div>
+      <div className="card-body">
+        {slowProducts.length > 0 ? (
+          <ul className="list-group list-group-flush">
+            {slowProducts.map((item, idx) => (
+              <li
+                key={idx}
+                className="list-group-item d-flex justify-content-between text-light"
+                style={{ backgroundColor: 'inherit' }}
+              >
+                <span>{item.productName}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ color: '#ccc' }}>No slow product data.</p>
+        )}
+      </div>
     </div>
   </div>
 </div>
-</div>
+
 
 
 
