@@ -73,7 +73,7 @@ const res = await axios.get('/products');
     } else {
       setSaleItems([...saleItems, {
         product: productId,
-        quantity: 0,
+        quantity: 1,
         discount: 0 ,
         discountAmount: 0
       }]);
@@ -83,6 +83,12 @@ const res = await axios.get('/products');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (saleItems.length === 0 || saleItems.some(item => !products.find(p => p._id === item.product))) {
+  toast.error('One or more products are invalid. Please refresh and try again.');
+  return;
+}
+
 
     if (
       (!customerId && (!newCustomerName.trim() || !newCustomerAddress.trim() || !newCustomerContact.trim())) ||
@@ -104,9 +110,12 @@ const res = await axios.get('/products');
       }
       const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, {
   customer: finalCustomerId,
-  items: saleItems.map(item => {
+  items: saleItems
+  .map(item => {
     const product = products.find(p => p._id === item.product);
-    const price = product?.price || 0;
+    if (!product) return null; // skip invalid items
+
+    const price = product.price;
     const discount = item.discount || 0;
     const discountAmount = item.discountAmount || (price * discount) / 100;
     const total = (price - discountAmount) * item.quantity;
@@ -115,12 +124,14 @@ const res = await axios.get('/products');
       product: item.product,
       quantity: item.quantity,
       price,
-      priceAtSale: price,       // keeps sale reports working
+      priceAtSale: price,
       discount,
       discountAmount,
-      total                     // ensures ledger validation passes
+      total
     };
   })
+  .filter(Boolean) // remove any nulls
+
 });
 
       await fetchProducts(); // 🔄 Refresh product list to reflect updated stock
@@ -166,7 +177,7 @@ const handleAddLedger = async () => {
       const p = products.find(pr => pr._id === productId);
       const price = p?.price || 0;
       const discount = item.discount || 0;
-      const discountAmount = item.discountAmount || (price * discount) / 100;
+const discountAmount = item.discountAmount || (price * (item.discount || 0) / 100);
       const total = (price - discountAmount) * item.quantity;
 
       return {
