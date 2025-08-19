@@ -14,7 +14,8 @@ const Reports = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [topProducts, setTopProducts] = useState([]);
-const [slowProducts, setSlowProducts] = useState([]);
+  const [slowProducts, setSlowProducts] = useState([]);
+  const [customerReport, setCustomerReport] = useState([]);
 
   const fetchReports = async (start, end) => {
     setLoading(true);
@@ -26,6 +27,8 @@ const [slowProducts, setSlowProducts] = useState([]);
 
       const daily = await axios.get(`/reports/daily?start=${startStr}&end=${endStr}`);
       const monthly = await axios.get(`/reports/monthly?month=${monthStr}`);
+      const customers = await axios.get('/reports/customers');
+
       const top = await axios.get('/reports/top-products');
       const slow = await axios.get('/reports/slow-products', {
     params: { start: startStr, end: endStr }
@@ -35,11 +38,13 @@ const [slowProducts, setSlowProducts] = useState([]);
     console.log("Monthly report API response:", monthly.data);
     console.log("Top products API response:", top.data);
     console.log("Slow products API response:", slow.data);
+    console.log("Customer report API response:", customers.data);
 
       setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
       setTopProducts(top.data);
-       setSlowProducts(slow.data);
+      setSlowProducts(slow.data);
+      setCustomerReport(customers.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
       setError('Failed to load reports.');
@@ -237,6 +242,42 @@ const [slowProducts, setSlowProducts] = useState([]);
   </div>
 </div>
 
+{/* Customer Report */}
+<div className="col-md-12 mt-4">
+  <div className="card bg-dark text-light shadow-sm border-0">
+    <div className="card-header d-flex align-items-center bg-info text-white">
+      <h5 className="mb-0">Customer Report</h5>
+    </div>
+    <div className="card-body" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      {customerReport.length > 0 ? (
+        <table className="table table-dark table-striped table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Total Orders</th>
+              <th>Total Amount</th>
+              <th>Last Purchase</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customerReport.map((c) => (
+              <tr key={c._id}>
+                <td>{c.name}</td>
+                <td>{c.contact}</td>
+                <td>{c.totalOrders}</td>
+                <td>₹ {c.totalAmount}</td>
+                <td>{new Date(c.lastPurchase).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p style={{ color: '#ccc' }}>No customer data available.</p>
+      )}
+    </div>
+  </div>
+</div>
 
 
 
