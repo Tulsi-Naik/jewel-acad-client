@@ -14,6 +14,7 @@ const Reports = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [topProducts, setTopProducts] = useState([]);
+const [slowProducts, setSlowProducts] = useState([]);
 
   const fetchReports = async (start, end) => {
     setLoading(true);
@@ -26,15 +27,19 @@ const Reports = () => {
       const daily = await axios.get(`/reports/daily?start=${startStr}&end=${endStr}`);
       const monthly = await axios.get(`/reports/monthly?month=${monthStr}`);
       const top = await axios.get('/reports/top-products');
-
+      const slow = await axios.get('/reports/slow-products', {
+    params: { start: startStr, end: endStr }
+  });
        //  Debug logs
     console.log("Daily report API response:", daily.data);
     console.log("Monthly report API response:", monthly.data);
     console.log("Top products API response:", top.data);
+    console.log("Slow products API response:", slow.data);
 
       setDailyReport(daily.data);
       setMonthlyReport(monthly.data);
       setTopProducts(top.data);
+       setSlowProducts(slow.data);
     } catch (err) {
       console.error('Error fetching reports:', err);
       setError('Failed to load reports.');
@@ -203,6 +208,32 @@ const Reports = () => {
     </div>
   </div>
 </div>
+// Inside Reports.js, same row as TopProducts
+<div className="col-md-6">
+  <div className="card bg-dark text-light shadow-sm border-0 mt-4">
+    <div className="card-header d-flex align-items-center bg-danger text-white">
+      <h5 className="mb-0">Slow / No Movement Products</h5>
+    </div>
+    <div className="card-body">
+      {slowProducts.length > 0 ? (
+        <ul className="list-group list-group-flush">
+          {slowProducts.map((item, idx) => (
+            <li
+              key={idx}
+              className="list-group-item d-flex justify-content-between text-light"
+              style={{ backgroundColor: 'inherit' }}
+            >
+              <span>{item.productName}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ color: '#ccc' }}>No slow product data.</p>
+      )}
+    </div>
+  </div>
+</div>
+
 
         </div>
         
