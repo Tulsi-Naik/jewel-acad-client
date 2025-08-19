@@ -49,14 +49,17 @@ const Ledger = () => {
   }, [fetchLedger]);
 
   // Group ledger by customer
-  const groupByCustomer = () => {
-  return ledgerData.reduce((acc, entry) => {
+const groupByCustomer = (data) => {
+  return data.reduce((acc, entry) => {
     const id = entry.customer?._id || 'unknown';
     if (!acc[id]) acc[id] = [];
     acc[id].push(entry);
     return acc;
   }, {});
 };
+
+
+
 
 
   const handleToggleExpand = (customerId) => {
@@ -160,7 +163,8 @@ const Ledger = () => {
     html2pdf().from(pdfContent).set({ filename: `ledger_${ledgerId}.pdf` }).save();
   };
 
-  const grouped = groupByCustomer();
+ const grouped = groupByCustomer(filteredData); // now reflects filters
+
 
   return (
     <div className="container mt-4">
