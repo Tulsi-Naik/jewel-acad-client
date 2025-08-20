@@ -117,27 +117,30 @@ const validItems = saleItems
   }
 
   // Ensure we have a customer
-  let finalCustomerId = customerId;
-  if (!finalCustomerId) {
-    if (!newCustomerName.trim() || !newCustomerAddress.trim() || !newCustomerContact.trim()) {
-      toast.error('Customer information is required.');
-      return;
-    }
-    // Create new customer
-    try {
-      const newCustomer = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/customers`, {
-        name: newCustomerName.trim(),
-        address: newCustomerAddress.trim(),
-        contact: newCustomerContact.trim()
-      });
-      finalCustomerId = newCustomer.data._id;
-      setCustomerId(finalCustomerId);
-    } catch (err) {
-      console.error('Error creating customer:', err);
-      toast.error('Failed to create new customer.');
-      return;
-    }
+ let finalCustomerId = customerId;
+
+if (!finalCustomerId) {
+  if (!newCustomerName.trim() || !newCustomerAddress.trim() || !newCustomerContact.trim()) {
+    toast.error('Customer information is required.');
+    return;
   }
+
+  // Create new customer only once
+  try {
+    const newCustomer = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/customers`, {
+      name: newCustomerName.trim(),
+      address: newCustomerAddress.trim(),
+      contact: newCustomerContact.trim()
+    });
+    finalCustomerId = newCustomer.data._id;
+    setCustomerId(finalCustomerId);  // keep for UI & future use
+  } catch (err) {
+    console.error('Error creating customer:', err);
+    toast.error('Failed to create new customer.');
+    return;
+  }
+}
+
 
   // Prepare payload
   const payload = {
@@ -163,24 +166,9 @@ const validItems = saleItems
 
 
 // --- Handle Add Ledger ---
-const handleAddLedger = async () => {
+// --- Handle Add Ledger ---
+const handleAddLedger = async (ledgerCustomerId) => {
   try {
-    let ledgerCustomerId = customerId;
-
-    // Create new customer if needed
-    if (!ledgerCustomerId && newCustomerName.trim()) {
-      const newCustomer = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
-        {
-          name: newCustomerName.trim(),
-          address: newCustomerAddress.trim(),
-          contact: newCustomerContact.trim()
-        }
-      );
-      ledgerCustomerId = newCustomer.data._id;
-      setCustomerId(ledgerCustomerId);
-    }
-
     if (!ledgerCustomerId) {
       toast.error('Customer is required for ledger.');
       return;
@@ -191,7 +179,6 @@ const handleAddLedger = async () => {
       return;
     }
 
-    // Build validated ledger products
     const ledgerProducts = saleItems
       .map(item => {
         const productId = typeof item.product === 'string' ? item.product : item.product?._id;
@@ -204,10 +191,7 @@ const handleAddLedger = async () => {
         const quantity = Number(item.quantity ?? 0);
         const total = Number(((price - discountAmount) * quantity).toFixed(2));
 
-        if (!productId || price <= 0 || quantity <= 0 || total <= 0) {
-          console.error('Skipping invalid ledger product:', { productId, price, quantity, discount, discountAmount, total });
-          return null;
-        }
+        if (!productId || price <= 0 || quantity <= 0 || total <= 0) return null;
 
         return { product: productId, price, discount, discountAmount, quantity, total };
       })
@@ -240,24 +224,8 @@ const handleAddLedger = async () => {
 };
 
 // --- Handle Mark as Paid ---
-const handleMarkAsPaid = async () => {
+const handleMarkAsPaid = async (ledgerCustomerId) => {
   try {
-    let ledgerCustomerId = customerId;
-
-    // Create new customer if needed
-    if (!ledgerCustomerId && newCustomerName.trim()) {
-      const newCustomer = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
-        {
-          name: newCustomerName.trim(),
-          address: newCustomerAddress.trim(),
-          contact: newCustomerContact.trim()
-        }
-      );
-      ledgerCustomerId = newCustomer.data._id;
-      setCustomerId(ledgerCustomerId);
-    }
-
     if (!ledgerCustomerId) {
       toast.error('Customer is required for ledger.');
       return;
@@ -280,10 +248,7 @@ const handleMarkAsPaid = async () => {
         const quantity = Number(item.quantity ?? 0);
         const total = Number(((price - discountAmount) * quantity).toFixed(2));
 
-        if (!productId || price <= 0 || quantity <= 0 || total <= 0) {
-          console.error('Skipping invalid ledger product:', { productId, price, quantity, discount, discountAmount, total });
-          return null;
-        }
+        if (!productId || price <= 0 || quantity <= 0 || total <= 0) return null;
 
         return { product: productId, price, discount, discountAmount, quantity, total };
       })
@@ -314,6 +279,7 @@ const handleMarkAsPaid = async () => {
     setShowModal(false);
   }
 };
+
 
   const resetForm = () => {
     setSaleItems([]);
@@ -580,28 +546,40 @@ const handleMarkAsPaid = async () => {
 
       </form>
 
-      {showModal && (
-        <>
-          <div className="modal-backdrop fade show"></div>
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ zIndex: 1050 }}>
-            <div className="modal-dialog modal-dialog-centered" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Select Ledger Option</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-                </div>
-                <div className="modal-body">
-                  <p>How would you like to proceed with the ledger?</p>
-                </div>
-                <div className="modal-footer">
-                  <button onClick={handleAddLedger} className="btn btn-primary">Add Ledger</button>
-                  <button onClick={handleMarkAsPaid} className="btn btn-success">Mark as Paid</button>
-                </div>
-              </div>
-            </div>
+     {showModal && (
+  <>
+    <div className="modal-backdrop fade show"></div>
+    <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ zIndex: 1050 }}>
+      <div className="modal-dialog modal-dialog-centered" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Select Ledger Option</h5>
+            <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
           </div>
-        </>
-      )}
+          <div className="modal-body">
+            <p>How would you like to proceed with the ledger?</p>
+          </div>
+          <div className="modal-footer">
+            {/* Pass the existing customerId to the handlers */}
+            <button
+              onClick={() => handleAddLedger(customerId)}
+              className="btn btn-primary"
+            >
+              Add Ledger
+            </button>
+            <button
+              onClick={() => handleMarkAsPaid(customerId)}
+              className="btn btn-success"
+            >
+              Mark as Paid
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+)}
+
 
       <ToastContainer position="top-center" autoClose={2000} />
     </div>
