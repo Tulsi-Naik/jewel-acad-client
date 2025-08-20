@@ -88,26 +88,28 @@ const handleSubmit = async (e) => {
   console.log('products loaded:', products);
 
   // Filter out invalid saleItems (missing product or quantity <= 0)
-  const validItems = saleItems
-    .map(item => {
-      const productObj = products.find(p => p._id === (typeof item.product === 'string' ? item.product : item.product?._id));
-      if (!productObj) return null; // invalid product
-      if (!item.quantity || item.quantity <= 0) return null; // invalid quantity
+const validItems = saleItems
+  .map(item => {
+    const productObj = products.find(p => p._id === item.product);
+    if (!productObj) return null;
 
-      const price = productObj.price || 0;
-      const discount = item.discount || 0;
-      const discountAmount = item.discountAmount || (price * discount) / 100;
+    const price = productObj.price || 0;
+    const discount = item.discount || 0;
+    const discountAmount = item.discountAmount || (price * discount / 100);
+    const total = (price - discountAmount) * item.quantity; // <-- add this
 
-      return {
-        product: productObj._id,
-        quantity: item.quantity,
-        price,
-        priceAtSale: price,
-        discount,
-        discountAmount,
-      };
-    })
-    .filter(Boolean); // remove nulls
+    return {
+      product: productObj._id,
+      quantity: item.quantity,
+      price,
+      priceAtSale: price,
+      discount,
+      discountAmount,
+      total,  // <-- include total
+    };
+  })
+  .filter(Boolean);
+
 
   if (validItems.length === 0) {
     toast.error('No valid products to submit. Please check your items.');
