@@ -1,20 +1,20 @@
+// src/components/InvoicePreview.js
 import React, { forwardRef } from 'react';
 
 const vendor = JSON.parse(localStorage.getItem('vendorInfo') || '{}');
 
-const InvoicePreview = forwardRef(({ customer = {}, saleItems = [], products = [], invoiceNo = '', totalAmount = 0 }, ref) => {
+const InvoicePreview = forwardRef(({ customer = {}, saleItems = [], invoiceNo = '', totalAmount = 0 }, ref) => {
+  // Calculate total using saleItems' own priceAtSale and discountAmount
   const total = saleItems.reduce((sum, item) => {
-    const product = products.find(p => p._id === item.product);
-    if (!product) return sum;
-    const price = product.price || 0;
-    const discount = item.discount || 0;
-    const discountedPrice = price - (price * discount) / 100;
-    return sum + discountedPrice * item.quantity;
+    const price = Number(item.priceAtSale || 0);
+    const discountAmount = Number(item.discountAmount || 0);
+    const lineTotal = (price - discountAmount) * item.quantity;
+    return sum + lineTotal;
   }, 0);
 
   const date = new Date();
   const currentDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-//
+
   return (
     <div
       ref={ref}
@@ -52,26 +52,16 @@ const InvoicePreview = forwardRef(({ customer = {}, saleItems = [], products = [
           </tr>
         </thead>
         <tbody>
-          {saleItems.map(item => {
-            const product = products.find(p => p._id === item.product);
-            if (!product) return null;
-
-            const price = product.price || 0;
-            const discount = item.discount || 0;
-            const discountedPrice = price - (price * discount) / 100;
-            const totalPrice = discountedPrice * item.quantity;
-
-            return (
-              <tr key={item.product}>
-                <td>{product.name}</td>
-                <td>{item.quantity}</td>
-                <td>₹{price.toFixed(2)}</td>
-                <td>{discount > 0 ? `${discount.toFixed(1)}%` : '—'}</td>
-                <td>{item.discountAmount > 0 ? `₹${item.discountAmount.toFixed(2)}` : '—'}</td>
-                <td>₹{totalPrice.toFixed(2)}</td>
-              </tr>
-            );
-          })}
+          {saleItems.map(item => (
+            <tr key={item.product}>
+              <td>{item.name || 'Product'}</td>
+              <td>{item.quantity}</td>
+              <td>₹{(item.priceAtSale || 0).toFixed(2)}</td>
+              <td>{item.discount > 0 ? `${item.discount.toFixed(1)}%` : '—'}</td>
+              <td>{item.discountAmount > 0 ? `₹${item.discountAmount.toFixed(2)}` : '—'}</td>
+              <td>₹{((item.priceAtSale || 0) - (item.discountAmount || 0)) * item.quantity}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
