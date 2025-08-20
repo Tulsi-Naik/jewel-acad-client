@@ -238,6 +238,11 @@ nameEl.textContent = product.name;
 
 const priceEl = document.createElement('div');
 priceEl.textContent = `MRP: ₹ ${product.price}`;
+const weightEl = document.createElement('div');
+if (product.weight != null && product.weight !== 0) {
+  weightEl.textContent = `Weight: ${product.weight}g`;
+  leftDiv.appendChild(weightEl);
+}
 
 leftDiv.append(brandEl, nameEl, priceEl);
 
@@ -373,16 +378,19 @@ const openHistoryModal = async (productId) => {
     </div>
 
     <div className="col-md-4">
-      <label className="form-label">Weight</label>
-      <input
-        type="text"
-        className="form-control"
-        name="weight"
-        value={form.weight}
-        onChange={handleChange}
-        placeholder="e.g. 5g"
-      />
-    </div>
+  <label className="form-label">Weight (g)</label>
+  <input
+    type="number"
+    className="form-control"
+    name="weight"
+    value={form.weight}
+    onChange={(e) => setForm({ ...form, weight: e.target.value ? Number(e.target.value) : '' })}
+    placeholder="Weight in grams"
+    min="0"
+    step="0.01"
+  />
+</div>
+
 
     <div className="col-md-4">
       <label className="form-label">GST (%)</label>
@@ -471,7 +479,7 @@ const openHistoryModal = async (productId) => {
         <td>{p.price}</td>
         <td>
           <small>
-            {p.weight && <>Weight: {p.weight} <br /></>}
+{p.weight != null && <>Weight: {p.weight}g <br /></>}
             {p.gst != null && <>GST: {p.gst}% <br /></>}
             {p.category && <>Category: {p.category}</>}
           </small>
@@ -504,16 +512,20 @@ const openHistoryModal = async (productId) => {
           <div className="mb-3"><label className="form-label">Name</label><input type="text" className="form-control" name="name" value={editForm.name} onChange={handleEditChange} /></div>
           <div className="mb-3"><label className="form-label">Quantity</label><input type="number" className="form-control" name="quantity" value={editForm.quantity} onChange={handleEditChange} /></div>
           <div className="mb-3"><label className="form-label">Price</label><input type="number" className="form-control" name="price" value={editForm.price} onChange={handleEditChange} /></div>
-          <div className="mb-3">
-  <label className="form-label">Weight</label>
+       <div className="mb-3">
+  <label className="form-label">Weight (g)</label>
   <input
-    type="text"
+    type="number"
     className="form-control"
     name="weight"
     value={editForm.weight}
-    onChange={handleEditChange}
+    onChange={(e) => setEditForm({ ...editForm, weight: e.target.value ? Number(e.target.value) : '' })}
+    placeholder="Weight in grams"
+    min="0"
+    step="0.01"
   />
 </div>
+
 
 <div className="mb-3">
   <label className="form-label">GST (%)</label>
