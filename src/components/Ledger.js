@@ -158,6 +158,10 @@ const groupByCustomer = (data) => {
         <p><strong>Paid:</strong> ₹${paidAmount.toFixed(2)}</p>
         <p><strong>Total Pending:</strong> ₹${remaining.toFixed(2)}</p>
         <p><strong>Status:</strong> ${status}</p>
+         <div style="margin-top: 30px; text-align: right;">
+        <p>Authorized Signature __________________</p>
+      </div>
+
       </div>
     `;
     html2pdf().from(pdfContent).set({ filename: `ledger_${ledgerId}.pdf` }).save();
