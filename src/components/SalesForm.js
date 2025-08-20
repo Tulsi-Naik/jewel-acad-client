@@ -160,85 +160,12 @@ const handleSubmit = async (e) => {
 };
 
 
+// --- Handle Add Ledger ---
 const handleAddLedger = async () => {
   try {
-    // Ensure we have a valid customer ID
     let ledgerCustomerId = customerId;
-    if (!ledgerCustomerId && newCustomerName.trim()) {
-      const newCustomer = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
-        {
-          name: newCustomerName.trim(),
-          address: newCustomerAddress.trim(),
-          contact: newCustomerContact.trim()
-        }
-      );
-      ledgerCustomerId = newCustomer.data._id;
-      setCustomerId(ledgerCustomerId); // optional, update state
-    }
 
-    if (!ledgerCustomerId) {
-      toast.error('Customer is required for ledger');
-      return;
-    }
-
-    if (!savedSaleId) {
-      toast.error('Sale ID not found');
-      return;
-    }
-
-    // Prepare products payload
-  const ledgerProducts = saleItems
-  .map(item => {
-    const productId = typeof item.product === 'string' ? item.product : item.product._id;
-    const p = products.find(pr => pr._id === productId);
-    if (!p) return null; // skip invalid product
-
-    const price = Number(p.price || 0);
-    const discount = Number(item.discount || 0);
-    const discountAmount = Number(item.discountAmount ?? (price * discount / 100));
-    const quantity = Number(item.quantity || 0);
-    const total = (price - discountAmount) * quantity;
-
-    return {
-      product: productId,
-      quantity,
-      price,
-      discount,
-      discountAmount,
-      total
-    };
-  })
-  .filter(Boolean); // remove nulls
-
-
-
-    const payload = {
-      sale: savedSaleId,
-      customer: ledgerCustomerId,
-      total: ledgerProducts.reduce((sum, p) => sum + p.total, 0),
-      products: ledgerProducts,
-      markAsPaid: false
-    };
-
-    console.log('🧾 Sending to ledger (Add Ledger):', payload);
-
-    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
-
-    toast.success('Ledger entry added successfully');
-    resetForm();
-  } catch (err) {
-    console.error('Error adding ledger:', err);
-    toast.error('Failed to add ledger. Check console for details.');
-  } finally {
-    setShowModal(false);
-  }
-};
-
-const handleMarkAsPaid = async () => {
-  try {
-    // Ensure we have a valid customer ID
-    let ledgerCustomerId = customerId;
+    // Create new customer if needed
     if (!ledgerCustomerId && newCustomerName.trim()) {
       const newCustomer = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
@@ -253,33 +180,117 @@ const handleMarkAsPaid = async () => {
     }
 
     if (!ledgerCustomerId) {
-      toast.error('Customer is required for ledger');
+      toast.error('Customer is required for ledger.');
       return;
     }
 
     if (!savedSaleId) {
-      toast.error('Sale ID not found');
+      toast.error('Sale ID not found.');
       return;
     }
 
-    // Prepare products payload
-    const ledgerProducts = saleItems.map(item => {
-      const productId = typeof item.product === 'string' ? item.product : item.product._id;
-      const p = products.find(pr => pr._id === productId);
-      const price = p?.price || 0;
-      const discount = item.discount || 0;
-      const discountAmount = item.discountAmount || (price * discount) / 100;
-      const total = (price - discountAmount) * item.quantity;
+    // Build validated ledger products
+    const ledgerProducts = saleItems
+      .map(item => {
+        const productId = typeof item.product === 'string' ? item.product : item.product?._id;
+        const p = products.find(pr => pr._id === productId);
+        if (!p) return null;
 
-      return {
-        product: productId,
-        quantity: item.quantity,
-        price,
-        discount,
-        discountAmount,
-        total
-      };
-    });
+        const price = Number(p.price ?? 0);
+        const discount = Number(item.discount ?? 0);
+        const discountAmount = Number(item.discountAmount ?? (price * discount / 100));
+        const quantity = Number(item.quantity ?? 0);
+        const total = Number(((price - discountAmount) * quantity).toFixed(2));
+
+        if (!productId || price <= 0 || quantity <= 0 || total <= 0) {
+          console.error('Skipping invalid ledger product:', { productId, price, quantity, discount, discountAmount, total });
+          return null;
+        }
+
+        return { product: productId, price, discount, discountAmount, quantity, total };
+      })
+      .filter(Boolean);
+
+    if (!ledgerProducts.length) {
+      toast.error('No valid products to add to ledger.');
+      return;
+    }
+
+    const payload = {
+      sale: savedSaleId,
+      customer: ledgerCustomerId,
+      total: ledgerProducts.reduce((sum, p) => sum + p.total, 0),
+      products: ledgerProducts,
+      markAsPaid: false
+    };
+
+    console.log('Add Ledger Payload:', payload);
+    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
+
+    toast.success('Ledger entry added successfully');
+    resetForm();
+  } catch (err) {
+    console.error('Error adding ledger:', err);
+    toast.error(err.response?.data?.message || 'Failed to add ledger.');
+  } finally {
+    setShowModal(false);
+  }
+};
+
+// --- Handle Mark as Paid ---
+const handleMarkAsPaid = async () => {
+  try {
+    let ledgerCustomerId = customerId;
+
+    // Create new customer if needed
+    if (!ledgerCustomerId && newCustomerName.trim()) {
+      const newCustomer = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/customers`,
+        {
+          name: newCustomerName.trim(),
+          address: newCustomerAddress.trim(),
+          contact: newCustomerContact.trim()
+        }
+      );
+      ledgerCustomerId = newCustomer.data._id;
+      setCustomerId(ledgerCustomerId);
+    }
+
+    if (!ledgerCustomerId) {
+      toast.error('Customer is required for ledger.');
+      return;
+    }
+
+    if (!savedSaleId) {
+      toast.error('Sale ID not found.');
+      return;
+    }
+
+    const ledgerProducts = saleItems
+      .map(item => {
+        const productId = typeof item.product === 'string' ? item.product : item.product?._id;
+        const p = products.find(pr => pr._id === productId);
+        if (!p) return null;
+
+        const price = Number(p.price ?? 0);
+        const discount = Number(item.discount ?? 0);
+        const discountAmount = Number(item.discountAmount ?? (price * discount / 100));
+        const quantity = Number(item.quantity ?? 0);
+        const total = Number(((price - discountAmount) * quantity).toFixed(2));
+
+        if (!productId || price <= 0 || quantity <= 0 || total <= 0) {
+          console.error('Skipping invalid ledger product:', { productId, price, quantity, discount, discountAmount, total });
+          return null;
+        }
+
+        return { product: productId, price, discount, discountAmount, quantity, total };
+      })
+      .filter(Boolean);
+
+    if (!ledgerProducts.length) {
+      toast.error('No valid products to mark as paid.');
+      return;
+    }
 
     const payload = {
       sale: savedSaleId,
@@ -289,23 +300,18 @@ const handleMarkAsPaid = async () => {
       markAsPaid: true
     };
 
-    console.log('🧾 Sending to ledger (Mark as Paid):', payload);
-
+    console.log('Mark as Paid Payload:', payload);
     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
 
-    toast.success('Ledger marked as paid');
+    toast.success('Ledger marked as paid successfully');
     resetForm();
   } catch (err) {
     console.error('Error marking ledger as paid:', err);
-    toast.error('Failed to mark ledger as paid. Check console for details.');
+    toast.error(err.response?.data?.message || 'Failed to mark ledger as paid.');
   } finally {
     setShowModal(false);
   }
 };
-
-
-
-
 
   const resetForm = () => {
     setSaleItems([]);
