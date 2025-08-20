@@ -81,68 +81,84 @@ const res = await axios.get('/products');
   };
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (saleItems.length === 0 || saleItems.some(item => !products.find(p => p._id === item.product))) {
-  toast.error('One or more products are invalid. Please refresh and try again.');
-  return;
-}
+  console.log('saleItems before submit:', saleItems);
+  console.log('products loaded:', products);
 
+  // Filter out invalid saleItems (missing product or quantity <= 0)
+  const validItems = saleItems
+    .map(item => {
+      const productObj = products.find(p => p._id === (typeof item.product === 'string' ? item.product : item.product?._id));
+      if (!productObj) return null; // invalid product
+      if (!item.quantity || item.quantity <= 0) return null; // invalid quantity
 
-    if (
-      (!customerId && (!newCustomerName.trim() || !newCustomerAddress.trim() || !newCustomerContact.trim())) ||
-      saleItems.length === 0
-    ) {
+      const price = productObj.price || 0;
+      const discount = item.discount || 0;
+      const discountAmount = item.discountAmount || (price * discount) / 100;
+
+      return {
+        product: productObj._id,
+        quantity: item.quantity,
+        price,
+        priceAtSale: price,
+        discount,
+        discountAmount,
+      };
+    })
+    .filter(Boolean); // remove nulls
+
+  if (validItems.length === 0) {
+    toast.error('No valid products to submit. Please check your items.');
+    return;
+  }
+
+  // Ensure we have a customer
+  let finalCustomerId = customerId;
+  if (!finalCustomerId) {
+    if (!newCustomerName.trim() || !newCustomerAddress.trim() || !newCustomerContact.trim()) {
+      toast.error('Customer information is required.');
       return;
     }
+    // Create new customer
     try {
-      let finalCustomerId = customerId;
-      if (!finalCustomerId && newCustomerName.trim() && newCustomerAddress.trim() && newCustomerContact.trim()) {
-        const newCustomer = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/customers`, {
-          name: newCustomerName.trim(),
-          address: newCustomerAddress.trim(),
-          contact: newCustomerContact.trim()
-        });
-
-        finalCustomerId = newCustomer.data._id;
-        setCustomerId(finalCustomerId);
-      }
-      const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, {
-  customer: finalCustomerId,
-  items: saleItems
-  .map(item => {
-    const product = products.find(p => p._id === item.product);
-    if (!product) return null; // skip invalid items
-
-    const price = product.price;
-    const discount = item.discount || 0;
-    const discountAmount = item.discountAmount || (price * discount) / 100;
-    const total = (price - discountAmount) * item.quantity;
-
-    return {
-      product: item.product,
-      quantity: item.quantity,
-      price,
-      priceAtSale: price,
-      discount,
-      discountAmount,
-      total
-    };
-  })
-  .filter(Boolean) // remove any nulls
-
-});
-
-      await fetchProducts(); // 🔄 Refresh product list to reflect updated stock
-
-
-      setSavedSaleId(saleRes.data._id);
-      setShowModal(true);
+      const newCustomer = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/customers`, {
+        name: newCustomerName.trim(),
+        address: newCustomerAddress.trim(),
+        contact: newCustomerContact.trim()
+      });
+      finalCustomerId = newCustomer.data._id;
+      setCustomerId(finalCustomerId);
     } catch (err) {
-      console.error('Error saving sale:', err);
+      console.error('Error creating customer:', err);
+      toast.error('Failed to create new customer.');
+      return;
     }
+  }
+
+  // Prepare payload
+  const payload = {
+    customer: finalCustomerId,
+    products: validItems
   };
+
+  console.log('Payload to backend:', payload);
+
+  // Submit sale
+  try {
+    const saleRes = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/sales`, payload);
+
+    await fetchProducts(); // refresh stock
+    setSavedSaleId(saleRes.data._id);
+    setShowModal(true);
+    toast.success('Sale saved successfully!');
+  } catch (err) {
+    console.error('Error saving sale:', err);
+    toast.error(err.response?.data?.message || 'Failed to save sale.');
+  }
+};
+
 
 const handleAddLedger = async () => {
   try {
