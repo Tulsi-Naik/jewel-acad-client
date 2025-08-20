@@ -22,6 +22,7 @@ const SalesForm = () => {
   const [newCustomerAddress, setNewCustomerAddress] = useState('');
   const [newCustomerContact, setNewCustomerContact] = useState('');
   const componentRef = useRef();
+  const [ledgerCreated, setLedgerCreated] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,9 +166,14 @@ if (!finalCustomerId) {
 };
 
 
-// --- Handle Add Ledger ---
+
 // --- Handle Add Ledger ---
 const handleAddLedger = async (ledgerCustomerId) => {
+  if (ledgerCreated) {
+    toast.info('Ledger entry already exists for this sale. You can update payment only from ledger page.');
+    return;
+  }
+
   try {
     if (!ledgerCustomerId) {
       toast.error('Customer is required for ledger.');
@@ -214,7 +220,8 @@ const handleAddLedger = async (ledgerCustomerId) => {
     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
 
     toast.success('Ledger entry added successfully');
-    resetForm();
+    setLedgerCreated(true); // prevent duplicate ledger
+    resetForm(); // optional: clear form after adding ledger
   } catch (err) {
     console.error('Error adding ledger:', err);
     toast.error(err.response?.data?.message || 'Failed to add ledger.');
@@ -223,8 +230,14 @@ const handleAddLedger = async (ledgerCustomerId) => {
   }
 };
 
+
 // --- Handle Mark as Paid ---
 const handleMarkAsPaid = async (ledgerCustomerId) => {
+  if (ledgerCreated) {
+    toast.info('Ledger entry already exists for this sale. You can update payment only from ledger page.');
+    return;
+  }
+
   try {
     if (!ledgerCustomerId) {
       toast.error('Customer is required for ledger.');
@@ -271,7 +284,9 @@ const handleMarkAsPaid = async (ledgerCustomerId) => {
     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/ledger/sync`, payload);
 
     toast.success('Ledger marked as paid successfully');
-    resetForm();
+
+    setLedgerCreated(true); // prevent duplicates
+    resetForm(); // optional: only clear after successful ledger
   } catch (err) {
     console.error('Error marking ledger as paid:', err);
     toast.error(err.response?.data?.message || 'Failed to mark ledger as paid.');
@@ -280,16 +295,17 @@ const handleMarkAsPaid = async (ledgerCustomerId) => {
   }
 };
 
-
-  const resetForm = () => {
-    setSaleItems([]);
-    setCustomerId('');
-    setSavedSaleId(null);
-    setTotalAmount(0);
-    setNewCustomerName('');
-    setNewCustomerAddress('');
-    setNewCustomerContact('');
-  };
+// --- Updated resetForm ---
+const resetForm = () => {
+  setSaleItems([]);
+  setCustomerId('');
+  setSavedSaleId(null);
+  setTotalAmount(0);
+  setNewCustomerName('');
+  setNewCustomerAddress('');
+  setNewCustomerContact('');
+  setLedgerCreated(false); // reset ledger flag for next sale
+};
 
   const handleGeneratePDF = () => {
     const element = componentRef.current;
