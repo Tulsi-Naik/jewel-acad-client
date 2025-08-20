@@ -1,25 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import html2pdf from 'html2pdf.js';
-
 import JsBarcode from 'jsbarcode';
 import jsPDF from 'jspdf';
 import { Modal, Button, Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
-// import logoMarathi from '../components/assets/logo-marathi.png';
-
 import { getUserFromToken } from '../utils/auth';
 import axios from '../utils/axiosInstance';
-
-
-
 
 const ProductForm = () => {
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({
-    name: '', quantity: '', price: '', weight: ''
+    name: '', quantity: '', price: '', weight: '', gst: 3, category: ''
   });
   const [editForm, setEditForm] = useState({
-    name: '', quantity: '', price: '', weight: '',  barcode: ''
+    name: '', quantity: '', price: '', weight: '', gst: 3, category: '',  barcode: ''
   });
   const [editId, setEditId] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -39,17 +33,8 @@ const [showHistoryModal, setShowHistoryModal] = useState(false);
 const [stockHistory, setStockHistory] = useState([]);
 const labelRef = useRef(null);
 const [barcodeDataUrl, setBarcodeDataUrl] = useState('');
-// const [branding, setBranding] = useState({ brandFull: '', brandShort: '' });
-const user = getUserFromToken();
 
-// useEffect(() => {
-//   if (user?.vendor) {
-//     setBranding({
-//       brandFull: user.vendor.brandFull || 'Default Brand Name',
-//       brandShort: user.vendor.brandShort || 'Default Short Name',
-//     });
-//   }
-// }, []);
+const user = getUserFromToken();
 
  const fetchProducts = async () => {
   setLoading(true);
@@ -87,8 +72,8 @@ const user = getUserFromToken();
       quantity: Number(quantity),
       price: Number(price),
       weight: form.weight,
-      expiryDate: form.expiryDate,
-      manufacturingDate: form.manufacturingDate,
+       gst: Number(form.gst),
+  category: form.category
     };
 
     try {
@@ -344,60 +329,93 @@ const openHistoryModal = async (productId) => {
       <ToastContainer position="top-center" autoClose={2000} />
       <h2 className="text-center mb-4 text-primary">Add Product</h2>
 
-      <form onSubmit={handleSubmit} className="p-4 border rounded shadow bg-white">
-        <h5 className="mb-3 border-bottom pb-2 text-primary">Add New Product</h5>
+    <form onSubmit={handleSubmit} className="p-4 border rounded shadow bg-white">
+  <h5 className="mb-3 border-bottom pb-2 text-primary">Add New Product</h5>
 
-        <div className="row g-4">
-          {/* Product Info */}
-          <div className="col-md-4">
-            <label className="form-label">Product Name</label>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="e.g. Gold Ring"
-              required
-            />
-          </div>
+  <div className="row g-4">
+    <div className="col-md-4">
+      <label className="form-label">Product Name</label>
+      <input
+        type="text"
+        className="form-control"
+        name="name"
+        value={form.name}
+        onChange={handleChange}
+        placeholder="e.g. Gold Ring"
+        required
+      />
+    </div>
 
-          <div className="col-md-4">
-            <label className="form-label">Quantity</label>
-            <input
-              type="number"
-              className="form-control"
-              name="quantity"
-              value={form.quantity}
-              onChange={handleChange}
-              placeholder="e.g. 12"
-              required
-            />
-          </div>
+    <div className="col-md-4">
+      <label className="form-label">Quantity</label>
+      <input
+        type="number"
+        className="form-control"
+        name="quantity"
+        value={form.quantity}
+        onChange={handleChange}
+        placeholder="e.g. 12"
+        required
+      />
+    </div>
 
-          <div className="col-md-4">
-            <label className="form-label">Price (₹)</label>
-            <input
-              type="number"
-              className="form-control"
-              name="price"
-              value={form.price}
-              onChange={handleChange}
-              placeholder="e.g. 60"
-              required
-            />
-          </div>
+    <div className="col-md-4">
+      <label className="form-label">Price (₹)</label>
+      <input
+        type="number"
+        className="form-control"
+        name="price"
+        value={form.price}
+        onChange={handleChange}
+        placeholder="e.g. 60"
+        required
+      />
+    </div>
 
-        
+    <div className="col-md-4">
+      <label className="form-label">Weight</label>
+      <input
+        type="text"
+        className="form-control"
+        name="weight"
+        value={form.weight}
+        onChange={handleChange}
+        placeholder="e.g. 5g"
+      />
+    </div>
 
-          {/* Submit Button */}
-          <div className="col-12 text-end">
-            <button className="btn btn-success px-4" type="submit">
-              Save Product
-            </button>
-          </div>
-        </div>
-      </form>
+    <div className="col-md-4">
+      <label className="form-label">GST (%)</label>
+      <input
+        type="number"
+        className="form-control"
+        name="gst"
+        value={form.gst}
+        onChange={handleChange}
+        placeholder="e.g. 3"
+      />
+    </div>
+
+    <div className="col-md-4">
+      <label className="form-label">Category</label>
+      <input
+        type="text"
+        className="form-control"
+        name="category"
+        value={form.category}
+        onChange={handleChange}
+        placeholder="e.g. Ring, Necklace"
+      />
+    </div>
+
+    <div className="col-12 text-end">
+      <button className="btn btn-success px-4" type="submit">
+        Save Product
+      </button>
+    </div>
+  </div>
+</form>
+
 
       <br />
 
@@ -429,46 +447,53 @@ const openHistoryModal = async (productId) => {
         <div className="text-center my-5"><Spinner animation="border" /></div>
       ) : (
 <table className="table table-bordered table-hover">
-        <thead className="table-dark">
-  <tr>
-    <th style={{ width: '25%' }}>Name</th>
-    <th style={{ width: '10%' }}>Quantity</th>
-    <th style={{ width: '15%' }}>Price (₹)</th>
-    <th style={{ width: '20%' }}>Barcode</th>
-    <th style={{ width: '30%' }}>Actions</th>
-  </tr>
-</thead>
+  <thead className="table-dark">
+    <tr>
+      <th style={{ width: '20%' }}>Name</th>
+      <th style={{ width: '8%' }}>Qty</th>
+      <th style={{ width: '10%' }}>Price (₹)</th>
+      <th style={{ width: '22%' }}>Specs</th>
+      <th style={{ width: '20%' }}>Barcode</th>
+      <th style={{ width: '20%' }}>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredProducts.map((p) => (
+      <tr key={p._id} className={p.quantity === 0 ? 'table-danger' : ''}>
+        <td>{p.name}</td>
+        <td>
+          {p.quantity === 0 ? (
+            <span className="badge bg-danger">Out of Stock</span>
+          ) : (
+            p.quantity
+          )}
+        </td>
+        <td>{p.price}</td>
+        <td>
+          <small>
+            {p.weight && <>Weight: {p.weight} <br /></>}
+            {p.gst != null && <>GST: {p.gst}% <br /></>}
+            {p.category && <>Category: {p.category}</>}
+          </small>
+        </td>
+        <td>
+          <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display: 'none' }} />
+          <button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
+        </td>
+        <td>
+          <div className="d-flex gap-1 flex-nowrap">
+            <button className="btn btn-sm btn-outline-warning" onClick={() => handleEdit(p)}>Edit</button>
+            <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
+            <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>Stock In</button>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
+            <button className="btn btn-sm btn-outline-info" onClick={() => openHistoryModal(p._id)}>History</button>
+          </div>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
-
-          <tbody>
-            {filteredProducts.map((p) => (
-<tr key={p._id} className={p.quantity === 0 ? 'table-danger' : ''}>
-                <td>{p.name}</td>
-<td>
-  {p.quantity === 0 ? (
-    <span className="badge bg-danger">Out of Stock</span>
-  ) : (
-    p.quantity
-  )}
-</td>
-                <td>{p.price}</td>
-                <td>
-                  <canvas ref={(el) => (barcodeRefs.current[p._id] = el)} style={{ display:'none' }} />
-<button className="btn btn-outline-success btn-sm mt-1" onClick={() => openLabelModal(p)}>📄 PDF</button>
-                </td>
- <td>
-  <div className="d-flex gap-1 flex-nowrap">
-    <button className="btn btn-sm btn-outline-warning" onClick={() => handleEdit(p)}>Edit</button>
-    <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(p._id)}>Delete</button>
-    <button className="btn btn-sm btn-outline-primary" onClick={() => openStockModal(p, 'in')}>Stock In</button>
-    <button className="btn btn-sm btn-outline-secondary" onClick={() => openStockModal(p, 'out')}>Stock Out</button>
-      <button className="btn btn-sm btn-outline-info" onClick={() => openHistoryModal(p._id)}>History</button>
-  </div>
-</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       )}
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -479,6 +504,39 @@ const openHistoryModal = async (productId) => {
           <div className="mb-3"><label className="form-label">Name</label><input type="text" className="form-control" name="name" value={editForm.name} onChange={handleEditChange} /></div>
           <div className="mb-3"><label className="form-label">Quantity</label><input type="number" className="form-control" name="quantity" value={editForm.quantity} onChange={handleEditChange} /></div>
           <div className="mb-3"><label className="form-label">Price</label><input type="number" className="form-control" name="price" value={editForm.price} onChange={handleEditChange} /></div>
+          <div className="mb-3">
+  <label className="form-label">Weight</label>
+  <input
+    type="text"
+    className="form-control"
+    name="weight"
+    value={editForm.weight}
+    onChange={handleEditChange}
+  />
+</div>
+
+<div className="mb-3">
+  <label className="form-label">GST (%)</label>
+  <input
+    type="number"
+    className="form-control"
+    name="gst"
+    value={editForm.gst}
+    onChange={handleEditChange}
+  />
+</div>
+
+<div className="mb-3">
+  <label className="form-label">Category</label>
+  <input
+    type="text"
+    className="form-control"
+    name="category"
+    value={editForm.category}
+    onChange={handleEditChange}
+  />
+</div>
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
