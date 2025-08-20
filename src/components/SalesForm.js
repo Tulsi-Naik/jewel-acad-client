@@ -188,23 +188,30 @@ const handleAddLedger = async () => {
     }
 
     // Prepare products payload
-    const ledgerProducts = saleItems.map(item => {
-      const productId = typeof item.product === 'string' ? item.product : item.product._id;
-      const p = products.find(pr => pr._id === productId);
-      const price = p?.price || 0;
-      const discount = item.discount || 0;
-const discountAmount = item.discountAmount || (price * (item.discount || 0) / 100);
-      const total = (price - discountAmount) * item.quantity;
+  const ledgerProducts = saleItems
+  .map(item => {
+    const productId = typeof item.product === 'string' ? item.product : item.product._id;
+    const p = products.find(pr => pr._id === productId);
+    if (!p) return null; // skip invalid product
 
-      return {
-        product: productId,
-        quantity: item.quantity,
-        price,
-        discount,
-        discountAmount,
-        total
-      };
-    });
+    const price = Number(p.price || 0);
+    const discount = Number(item.discount || 0);
+    const discountAmount = Number(item.discountAmount ?? (price * discount / 100));
+    const quantity = Number(item.quantity || 0);
+    const total = (price - discountAmount) * quantity;
+
+    return {
+      product: productId,
+      quantity,
+      price,
+      discount,
+      discountAmount,
+      total
+    };
+  })
+  .filter(Boolean); // remove nulls
+
+
 
     const payload = {
       sale: savedSaleId,
